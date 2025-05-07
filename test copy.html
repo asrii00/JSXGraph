@@ -1,0 +1,209 @@
+<!-- chatgpt Example.... -->
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Chi-Square Visualization with Sliders</title>
+  <script src="https://jsxgraph.org/distrib/jsxgraphcore.js"></script>
+  <link rel="stylesheet" href="https://jsxgraph.org/distrib/jsxgraph.css" type="text/css" />
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+
+    #jxgbox {
+      width: 700px;
+      height: 500px;
+      border: 1px solid #ccc;
+      margin-top: 20px;
+    }
+    #piebox {
+      width: 500px;
+      height: 500px;
+      border: 1px solid #ccc;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>Chi-Square Visualization: Genotype Frequencies (Interactive)</h2>
+  <p>
+    Use the sliders to adjust the allele frequency <strong>p</strong> (so q = 1 − p)
+    and the observed genotype counts. The graph updates expected values and χ² automatically.
+  </p>
+  <div id="jxgbox"></div>
+  <div id="piebox"></div>
+
+  <script>
+    // Initialize the JSXGraph board (graph area)
+    const board = JXG.JSXGraph.initBoard('jxgbox', {
+      boundingbox: [-1, 70, 5, -15],  // [left, top, right, bottom]
+      axis: true,
+      showCopyright: false,
+      showNavigation: false
+    });
+
+     // second board...
+    const pieboard = JXG.JSXGraph.initBoard('piebox', {
+      boundingbox: [-5, 5, 5, -5],
+      showNavigation: true,
+      showCopyright: false,
+    });
+
+    board.defaultAxes.x.removeAllTicks();
+
+    //pieboard.create('point', [1, 3], { name: 'P1', color: 'blue' });
+    var dataArr = [70, 30];
+    pieboard.suspendUpdate();
+    
+    var a = pieboard.create('chart', dataArr, {
+    chartStyle: 'pie',
+    colors: ['#0F408D', '#6F1B75', '#CA147A', '#DA2228', '#E8801B', '#FCF302', '#8DC922', '#15993C', '#87CCEE', '#0092CE'],
+    fillOpacity: 0.8,
+    center: [0, 0],
+    strokeColor: 'black',
+    strokeWidth: 2,
+    labels: ['G', 'g'],
+    });
+    pieboard.unsuspendUpdate();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const total = 100;  // Fixed total number of individuals in population
+
+    // ---------------------------
+    // SLIDERS
+    // ---------------------------
+
+    // Slider for allele frequency p (0 to 1)
+    const pSlider = board.create('slider', [[0.5, 65], [3, 65], [0.0, 0.7, 1.0]], {
+      name: 'p (G)',
+      snapWidth: 0.01,
+      fillColor: '#0288d1'
+    });
+
+    // Slider for observed count of genotype GG
+    const obsGG = board.create('slider', [[0.5, 62], [3, 62], [0, 52, 100]], {
+      name: 'Observed GG',
+      snapWidth: 1,
+      fillColor: '#4caf50'
+    });
+
+    // Slider for observed count of genotype Gg
+    const obsGg = board.create('slider', [[0.5, 59], [3, 59], [0, 30, 100]], {
+      name: 'Observed Gg',
+      snapWidth: 1,
+      fillColor: '#ff9800'
+    });
+
+    // Helper functions to get slider values as integers
+    const obsGgValue = () => Math.round(obsGg.Value());
+    const obsGGValue = () => Math.round(obsGG.Value());
+
+    // Arrays to track visual elements so we can remove them later
+    let bars = [], texts = [], totalChi2Text;
+
+    // ---------------------------
+    // FUNCTION: Update visualization
+    // ---------------------------
+    function updateChart() {
+      const p = pSlider.Value();   // Allele frequency of G
+      const q = 1 - p;             // Allele frequency of g
+
+      // Expected genotype frequencies (Hardy-Weinberg)
+      const expGG = total * p * p;
+      const expGg = total * 2 * p * q;
+      const expgg = total * q * q;
+      const expected = [expGG, expGg, expgg];
+
+      // Get observed values from sliders
+      const observed = [
+        obsGGValue(),                // GG
+        obsGgValue(),                // Gg
+        total - obsGGValue() - obsGgValue() // gg is inferred
+      ];
+
+      // Clear old chart elements
+      for (const item of [...bars, ...texts]) board.removeObject(item);
+      bars = [];
+      texts = [];
+
+      let chi2 = 0;  // Total chi-square value
+      const labels = ['GG', 'Gg', 'gg'];  // Genotype labels
+
+      // Create visuals for each genotype
+      for (let i = 0; i < 3; i++) {
+        const x = i + 1;  // X-axis position
+
+        // Expected bar (light gray)
+        bars.push(board.create('polygon', [
+          [x - 0.3, 0],
+          [x + 0.3, 0],
+          [x + 0.3, expected[i]],
+          [x - 0.3, expected[i]]
+        ], {
+          fillColor: '#ccc',
+          strokeColor: 'gray',
+          fillOpacity: 0.4,
+          fixed: true
+        }));
+
+        // Observed bar (green)
+        bars.push(board.create('polygon', [
+          [x - 0.15, 0],
+          [x + 0.15, 0],
+          [x + 0.15, observed[i]],
+          [x - 0.15, observed[i]]
+        ], {
+          fillColor: '#4caf50',
+          strokeColor: '#2e7d32',
+          fillOpacity: 0.9,
+          fixed: true
+        }));
+
+        // Genotype label below
+        texts.push(board.create('text', [x, -2, labels[i]], { anchorX: 'middle' }));
+
+
+        // Chi-square contribution from this category
+        const contrib = expected[i] > 0
+          ? ((observed[i] - expected[i]) ** 2 / expected[i])
+          : 0;
+        chi2 += contrib;
+
+        // Text label for this χ² contribution
+        texts.push(board.create('text', [x, -5, `χ² = ${contrib.toFixed(2)}`], { anchorX: 'middle' }));
+      }
+
+      // Show total chi-square value below
+      if (totalChi2Text) board.removeObject(totalChi2Text);
+      totalChi2Text = board.create('text', [0.5, -10, `Total χ² = ${chi2.toFixed(2)}`], { fontSize: 16 });
+
+      const alleleFreqs = [p, q];  // p = G, q = g
+      
+      pieboard.update();
+    }
+
+    // Run once on page load
+    updateChart();
+
+    // Bind updates to slider changes
+    board.on('update', updateChart);
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,66 @@
+<!-- modified from official JSXGraph example -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Pie Chart Example</title>
+  <script src="https://jsxgraph.org/distrib/jsxgraphcore.js"></script>
+  <link rel="stylesheet" href="https://jsxgraph.org/distrib/jsxgraph.css" type="text/css" />
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+    #jxgbox {
+      width: 600px;
+      height: 450px;
+      border: 1px solid #ccc;
+      margin: 20px auto;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Pie Chart Visualization</h2>
+<p>This pie chart shows a distribution of alleles G and g.</p>
+
+<!-- JSXGraph container for the pie chart -->
+<div id="jxgbox"></div>
+
+<script>
+  // Data for the pie chart 
+  
+
+  // Initialize the JSXGraph board
+  var pieboard = JXG.JSXGraph.initBoard('jxgbox', {
+    showNavigation: false,
+    showCopyright: false,
+    boundingbox: [-2.4, 8, 13.6, -4]
+  });
+  
+  var dataArr = [70, 30];
+
+  // Customize the background color and label stroke color
+  pieboard.containerObj.style.backgroundColor = 'white';
+  pieboard.options.label.strokeColor = 'black';
+
+  // Suspend updates to optimize rendering
+  pieboard.suspendUpdate();
+
+  // Create the pie chart with data and styling options
+  var a = pieboard.create('chart', dataArr, {
+    chartStyle: 'pie',
+    colors: ['#0F408D', '#6F1B75', '#CA147A', '#DA2228', '#E8801B', '#FCF302', '#8DC922', '#15993C', '#87CCEE', '#0092CE'],
+    fillOpacity: 0.8,
+    center: [5, 2],
+    strokeColor: 'black',
+    strokeWidth: 2,
+    labels: ['G', 'g'],
+  });
+
+  // Unsuspend updates and render the board
+  pieboard.unsuspendUpdate();
+</script>
+
+</body>
+</html>
