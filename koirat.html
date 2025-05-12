@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>JSXGraph Example</title>
+  <title>Koiran luonne tähtikaaviossa</title>
   <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
   <style>
@@ -19,7 +19,7 @@
 
   <script>
     const board = JXG.JSXGraph.initBoard('box', {
-      boundingbox: [-14, 14, 14, -14],
+      boundingbox: [-15, 15, 15, -15],
       axis: false
     });
 
@@ -28,42 +28,56 @@
     //const personality = [4, 1, 5, 5, 3] //Hippu
     //const personality = [1, 4, 2, 1, 5] //Rico
     //const personality = [1, 1, 2, 3, 4] //Roope
-  
-  
-    const radius = 2;
-    const divisions = 5;
-    const p0 = board.create('point', [0, 0], { name: '', color: 'grey', size: 1 });
+
+
+    const radius = 2; //length of 1 'step'
+    const divisions = 5; //number of axes
+    const p0 = board.create('point', [0, 0], { name: '0', color: 'grey', size: 1 }); //origin/0
     const axisLabels = ['Pelokkuus', 'Aggressiivisuus', 'Leikkisyys', 'Tottelevaisuus', 'Äänekkyys'];
-    const offsetDistance = 2;
+    const offsetDistance = 2.5; //axis label offset
 
-
-    var perims = [];
+    //Static base: Map points for 'rings' that illustrate the levels/values on the axes from 1 to 5
+    var rings = [];
     for (j = 0; j < 5; j++) {
-      perims[j] = [];
+      rings[j] = [];
       for (i = 0; i < (divisions); i++) {
-        perims[j][i] = board.create('point', [radius * (j + 1) * Math.cos((i * 2 / divisions + 0.5) * Math.PI), radius * (j + 1) * Math.sin((i * 2 / divisions + 0.5) * Math.PI)], { name: '', size: 0, color: 'grey', fixed: true }); //+0.5 rotates it so that the first point points up
+        rings[j][i] = board.create('point', [radius * (j + 1) * Math.cos((i * 2 / divisions + 0.5) * Math.PI), radius * (j + 1) * Math.sin((i * 2 / divisions + 0.5) * Math.PI)], { name: j + 1, size: 0, color: 'grey', fixed: true }); //+0.5 rotates it so that the first point points up
       }
     }
 
+    //Draw polygons to create the rings
+    for (j = 0; j < 5; j++) {
+      board.create('polygon', rings[j], {
+        fillColor: 'lightgrey',
+      });
+    }
+
+    //Map the personality values onto the graph
     var personalitypoints = []
     for (i = 0; i < (divisions); i++) {
       personalitypoints[i] = board.create('point', [radius * personality[i] * Math.cos((i * 2 / divisions + 0.5) * Math.PI), radius * personality[i] * Math.sin((i * 2 / divisions + 0.5) * Math.PI)], { name: '', size: 1, color: 'blue', fixed: true }); //+0.5 rotates it so that the first point points up
     }
 
+    // Draw polygon to connect personality points
+    board.create('polygon', personalitypoints, {
+      fillColor: 'blue',
+      fillOpacity: 0.8
 
-    for (j = 0; j < 5; j++) {
-      board.create('polygon', perims[j], {
-        fillColor: 'lightgrey',
-      });
-    }
+    });
+
 
     for (k = 0; k < divisions; k++) {
-      board.create('line', [p0, perims[4][k]], { straightFirst: false, straightLast: false });
+      //Draw the axes from origin to outermost points
+      board.create('line', [p0, rings[4][k]], { straightFirst: false, straightLast: false });
+
+      //Radial offset for labels
       const theta = (k * 2 / divisions + 0.5) * Math.PI;
 
       const labelRadius = radius * 5 + offsetDistance;
       const lx = labelRadius * Math.cos(theta);
       const ly = labelRadius * Math.sin(theta);
+
+      //Create invisible points and add the labels here instead of during ring point creation - this seemed like the simpler approach to me
       board.create('point', [lx, ly], {
         name: axisLabels[k],
         size: 0, //not visible
@@ -74,17 +88,9 @@
           anchorX: 'middle',
           anchorY: 'middle',
           strokeColor: 'black'
-        }});
-      }
-
-    board.create('polygon', personalitypoints, {
-        fillColor: 'blue',
-        fillOpacity: 0.8
-
+        }
       });
-
-
-
+    }
   </script>
 
 </body>
