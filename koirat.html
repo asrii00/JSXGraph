@@ -19,22 +19,28 @@
 
   <script>
     const board = JXG.JSXGraph.initBoard('box', {
-      boundingbox: [-10, 10, 10, -10],
+      boundingbox: [-12, 12, 12, -12],
       axis: false
     });
-    const radius = 5;
+
+    const personality = [1, 2, 5, 4, 2]
+    const radius = 2;
     const divisions = 5;
-    const p0 = board.create('point', [0, 0], {name:'', color:'black'});
+    const p0 = board.create('point', [0, 0], { name: '', color: 'blue', size: 1 });
 
-    var points = [];
-
-    for (i = 0; i < (divisions); i++) {
-      points[i] = board.create('point', [radius * Math.cos((i * 2 / divisions + 0.5) * Math.PI), radius * Math.sin((i * 2 / divisions + 0.5) * Math.PI)],  {name:''}); //+0.5 rotates it so that the first point points up
+    var perims = [];
+    for (j = 0; j < 5; j++) {
+      perims[j] = [];
+      for (i = 0; i < (divisions); i++) {
+        perims[j][i] = board.create('point', [radius * (j+1) * Math.cos((i * 2 / divisions + 0.5) * Math.PI), radius * (j+1) * Math.sin((i * 2 / divisions + 0.5) * Math.PI)], { name: '', size: 1, color:'blue'}); //+0.5 rotates it so that the first point points up
+      }
     }
-  
-    board.create('polygon', points, {
-      fillColor: 'lightblue',
-    });
+
+    for (j = 0; j < 5; j++) {
+      board.create('polygon', perims[j], {
+        fillColor: 'lightblue',
+      });
+    }
 
 
 
