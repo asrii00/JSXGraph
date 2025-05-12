@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
   <style>
     #box {
-      width: 1000px;
+      width: 600px;
       height: 600px;
     }
   </style>
@@ -20,21 +20,24 @@
   <script>
     const board = JXG.JSXGraph.initBoard('box', {
       boundingbox: [-10, 10, 10, -10],
-      axis: true
+      axis: false
     });
+    const radius = 5;
+    const divisions = 5;
+    const p0 = board.create('point', [0, 0], {name:'', color:'black'});
 
-    const p1 = board.create('point', [2, 1]);
-    const p2 = board.create('point', [-1, -3]);
-    const p3 = board.create('point', [-1, 5]);
-    board.create('line', [p1, p2]);
-    board.create('line', [p1, p2]);
+    var points = [];
 
-
-    board.create('polygon', [p1, p2, p3], {
+    for (i = 0; i < (divisions); i++) {
+      points[i] = board.create('point', [radius * Math.cos((i * 2 / divisions + 0.5) * Math.PI), radius * Math.sin((i * 2 / divisions + 0.5) * Math.PI)],  {name:''}); //+0.5 rotates it so that the first point points up
+    }
+  
+    board.create('polygon', points, {
       fillColor: 'lightblue',
-      strokeColor: 'black',
-      strokeWidth: 2
     });
+
+
+
   </script>
 
 </body>
