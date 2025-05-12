@@ -23,24 +23,39 @@
       axis: false
     });
 
-    const personality = [1, 2, 5, 4, 2]
+    const personality = [1, 2, 1, 4, 2]
     const radius = 2;
     const divisions = 5;
-    const p0 = board.create('point', [0, 0], { name: '', color: 'blue', size: 1 });
+    const p0 = board.create('point', [0, 0], { name: '', color: 'grey', size: 1 });
 
     var perims = [];
     for (j = 0; j < 5; j++) {
       perims[j] = [];
       for (i = 0; i < (divisions); i++) {
-        perims[j][i] = board.create('point', [radius * (j+1) * Math.cos((i * 2 / divisions + 0.5) * Math.PI), radius * (j+1) * Math.sin((i * 2 / divisions + 0.5) * Math.PI)], { name: '', size: 1, color:'blue'}); //+0.5 rotates it so that the first point points up
+        perims[j][i] = board.create('point', [radius * (j+1) * Math.cos((i * 2 / divisions + 0.5) * Math.PI), radius * (j+1) * Math.sin((i * 2 / divisions + 0.5) * Math.PI)], { name: '', size: 0, color:'grey', fixed: true}); //+0.5 rotates it so that the first point points up
       }
     }
 
+    var personalitypoints = []
+    for (i = 0; i < (divisions); i++) {
+        personalitypoints[i] = board.create('point', [radius * personality[i] * Math.cos((i * 2 / divisions + 0.5) * Math.PI), radius * personality[i] * Math.sin((i * 2 / divisions + 0.5) * Math.PI)], { name: '', size: 1, color:'blue', fixed: true}); //+0.5 rotates it so that the first point points up
+      }
+      
+    
     for (j = 0; j < 5; j++) {
       board.create('polygon', perims[j], {
-        fillColor: 'lightblue',
+        fillColor: 'lightgrey',
       });
     }
+    for (k=0; k<divisions; k++){
+      board.create('line', [p0, perims[4][k]], {straightFirst:false, straightLast:false})
+    }
+
+    board.create('polygon', personalitypoints, {
+        fillColor: 'blue',
+        fillOpacity: 0.8
+        
+      });
 
 
 
