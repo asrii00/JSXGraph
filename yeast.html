@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>JSXGraph Example</title>
+  <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+  <style>
+    #box {
+      width: 1800px;
+      height: 1000px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="box" class="jxgbox"></div>
+
+  <script>
+    const board = JXG.JSXGraph.initBoard('box', {
+      boundingbox: [-1, 500000, 80, -10000],
+      axis: true
+    });
+
+    const yeastBaseCounts = [
+      { chromosome: 'chrI', A: 69836, T: 69975, C: 44641, G: 45766 },
+      { chromosome: 'chrII', A: 249673, T: 251728, C: 157392, G: 154391 },
+      { chromosome: 'chrIII', A: 98656, T: 95963, C: 62359, G: 59642 },
+      { chromosome: 'chrIV', A: 476761, T: 474471, C: 289337, G: 291364 },
+      { chromosome: 'chrV', A: 176533, T: 178202, C: 109826, G: 112313 },
+      { chromosome: 'chrVI', A: 82936, T: 82595, C: 52197, G: 52433 },
+      { chromosome: 'chrVII', A: 338308, T: 337405, C: 207771, G: 207456 },
+      { chromosome: 'chrVIII', A: 174024, T: 172029, C: 109103, G: 107487 },
+      { chromosome: 'chrIX', A: 134339, T: 134423, C: 85465, G: 85661 },
+      { chromosome: 'chrX', A: 231169, T: 228413, C: 142294, G: 143875 },
+      { chromosome: 'chrXI', A: 206161, T: 206802, C: 127768, G: 126085 },
+      { chromosome: 'chrXII', A: 330584, T: 332750, C: 207777, G: 207066 },
+      { chromosome: 'chrXIII', A: 286298, T: 284967, C: 176734, G: 176432 },
+      { chromosome: 'chrXIV', A: 241558, T: 239725, C: 151659, G: 151391 },
+      { chromosome: 'chrXV', A: 339394, T: 335458, C: 209023, G: 207416 },
+      { chromosome: 'chrXVI', A: 293950, T: 293240, C: 180367, G: 180509 }
+    ];
+
+    const dataArr = [
+      69836, 69975, 44641, 45766,
+      249673, 251728, 157392, 154391,
+      98656, 95963, 62359, 59642,
+      476761, 474471, 289337, 291364,
+      176533, 178202, 109826, 112313,
+      82936, 82595, 52197, 52433,
+      338308, 337405, 207771, 207456,
+      174024, 172029, 109103, 107487,
+      134339, 134423, 85465, 85661,
+      231169, 228413, 142294, 143875,
+      206161, 206802, 127768, 126085,
+      330584, 332750, 207777, 207066,
+      286298, 284967, 176734, 176432,
+      241558, 239725, 151659, 151391,
+      339394, 335458, 209023, 207416,
+      293950, 293240, 180367, 180509
+    ]
+
+    const xPositions = []
+    var x=1;
+    while ( x < 80) {
+      if (x % 5 !== 0) { //every 5th is omitted for a gap
+        xPositions.push(x);
+      }
+      x++;
+    }
+
+    var a = board.create('chart', [xPositions, dataArr], 
+    { chartStyle: 'bar', width: 1, labels: dataArr, colors: ['#0F408D', '#6F1B75', '#CA147A', '#DA2228'] });
+
+  </script>
+
+</body>
+
+</html>
