@@ -16,6 +16,19 @@
 <body>
 
   <div id="box" class="jxgbox"></div>
+  <div>
+    <form>
+      <label>
+        <input type="radio" name="species" value="setosa" checked> <i>Iris setosa</i>
+      </label>
+      <label>
+        <input type="radio" name="species" value="versicolor"> <i>Iris versicolor</i>
+      </label>
+      <label>
+        <input type="radio" name="species" value="virginica"> <i> Iris virginica</i>
+      </label>
+    </form>
+  </div>
 
   <script>
     const board = JXG.JSXGraph.initBoard('box', {
@@ -60,9 +73,7 @@
       [1.5, 0.2], [1.4, 0.2]
     ];
 
-    //setosa.forEach(([length, width]) => {
-    //versicolor.forEach(([length, width]) => {
-    virginica.forEach(([length, width]) => {
+    setosa.forEach(([length, width]) => {
       dataPoints.push(board.create('point', [length, width], { color: 'blue' }))
     });
 
@@ -127,23 +138,49 @@
     }
     board.create('point', [1.5, 5], {
       name: () => `Error = ${totalError().toFixed(2)}`,
-      showInfoBox: false, fixed: true, visible: true, size: 0, label: {fontSize:20}
+      showInfoBox: false, fixed: true, visible: true, size: 0, label: { fontSize: 20 }
     });
 
     //Added these labels
     board.create('point', [3.2, 5], {
       name: () => `Intercept point = ${calculateIntercept().toFixed(2)}`,
-      showInfoBox: false, fixed: true, visible: true, size: 0, label: {fontSize:20}
+      showInfoBox: false, fixed: true, visible: true, size: 0, label: { fontSize: 20 }
     });
     board.create('point', [5.5, 5], {
       name: () => `Slope = ${calculateSlope().toFixed(2)}`,
-      showInfoBox: false, fixed: true, visible: true, size: 0, label: {fontSize:20}
+      showInfoBox: false, fixed: true, visible: true, size: 0, label: { fontSize: 20 }
+    });
+
+    const radios = document.querySelectorAll('input[name="species"]');
+    function recreateChart(newData) {
+      dataPoints.forEach(point => board.removeObject(point));
+      dataPoints.length = 0;
+      newData.forEach(([length, width]) => {
+        dataPoints.push(board.create('point', [length, width], { color: 'blue' }))
       });
 
+    }
+
+    radios.forEach(radio => {
+      radio.addEventListener('change', () => {
+        if (radio.checked) {
+          console.log('Selected mode:', radio.value);
+          if (radio.value == "setosa") {
+            recreateChart(setosa);
+          }
+          else if (radio.value == "versicolor") {
+            recreateChart(versicolor)
+          }
+          else if (radio.value == "virginica") {
+            recreateChart(virginica)
+          }
+          board.update()
+        }
+      });
+    });
 
   </script>
 
 </body>
 
 </html>
-
