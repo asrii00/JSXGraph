@@ -25,6 +25,9 @@
     <br>
     <table id="baseTable" cellpadding="5" cellspacing="0">
     </table>
+    <br>
+    <table id="percentTable" cellpadding="5" cellspacing="0">
+    </table>
   </div>
 
 
@@ -89,6 +92,37 @@
         row.appendChild(cell);
       });
       table.appendChild(row);
+    });
+
+    // PERCENTAGES
+    //Header row
+    const percentTable = document.getElementById('percentTable');
+    const percentHeaderRow = document.createElement('tr');
+    ['Chromosome', 'A', 'T', 'C', 'G'].forEach(label => {
+      const pth = document.createElement('th');
+      pth.textContent = label;
+      percentHeaderRow.appendChild(pth);
+    });
+    percentTable.appendChild(percentHeaderRow);
+
+    //Entries
+    yeastBaseCounts.forEach(entry => {
+      const prow = document.createElement('tr');
+
+      //Chromosome names
+      const labelcell = document.createElement('td');
+      labelcell.textContent = entry.chromosome;
+      prow.appendChild(labelcell);
+
+      const total = entry.A + entry.T + entry.C + entry.G;
+
+      [ 'A', 'T', 'C', 'G'].forEach(key => {
+        const pcell = document.createElement('td');
+        const percent = (entry[key] / total *100).toFixed(2) + '%';
+        pcell.textContent = percent;
+        prow.appendChild(pcell);
+      });
+      percentTable.appendChild(prow);
     });
   </script>
 
