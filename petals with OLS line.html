@@ -151,14 +151,15 @@
       showInfoBox: false, fixed: true, visible: true, size: 0, label: { fontSize: 20 }
     });
 
+    //Added buttons to change which dataset is displayed
     const radios = document.querySelectorAll('input[name="species"]');
+    
     function recreateChart(newData) {
       dataPoints.forEach(point => board.removeObject(point));
       dataPoints.length = 0;
       newData.forEach(([length, width]) => {
         dataPoints.push(board.create('point', [length, width], { color: 'blue' }))
       });
-
     }
 
     radios.forEach(radio => {
