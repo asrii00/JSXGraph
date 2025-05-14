@@ -74,7 +74,7 @@
     ];
 
     setosa.forEach(([length, width]) => {
-      dataPoints.push(board.create('point', [length, width], { color: 'blue' }))
+      dataPoints.push(board.create('point', [length, width], { color: 'crimson' }))
     });
 
     //Everything after this is borrowed from https://integraali.com/jsxgraph2025/kuvat/eka/least-squares.html 
@@ -153,12 +153,12 @@
 
     //Added buttons to change which dataset is displayed
     const radios = document.querySelectorAll('input[name="species"]');
-    
-    function recreateChart(newData) {
+
+    function recreateChart(newData, color) {
       dataPoints.forEach(point => board.removeObject(point));
       dataPoints.length = 0;
       newData.forEach(([length, width]) => {
-        dataPoints.push(board.create('point', [length, width], { color: 'blue' }))
+        dataPoints.push(board.create('point', [length, width], { color: color }))
       });
     }
 
@@ -167,15 +167,15 @@
         if (radio.checked) {
           console.log('Selected mode:', radio.value);
           if (radio.value == "setosa") {
-            recreateChart(setosa);
+            recreateChart(setosa, 'crimson');
           }
           else if (radio.value == "versicolor") {
-            recreateChart(versicolor)
+            recreateChart(versicolor, 'purple');
           }
           else if (radio.value == "virginica") {
-            recreateChart(virginica)
+            recreateChart(virginica, 'blue');
           }
-          board.update()
+          board.update();
         }
       });
     });
