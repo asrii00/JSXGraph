@@ -15,17 +15,21 @@
       border: 1px solid black;
       border-collapse: collapse;
     }
+
+    #table{
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
   </style>
 </head>
 
 <body>
-
   <div id="box" class="jxgbox"></div>
+  <br>
   <div id="table">
-    <br>
     <table id="baseTable" cellpadding="5" cellspacing="0">
     </table>
-    <br>
     <table id="percentTable" cellpadding="5" cellspacing="0">
     </table>
   </div>
@@ -63,7 +67,7 @@
       yValues.push(entry.A, entry.T, entry.C, entry.G);
     });
 
-    var x = 1;
+    let x = 1;
     while (x < 80) {
       if (x % 5 !== 0) { //every 5th is omitted for a gap
         xPositions.push(x);
@@ -71,7 +75,7 @@
       x++;
     }
 
-    var a = board.create('chart', [xPositions, yValues],
+    let a = board.create('chart', [xPositions, yValues],
       { chartStyle: 'bar', width: 1, labels: yValues, colors: ['#0F408D', '#6F1B75', '#CA147A', '#DA2228'] });
 
     //table generation? simpler this way?
@@ -95,6 +99,7 @@
     });
 
     // PERCENTAGES
+    const percentageArray = [];
     //Header row
     const percentTable = document.getElementById('percentTable');
     const percentHeaderRow = document.createElement('tr');
@@ -109,7 +114,7 @@
     yeastBaseCounts.forEach(entry => {
       const prow = document.createElement('tr');
 
-      //Chromosome names
+      //Chromosome labels
       const labelcell = document.createElement('td');
       labelcell.textContent = entry.chromosome;
       prow.appendChild(labelcell);
@@ -120,6 +125,7 @@
         const pcell = document.createElement('td');
         const percent = (entry[key] / total *100).toFixed(2) + '%';
         pcell.textContent = percent;
+        percentageArray.push(percent);
         prow.appendChild(pcell);
       });
       percentTable.appendChild(prow);
