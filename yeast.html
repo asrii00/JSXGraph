@@ -44,10 +44,20 @@
 
   <script>
     const board = JXG.JSXGraph.initBoard('box', {
-      boundingbox: [-1, 500000, 80, -20000],
+      boundingbox: [-3, 500000, 80, -20000],
       axis: true,
-      showNavigation: false
+      showNavigation: false,
+      defaultAxes: {
+        x: {
+          ticks: {
+            ticksDistance: 200,  //hide ticks
+            minorTicks: 0,
+            drawLabels: false //hide numbers along x axis
+          }
+        }
+      }
     });
+
 
     // Data from: https://www.kaggle.com/datasets/usharengaraju/floodsdamageindia
     const yeastBaseCounts = [
@@ -155,9 +165,9 @@
       const isPercent = this.checked;
       // Adjust the bounding box based on dataset
       if (isPercent) {
-        board.setBoundingBox([-1, 50, 80, -2], false); // Percentages
+        board.setBoundingBox([-3, 50, 80, -2], false); // Percentages
       } else {
-        board.setBoundingBox([-1, 500000, 80, -20000], false); // Absolute values
+        board.setBoundingBox([-3, 500000, 80, -20000], false); // Absolute values
       }
 
       if (this.checked) {
@@ -168,7 +178,7 @@
       board.update()
     });
 
-
+    //Add chromosome labels
     yeastBaseCounts.forEach((entry, index) => {
       const x = chromosomeLabelPositions[index];
       board.create('point', [x, 0], {
@@ -179,6 +189,7 @@
       });
     })
 
+    //Add base labels
     const baseLabels = ['A', 'T', 'C', 'G'];
 
     xPositions.forEach((x, index) => {
