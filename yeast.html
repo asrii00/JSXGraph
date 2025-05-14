@@ -10,12 +10,23 @@
       width: 1800px;
       height: 1000px;
     }
+
+    table,th,td {
+      border: 1px solid black;
+      border-collapse: collapse;
+    }
   </style>
 </head>
 
 <body>
 
   <div id="box" class="jxgbox"></div>
+  <div id="table">
+    <br>
+    <table id="baseTable" cellpadding="5" cellspacing="0">
+    </table>
+  </div>
+
 
   <script>
     const board = JXG.JSXGraph.initBoard('box', {
@@ -42,37 +53,43 @@
       { chromosome: 'chrXVI', A: 293950, T: 293240, C: 180367, G: 180509 }
     ];
 
-    const dataArr = [
-      69836, 69975, 44641, 45766,
-      249673, 251728, 157392, 154391,
-      98656, 95963, 62359, 59642,
-      476761, 474471, 289337, 291364,
-      176533, 178202, 109826, 112313,
-      82936, 82595, 52197, 52433,
-      338308, 337405, 207771, 207456,
-      174024, 172029, 109103, 107487,
-      134339, 134423, 85465, 85661,
-      231169, 228413, 142294, 143875,
-      206161, 206802, 127768, 126085,
-      330584, 332750, 207777, 207066,
-      286298, 284967, 176734, 176432,
-      241558, 239725, 151659, 151391,
-      339394, 335458, 209023, 207416,
-      293950, 293240, 180367, 180509
-    ]
-
     const xPositions = []
-    var x=1;
-    while ( x < 80) {
+    const yValues = []
+    const bases = ['A', 'T', 'C', 'G'];
+    yeastBaseCounts.forEach(entry => {
+      yValues.push(entry.A, entry.T, entry.C, entry.G);
+    });
+
+    var x = 1;
+    while (x < 80) {
       if (x % 5 !== 0) { //every 5th is omitted for a gap
         xPositions.push(x);
       }
       x++;
     }
 
-    var a = board.create('chart', [xPositions, dataArr], 
-    { chartStyle: 'bar', width: 1, labels: dataArr, colors: ['#0F408D', '#6F1B75', '#CA147A', '#DA2228'] });
+    var a = board.create('chart', [xPositions, yValues],
+      { chartStyle: 'bar', width: 1, labels: yValues, colors: ['#0F408D', '#6F1B75', '#CA147A', '#DA2228'] });
 
+    //table generation? simpler this way?
+    const table = document.getElementById('baseTable');
+    const headerRow = document.createElement('tr');
+    ['Chromosome', 'A', 'T', 'C', 'G'].forEach(label => {
+      const th = document.createElement('th');
+      th.textContent = label;
+      headerRow.appendChild(th);
+    });
+    table.appendChild(headerRow);
+
+    yeastBaseCounts.forEach(entry => {
+      const row = document.createElement('tr');
+      ['chromosome', 'A', 'T', 'C', 'G'].forEach(key => {
+        const cell = document.createElement('td');
+        cell.textContent = entry[key];
+        row.appendChild(cell);
+      });
+      table.appendChild(row);
+    });
   </script>
 
 </body>
