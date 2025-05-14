@@ -9,11 +9,14 @@
     #box {
       width: 1000px;
       height: 600px;
+      margin-top: 1%;
     }
   </style>
 </head>
 
 <body>
+  Petal length vs. petal width in three iris species, fitted with regression lines using the Least Squares
+  method
 
   <div id="box" class="jxgbox"></div>
   <div>
@@ -33,7 +36,31 @@
   <script>
     const board = JXG.JSXGraph.initBoard('box', {
       boundingbox: [-1, 8, 8, -1],
-      axis: true
+      defaultAxes: {
+        x: {
+          name: 'Width (cm)',   
+          withLabel: true,        
+          label: {
+            anchorX: 'left',    
+            anchorY: 'middle',
+            offset: [0,500],       
+            fontSize: 16
+          }
+        },
+        y: {
+          name: 'Length (cm)',
+          withLabel: true,
+          label: {
+            anchorX: 'left',
+            anchorY: 'bottom',
+            fontSize: 16, 
+            offset:[800,20]
+          }
+        }
+      },
+      axis: true,
+      showNavigation: false
+
     });
 
     var dataPoints = [];
