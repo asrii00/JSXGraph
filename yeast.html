@@ -11,22 +11,30 @@
       height: 1000px;
     }
 
-    table,th,td {
+    table,
+    th,
+    td {
       border: 1px solid black;
       border-collapse: collapse;
     }
 
-    #table{
+    #table {
       display: flex;
       gap: 20px;
       align-items: flex-start;
+      padding: 2%;
     }
   </style>
 </head>
 
 <body>
+  Yeast (<i>Saccharomyces cerevisiae</i>) genome, base composition
   <div id="box" class="jxgbox"></div>
-  <br>
+  <label>
+    <input type="checkbox" id="togglePercent">
+    Display Percentages
+  </label>
+
   <div id="table">
     <table id="baseTable" cellpadding="5" cellspacing="0">
     </table>
@@ -34,13 +42,14 @@
     </table>
   </div>
 
-
   <script>
     const board = JXG.JSXGraph.initBoard('box', {
-      boundingbox: [-1, 500000, 80, -10000],
-      axis: true
+      boundingbox: [-1, 500000, 80, -20000],
+      axis: true,
+      showNavigation: false
     });
 
+    // Data from: https://www.kaggle.com/datasets/usharengaraju/floodsdamageindia
     const yeastBaseCounts = [
       { chromosome: 'chrI', A: 69836, T: 69975, C: 44641, G: 45766 },
       { chromosome: 'chrII', A: 249673, T: 251728, C: 157392, G: 154391 },
@@ -60,12 +69,11 @@
       { chromosome: 'chrXVI', A: 293950, T: 293240, C: 180367, G: 180509 }
     ];
 
-    const xPositions = []
-    const yValues = []
+
+    const absoluteData = [];
+    const chromosomeLabelPositions = [2, 7, 12, 17, 22, 27, 32, 37, 42, 47, 52, 57, 62, 67, 72, 77];
     const bases = ['A', 'T', 'C', 'G'];
-    yeastBaseCounts.forEach(entry => {
-      yValues.push(entry.A, entry.T, entry.C, entry.G);
-    });
+    const xPositions = [];
 
     let x = 1;
     while (x < 80) {
@@ -75,10 +83,11 @@
       x++;
     }
 
-    let a = board.create('chart', [xPositions, yValues],
-      { chartStyle: 'bar', width: 1, labels: yValues, colors: ['#0F408D', '#6F1B75', '#CA147A', '#DA2228'] });
+    yeastBaseCounts.forEach(entry => {
+      absoluteData.push(entry.A, entry.T, entry.C, entry.G);
+    });
 
-    //table generation? simpler this way?
+    //Generate absolute values table
     const table = document.getElementById('baseTable');
     const headerRow = document.createElement('tr');
     ['Chromosome', 'A', 'T', 'C', 'G'].forEach(label => {
@@ -98,8 +107,9 @@
       table.appendChild(row);
     });
 
-    // PERCENTAGES
-    const percentageArray = [];
+    // Generate percentages table
+    const relativeData = []; // A, T, C, G
+
     //Header row
     const percentTable = document.getElementById('percentTable');
     const percentHeaderRow = document.createElement('tr');
@@ -120,16 +130,72 @@
       prow.appendChild(labelcell);
 
       const total = entry.A + entry.T + entry.C + entry.G;
+      relativeData.push((entry.A / total * 100), (entry.T / total * 100), (entry.C / total * 100), (entry.G / total * 100));
 
-      [ 'A', 'T', 'C', 'G'].forEach(key => {
+      ['A', 'T', 'C', 'G'].forEach(key => {
         const pcell = document.createElement('td');
-        const percent = (entry[key] / total *100).toFixed(2) + '%';
-        pcell.textContent = percent;
-        percentageArray.push(percent);
+        const percent = (entry[key] / total * 100);
+        const percentText = percent.toFixed(2) + '%';
+        pcell.textContent = percentText;
         prow.appendChild(pcell);
       });
       percentTable.appendChild(prow);
     });
+
+    let chart = board.create('chart', [xPositions, absoluteData],
+      { chartStyle: 'bar', width: 1, colors: ['#0F408D', '#6F1B75', '#CA147A', '#DA2228'] });
+
+    function recreateChart(newData) {
+      board.removeObject(chart);
+      chart = board.create('chart', [xPositions, newData], { chartStyle: 'bar', width: 1, colors: ['#0F408D', '#6F1B75', '#CA147A', '#DA2228'] });
+    }
+
+
+    document.getElementById('togglePercent').addEventListener('change', function () {
+      const isPercent = this.checked;
+      // Adjust the bounding box based on dataset
+      if (isPercent) {
+        board.setBoundingBox([-1, 50, 80, -2], false); // Percentages
+      } else {
+        board.setBoundingBox([-1, 500000, 80, -20000], false); // Absolute values
+      }
+
+      if (this.checked) {
+        recreateChart(relativeData);
+      } else {
+        recreateChart(absoluteData);
+      }
+      board.update()
+    });
+
+
+    yeastBaseCounts.forEach((entry, index) => {
+      const x = chromosomeLabelPositions[index];
+      board.create('point', [x, 0], {
+        name: () => `${entry.chromosome}`,
+        showInfoBox: false, fixed: true, visible: true, size: 0, label: {
+          fontSize: 20, anchorX: 'middle', anchorY: 'bottom',
+        }
+      });
+    })
+
+    const baseLabels = ['A', 'T', 'C', 'G'];
+
+    xPositions.forEach((x, index) => {
+      board.create('point', [x - 0.8, 0], {
+        name: () => baseLabels[index % 4],
+        showInfoBox: false,
+        fixed: true,
+        visible: true,
+        size: 0,
+        label: {
+          fontSize: 20,
+          anchorY: 'bottom',
+          offset: [11, -30]
+        }
+      });
+    });
+
   </script>
 
 </body>
