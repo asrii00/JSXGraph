@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>JSXGraph Example</title>
+  <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+  <style>
+    #box {
+      width: 1000px;
+      height: 600px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="box" class="jxgbox"></div>
+  <div>
+    <button onclick="step()"> Paina</button>
+    The direction was:
+    <div id="dir">-</div>
+  </div>
+
+  <script>
+    const board = JXG.JSXGraph.initBoard('box', {
+      boundingbox: [-50, 50, 50, -1],
+      axis: true
+    });
+
+    const points = [];
+    const lines = [];
+    const probabilities = [
+      ['Up', 0.49],
+      ['End', 0.01],
+      ['Right', 0.25],
+      ['Left', 0.25],
+    ]
+
+    function getDirection(num) {
+      let cumulative = 0;
+      for (const [label, prob] of probabilities) {
+        cumulative += prob;
+        if (num < cumulative) {
+          return label;
+        }
+      }
+      // In case of rounding error
+      return probabilities[probabilities.length - 1][0];
+    }
+
+    function getNewPoint(dir, lastPoint) {
+      let newPoint = lastPoint;
+      if (dir === 'Up') {
+        newPoint[1]++;
+        return newPoint;
+      }
+      else if (dir === 'Right') {
+        newPoint[1]++;
+        newPoint[0]++;
+        return newPoint;
+      }
+      else if (dir === 'Left') {
+        newPoint[1]++;
+        newPoint[0]--;
+        return newPoint;
+      }
+      else if (dir === 'End') {
+        return null;
+      }
+    }
+
+    let lastPoint = [0, 1];
+    points.push(board.create('point', lastPoint, {color: 'green', name:''}));
+    lines.push(board.create('line', [[0,0], lastPoint], { straightFirst: false, straightLast: false }));
+    let keepGoing = true;
+    let stepCounter = 0;
+
+    function step() {
+      if (keepGoing) {
+        const direction = getDirection(Math.random());
+        document.getElementById('dir').textContent = direction;
+        const newPoint = getNewPoint(direction, lastPoint)
+        if (newPoint) {
+          points.push(board.create('point', newPoint, {color: 'green', name: ''}));
+          lines.push(board.create('line', [points[stepCounter], newPoint], { straightFirst: false, straightLast: false, color: 'lightgreen' }));
+          lastPoint=newPoint;
+          stepCounter++; 
+        }
+        else {
+          keepGoing = false;
+        }
+      }
+    }
+
+
+    
+
+  </script>
+
+</body>
+
+</html>
