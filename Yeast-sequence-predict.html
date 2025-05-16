@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>JSXGraph Example</title>
+  <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+  <style>
+    #box {
+      width: 1000px;
+      height: 600px;
+    }
+
+    .flex-container {
+      display: flex;
+      gap: 20px;
+      /* space between items */
+      align-items: flex-start;
+      /* align tops */
+      padding: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="flex-container">
+    <div id="box" class="jxgbox"></div>
+    <iframe src="bigram_table.html" width="250" height="600"></iframe>
+  </div>
+  <script>
+    const board = JXG.JSXGraph.initBoard('box', {
+      boundingbox: [-3, 1500000, 25, -100000],
+      axis: true,
+      showNavigation: false,
+      
+      defaultAxes: {
+        x: {
+          ticks: {
+            ticksDistance:250,  //hide ticks
+            minorTicks: 0,
+            drawLabels: false, //hide numbers along x axis
+            majorHeight:0 //hide vertical grid lines
+          }
+        }
+      }
+    });
+    const yData = [];
+    const bigramCounts = [
+      ['AA', 1320952],
+      ['AC', 639445],
+      ['AG', 708838],
+      ['AT', 1097113],
+      ['CA', 786382],
+      ['CC', 473632],
+      ['CG', 355299],
+      ['CT', 705263],
+      ['GA', 756041],
+      ['GC', 453386],
+      ['GG', 470541],
+      ['GT', 637132],
+      ['TA', 902974],
+      ['TC', 754112],
+      ['TG', 782422],
+      ['TT', 1313572]
+    ];
+
+    const labels = [
+      'AA', 'AC', 'AG', 'AT',
+      'CA', 'CC', 'CG', 'CT',
+      'GA', 'GC', 'GG', 'GT',
+      'TA', 'TC', 'TG', 'TT'
+    ];
+
+    const xPositions = labels.map((_, i) => 1.5 * i + 1);
+
+    bigramCounts.forEach(bigram => {
+      yData.push(bigram[1])
+    }
+    )
+
+    let chart = board.create('chart', [xPositions, yData],
+      { chartStyle: 'bar', width: 1, 
+      colors : ['#CA1F26', '#DA3C32', '#B6233E', '#A11C2E', '#CA147A', '#E03C8B', '#B22873', '#8F1C5C', '#6F1B75', '#823A9C', '#6A2B85', '#4C1C66', '#0F408D', '#2756A3', '#3A6FC0', '#527FD1']
+ });
+
+    xPositions.forEach((x, i) => {
+      board.create('text', [x, -10000, labels[i]], {
+        anchorX: 'middle',
+        anchorY: 'top',
+        fontSize: 14
+      });
+    });
+  </script>
+
+</body>
+
+</html>
