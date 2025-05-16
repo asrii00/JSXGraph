@@ -28,19 +28,37 @@
     <div id="box" class="jxgbox"></div>
     <iframe src="bigram_table.html" width="250" height="600"></iframe>
   </div>
+  <div>
+    <p>
+      1) Taulukon luvut on saatu laskemalla Python-skriptin avulla hiivan (<i>Saccharomyces cerevisiae</i>) genomidatassa esiintyvien kirjainparien
+      lukumäärät. Päättele todennäköisyydet tämän datan ja sitä kuvaavan taulukon perusteella. <br>
+
+      &nbsp;&nbsp;&nbsp;a) Mikä emäs seuraa todennäköisimmin A:ta? (V: Toinen A)<br>
+      &nbsp;&nbsp;&nbsp;b) Mikä emäs edeltää todennäköisimmin C:tä? (V: T)<br>
+      &nbsp;&nbsp;&nbsp;c) Millä emäksellä on suurin todennäköisyys esiintyä kahdesti peräkkäin? (V: A)<br>
+      &nbsp;&nbsp;&nbsp;d) Millä emäksellä on pienin todennäköisyys esiintyä kahdesti peräkkäin? (V: G)<br>
+      &nbsp;&nbsp;&nbsp;e) Jos emäsketjun ensimmäiset yhdeksän emästä ovat “ATACGTTAT”, mikä on tämän taulukon perusteella
+      todennäköisin 10. emäs? (V: T) <br>
+      &nbsp;&nbsp;&nbsp;f) Geneettinen koodi jakautuu parien sijasta kolmen emäksen jonoihin eli kodoneihin, jotka koodaavat proteiinisynteesissä käytettäviä aminohappoja. 
+      Montako erilaista kodonia on mahdollista muodostaa, kun käytettävissä on neljä eri emästä? (V: 4^3 eli 64 erilaista kodonia)
+
+
+    </p>
+
+  </div>
   <script>
     const board = JXG.JSXGraph.initBoard('box', {
       boundingbox: [-3, 1500000, 25, -100000],
       axis: true,
       showNavigation: false,
-      
+
       defaultAxes: {
         x: {
           ticks: {
-            ticksDistance:250,  //hide ticks
+            ticksDistance: 250,  //hide ticks
             minorTicks: 0,
             drawLabels: false, //hide numbers along x axis
-            majorHeight:0 //hide vertical grid lines
+            majorHeight: 0 //hide vertical grid lines
           }
         }
       }
@@ -80,9 +98,10 @@
     )
 
     let chart = board.create('chart', [xPositions, yData],
-      { chartStyle: 'bar', width: 1, 
-      colors : ['#CA1F26', '#DA3C32', '#B6233E', '#A11C2E', '#CA147A', '#E03C8B', '#B22873', '#8F1C5C', '#6F1B75', '#823A9C', '#6A2B85', '#4C1C66', '#0F408D', '#2756A3', '#3A6FC0', '#527FD1']
- });
+      {
+        chartStyle: 'bar', width: 1,
+        colors: ['#CA1F26', '#DA3C32', '#B6233E', '#A11C2E', '#CA147A', '#E03C8B', '#B22873', '#8F1C5C', '#6F1B75', '#823A9C', '#6A2B85', '#4C1C66', '#0F408D', '#2756A3', '#3A6FC0', '#527FD1']
+      });
 
     xPositions.forEach((x, i) => {
       board.create('text', [x, -10000, labels[i]], {
