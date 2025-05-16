@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>JSXGraph Example</title>
+  <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+  <style>
+    #box {
+      width: 1000px;
+      height: 600px;
+      margin-top: 1%;
+    }
+  </style>
+</head>
+
+<body>
+  Petal length vs. petal width in three iris species, fitted with regression lines using the Least Squares
+  method
+
+  <div id="box" class="jxgbox"></div>
+  <div style="margin: 1%;">
+    <b> Tehtäviä</b><br>
+    1. Jos poimit iiriskukasta terälehden ja sen pituus on 55mm, mitä lajia kukka todennäköisimmin on? (virginica) <br>
+    2. Jos poimit terälehden ja sen leveys on 10mm, mikä laji kyseessä todennäköisimmin on? (versicolor) <br>
+    3. Jos poimitun terälehden leveyden ja pituuden suhde on 0.2, mikä laji se todennäköisimmin on? (setosa) <br>
+    4. a) Ennusta setosa-alalajin regressioviivan avulla, mikä terälehden leveys on, jos sen pituus on 6cm? (n.1,1cm)
+    <br>
+    b) Pohdinta: Onko tällaisen ennusteen tekeminen järkevää tai mielekästä, kun tarkastelet olemassaolevien
+    setosa-datapisteiden ryhmittymistä? Miksi tai miksi ei?
+    (Datapisteiden jakautuminen viittaa siihen, että setosa-alalaji ei tavallisesti kasvata paria senttiä pidempiä
+    terälehtiä. Jos näyte-erän oletetaan olevan kuvaava myös koko lajin populaation suhteen,
+    kuusisenttisen setosa-terälehden olemassaolo on epätodennäköistä. Lisäksi ekstrapolaatio lisää epävarmuutta -
+    pienten lehtien perusteella määritetty regressioviiva ei välttämättä kuvaa suurempien lehtien
+    pituuksien ja leveyksien suhdetta oikealla tavalla.) <br>(=> avoimen vastauksen sijaan monivalinta?, esim: <br>
+    tosi: Ekstrapolaatio kauas näyte-erän mittaskaalan ulkopuolelle lisää ennusteeseen paljon epävarmuutta, joten
+    ennuste ei ole kovin järkevä <br>
+    tosi: Mittausdatan perusteella vaikuttaa siltä, ettei setosa-alalaji yleensä kasvata yli 2-3cm pitkiä terälehtiä,
+    joten ennuste ei ole erityisen mielekäs ((Toki epäedustava otos on mahdollinen)) <br>
+    epätosi: Ekstrapolaation sijaan 6-senttisen setosa-terälehden leveys kannattaa ennustaa virginica-alalajin
+    regressioviivan perusteella,
+    sillä virginica-alalajissa on riittävästi näytepisteitä noin samanpituisista lehdistä <br>
+    epätosi: Ekstrapolaatio regressioviivan avulla on järkevää, sillä datapisteitä on riittävästi hyvän regressioviivan
+    laskemiseen<br>
+    )
+
+  </div>
+
+  <script>
+    const board = JXG.JSXGraph.initBoard('box', {
+      boundingbox: [-1, 8, 8, -1],
+      defaultAxes: {
+        x: {
+          name: 'Width (cm)',
+          withLabel: true,
+          label: {
+            anchorX: 'left',
+            anchorY: 'middle',
+            offset: [0, 500],
+            fontSize: 16
+          }
+        },
+        y: {
+          name: 'Length (cm)',
+          withLabel: true,
+          label: {
+            anchorX: 'left',
+            anchorY: 'bottom',
+            fontSize: 16,
+            offset: [800, 20]
+          }
+        }
+      },
+      axis: true,
+      showNavigation: false
+
+    });
+
+    var dataPoints = [];
+    //from: https://www.kaggle.com/datasets/uciml/iris/data
+    const versicolor = [
+      [4.7, 1.4], [4.5, 1.5], [4.9, 1.5], [4.0, 1.3], [4.6, 1.5], [4.5, 1.3],
+      [4.7, 1.6], [3.3, 1.0], [4.6, 1.3], [3.9, 1.4], [3.5, 1.0], [4.2, 1.5],
+      [4.0, 1.0], [4.7, 1.4], [3.6, 1.3], [4.4, 1.4], [4.5, 1.5], [4.1, 1.0],
+      [4.5, 1.5], [3.9, 1.1], [4.8, 1.8], [4.0, 1.3], [4.9, 1.5], [4.7, 1.2],
+      [4.3, 1.3], [4.4, 1.4], [4.8, 1.4], [5.0, 1.7], [4.5, 1.5], [3.5, 1.0],
+      [3.8, 1.1], [3.7, 1.0], [3.9, 1.2], [5.1, 1.6], [4.5, 1.5], [4.5, 1.6],
+      [4.7, 1.5], [4.4, 1.3], [4.1, 1.3], [4.0, 1.3], [4.4, 1.2], [4.6, 1.4],
+      [4.0, 1.2], [3.3, 1.0], [4.2, 1.3], [4.2, 1.2], [4.2, 1.3], [4.3, 1.3],
+      [3.0, 1.1], [4.1, 1.3]
+    ];
+
+    const virginica = [
+      [6.0, 2.5], [5.1, 1.9], [5.9, 2.1], [5.6, 1.8], [5.8, 2.2], [6.6, 2.1],
+      [4.5, 1.7], [6.3, 1.8], [5.8, 1.8], [6.1, 2.5], [5.1, 2.0], [5.3, 1.9],
+      [5.5, 2.1], [5.0, 2.0], [5.1, 2.4], [5.3, 2.3], [5.5, 1.8], [6.7, 2.2],
+      [6.9, 2.3], [5.0, 1.5], [5.7, 2.3], [4.9, 2.0], [6.7, 2.0], [4.9, 1.8],
+      [5.7, 2.1], [6.0, 1.8], [4.8, 1.8], [4.9, 1.8], [5.6, 2.1], [5.8, 1.6],
+      [6.1, 1.9], [6.4, 2.0], [5.6, 2.2], [5.1, 1.5], [5.6, 1.4], [6.1, 2.3],
+      [5.6, 2.4], [5.5, 1.8], [4.8, 1.8], [5.4, 2.1], [5.6, 2.4], [5.1, 2.3],
+      [5.1, 1.9], [5.9, 2.3], [5.7, 2.5], [5.2, 2.3], [5.0, 1.9], [5.2, 2.0],
+      [5.4, 2.3], [5.1, 1.8]
+    ];
+    const setosa = [
+      [1.4, 0.2], [1.4, 0.2], [1.3, 0.2], [1.5, 0.2], [1.4, 0.2], [1.7, 0.4],
+      [1.4, 0.3], [1.5, 0.2], [1.4, 0.2], [1.5, 0.1], [1.5, 0.2], [1.6, 0.2],
+      [1.4, 0.1], [1.1, 0.1], [1.2, 0.2], [1.5, 0.4], [1.3, 0.4], [1.4, 0.3],
+      [1.7, 0.3], [1.5, 0.3], [1.7, 0.2], [1.5, 0.4], [1.0, 0.2], [1.7, 0.5],
+      [1.9, 0.2], [1.6, 0.2], [1.6, 0.4], [1.5, 0.2], [1.4, 0.2], [1.6, 0.2],
+      [1.6, 0.2], [1.5, 0.4], [1.5, 0.1], [1.4, 0.2], [1.5, 0.1], [1.2, 0.2],
+      [1.3, 0.2], [1.5, 0.1], [1.3, 0.2], [1.5, 0.2], [1.3, 0.3], [1.3, 0.3],
+      [1.3, 0.2], [1.6, 0.6], [1.9, 0.4], [1.4, 0.3], [1.6, 0.2], [1.4, 0.2],
+      [1.5, 0.2], [1.4, 0.2]
+    ];
+    const setosaPoints = []
+    const virginicaPoints = []
+    const versicolorPoints = []
+    setosa.forEach(([length, width]) => {
+      setosaPoints.push(board.create('point', [length, width], { color: 'crimson', name: '' }))
+    });
+    versicolor.forEach(([length, width]) => {
+      versicolorPoints.push(board.create('point', [length, width], { color: 'purple', name: '' }))
+    });
+    virginica.forEach(([length, width]) => {
+      virginicaPoints.push(board.create('point', [length, width], { color: 'blue', name: '' }))
+    });
+
+    //Everything after this is borrowed from https://integraali.com/jsxgraph2025/kuvat/eka/least-squares.html 
+    //Variables renamed to be more descriptive
+    function calculateIntercept(dataPoints) {
+      let sumX = 0, sumY = 0, sumXX = 0, sumXY = 0;
+      const numPoints = dataPoints.length;
+
+      for (let i = 0; i < numPoints; i++) {
+        const x = dataPoints[i].X();
+        const y = dataPoints[i].Y();
+        sumX += x;
+        sumY += y;
+        sumXX += x * x;
+        sumXY += x * y;
+      }
+      const numerator = (sumXX * sumY - sumX * sumXY);
+      const denominator = (numPoints * sumXX - sumX * sumX);
+      return numerator / denominator;
+    }
+
+    function calculateSlope(dataPoints) {
+      let sumX = 0, sumY = 0, sumXX = 0, sumXY = 0;
+      const numPoints = dataPoints.length;
+
+      for (let i = 0; i < numPoints; i++) {
+        const x = dataPoints[i].X();
+        const y = dataPoints[i].Y();
+        sumX += x;
+        sumY += y;
+        sumXX += x * x;
+        sumXY += x * y;
+      }
+
+      const numerator = (numPoints * sumXY - sumX * sumY);
+      const denominator = (numPoints * sumXX - sumX * sumX);
+      return numerator / denominator;
+    }
+
+    // Create two points that define the least squares line
+    function createRegressionPoints(name, points, color) {
+      const intercept = board.create('point', [0, () => calculateIntercept(points)], {
+        name: 'A', size: 1, showInfoBox: false, visible: false
+      });
+
+      const slope = board.create('point', [1, () => calculateIntercept(points) + calculateSlope(points)], {
+        name: 'B', size: 1, showInfoBox: false, visible: false
+      });
+
+      const line = board.create('line', [intercept, slope], {
+        strokeWidth: 2, strokeColor: color, opacity: 0.7
+      });
+      return { intercept, slope };
+    }
+
+    const setosaReg = createRegressionPoints('setosa', setosaPoints, 'crimson');
+    const versicolorReg = createRegressionPoints('versicolor', versicolorPoints, 'purple');
+    const virginicaReg = createRegressionPoints('virginica', virginicaPoints, 'blue');
+
+
+    function totalError(dataPoints) {
+      let total = 0;
+      for (let i = 0; i < dataPoints.length; i++) {
+        const error = Math.abs(dataPoints[i].Y() - (calculateIntercept(dataPoints) + calculateSlope(dataPoints) * dataPoints[i].X()));
+        total += error;
+      }
+      return total;
+    }
+    const datasets = [
+      { name: 'Setosa', y: 7, points: setosaPoints, color:'darkred' },
+      { name: 'Versicolor', y: 6, points: versicolorPoints, color:'purple' },
+      { name: 'Virginica', y: 5, points: virginicaPoints, color:'darkblue' }
+    ];
+
+    datasets.forEach(({ name, y, points, color}) => {
+      board.create('point', [0.5, y], {
+        name: () => `${name} error = ${totalError(points).toFixed(2)}`,
+        showInfoBox: false, fixed: true, visible: true, size: 0,
+        label: { fontSize: 20, color: color }
+      });
+
+      board.create('point', [2.6, y], {
+        name: () => `${name} intercept point = ${calculateIntercept(points).toFixed(2)}`,
+        showInfoBox: false, fixed: true, visible: true, size: 0,
+        label: { fontSize: 20, color: color }
+      });
+
+      board.create('point', [5.5, y], {
+        name: () => `${name} slope = ${calculateSlope(points).toFixed(2)}`,
+        showInfoBox: false, fixed: true, visible: true, size: 0,
+        label: { fontSize: 20, color: color }
+      });
+    });
+
+    createChart(setosa, 'crimson');
+    createChart(versicolor, 'purple');
+    createChart(virginica, 'blue');
+
+  </script>
+
+</body>
+
+</html>
