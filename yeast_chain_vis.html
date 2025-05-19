@@ -74,14 +74,18 @@
       })
     })
 
-    const x = 10;
-    const y = 10;
+
     const radius = 3;
     const color = '#CA1F26'; // e.g., red for Adenine
+    const columns = 20;
+    const startX = 10;
+    const startY = 10;
+    const ySpacing = 10;
+
     const circles = [];
     const circleLabels = [];
 
-    function drawCircle(x, y) {
+    function drawCircle(x, y, base) {
       circles.push(board.create('circle', [
         [x, y], radius
       ], {
@@ -92,19 +96,35 @@
         fixed: true
       }));
       circleLabels.push(board.create('text', [
-        x, y, 'A'
+        x, y, base
       ], {
         anchorX: 'middle',
         anchorY: 'middle',
         fontSize: 14,
         fixed: true
       }));
-      
-
     }
-    drawCircle(10, 10)
-    drawCircle(16, 10)
+    
+  
+    function getPositionForIndex(index){
+      const x = startX + 2* radius * (index % columns);
+      const y = startY + ySpacing *Math.floor(index / columns);
+      return {x: x, y: y};
+    }
 
+    let index = 0;
+    const bases =[];
+
+    function step(){
+    // get new position
+      const pos = getPositionForIndex(index);
+      //get random base using probability matrix
+      const base = 'A' // getBase(bases[index-1].base? bases[index-1].base : 'A')
+
+      drawCircle(pos.x, pos.y, base);
+      bases.push({index: index, x: pos.x, y: pos.y, base: base})
+      index ++;
+    }
     console.log(percentageData)
   </script>
 
