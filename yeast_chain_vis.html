@@ -28,7 +28,11 @@
   </div>
   <div>
     <button onclick="step()">Generoi seuraava</button>
-
+    <button onclick="clearEverything()">Tyhjennä</button>
+  </div>
+  <div style="margin-top: 1em;">
+    <label for="base-output">Sekvenssi tekstinä</label><br>
+    <textarea id="base-output" rows="4" cols="50" readonly style="resize: none; font-family: monospace;">A</textarea>
   </div>
   <script>
     const board = JXG.JSXGraph.initBoard('box', {
@@ -59,6 +63,10 @@
 
     const circles = [];
     const circleLabels = [];
+
+    let index = 0;
+    const bases = [];
+    let baseString = 'A';
 
     function drawCircle(x, y, base, color) {
       circles.push(board.create('circle', [
@@ -100,9 +108,8 @@
       }
       return { base: 'A', color: baseColors['A'] };
     }
-   
-    let index = 0;
-    const bases = [];
+
+
 
     function step() {
       //get new position
@@ -112,13 +119,34 @@
 
       drawCircle(pos.x, pos.y, base.base, base.color);
       bases.push({ index: index, x: pos.x, y: pos.y, base: base.base })
+      baseString += base.base;
+      document.getElementById('base-output').value = baseString;
       index++;
     }
-    const firstpos= getPositionForIndex(0);
-    //always begin with an A
-    drawCircle(firstpos.x, firstpos.y, 'A', '#D35A5F')
-    index++;
-  
+
+    function addFirstBase() {
+      const firstpos = getPositionForIndex(0);
+      //always begin with an A
+      drawCircle(firstpos.x, firstpos.y, 'A', '#D35A5F')
+      index++;
+    }
+
+    function clearEverything() {
+      bases.length = 0;
+      index = 0;
+      baseString = 'A';
+      document.getElementById('base-output').value = baseString;
+
+      circles.forEach(circle => board.removeObject(circle));
+      circleLabels.forEach(label => board.removeObject(label));
+      circles.length = 0;
+      circleLabels.length = 0;
+
+      addFirstBase();
+    }
+
+    addFirstBase();
+
   </script>
 
 </body>
