@@ -1,4 +1,9 @@
 <style>
+  th, td, tr, thead, tbody{
+    border: solid 1px black
+
+  }
+
   tbody tr:nth-child(1),
   tbody tr:nth-child(2),
   tbody tr:nth-child(3),
@@ -11,7 +16,7 @@
   tbody tr:nth-child(7),
   tbody tr:nth-child(8) {
     background-color: #F7D6E8;
-    border-top: 2px solid #999;
+    
   }
 
   tbody tr:nth-child(9),
@@ -19,7 +24,7 @@
   tbody tr:nth-child(11),
   tbody tr:nth-child(12) {
     background-color: #E3D6F2;
-    border-top: 2px solid #999;
+    
   }
 
   tbody tr:nth-child(13),
@@ -27,7 +32,7 @@
   tbody tr:nth-child(15),
   tbody tr:nth-child(16) {
     background-color: #D6E3F5;
-    border-top: 2px solid #999;
+    
   }
 
   td {
@@ -35,29 +40,38 @@
   }
 </style>
   <table id="bigram-table" cellpadding="5" cellspacing="0" style="border: solid 1px black;">
-  <thead>
+      <thead>
     <tr>
-      <th>Pari</th>
-      <th>Todennäköisyydet*</th>
+      <th>Lähtöemäs</th>
+      <th>Seuraava emäs</th>
+      <th>Todennäköisyys</th>
     </tr>
   </thead>
   <tbody>
-  <tr><td>AA</td><td>0.351</td></tr>
-  <tr><td>AC</td><td>0.170</td></tr>
-  <tr><td>AG</td><td>0.188</td></tr>
-  <tr><td>AT</td><td>0.291</td></tr>
-  <tr><td>CA</td><td>0.339</td></tr>
-  <tr><td>CC</td><td>0.204</td></tr>
-  <tr><td>CG</td><td>0.153</td></tr>
-  <tr><td>CT</td><td>0.304</td></tr>
-  <tr><td>GA</td><td>0.326</td></tr>
-  <tr><td>GC</td><td>0.196</td></tr>
-  <tr><td>GG</td><td>0.203</td></tr>
-  <tr><td>GT</td><td>0.275</td></tr>
-  <tr><td>TA</td><td>0.241</td></tr>
-  <tr><td>TC</td><td>0.201</td></tr>
-  <tr><td>TG</td><td>0.208</td></tr>
-  <tr><td>TT</td><td>0.350</td></tr>
-</tbody>
+    <tr><td rowspan="4"><b>A</b></td><td>A</td><td>0.351</td></tr>
+    <tr>                <td>C</td><td>0.170</td></tr>
+    <tr>                <td>G</td><td>0.188</td></tr>
+    <tr>                <td>T</td><td>0.291</td></tr>
 
+    <tr><td rowspan="4"><b>C</b></td><td>A</td><td>0.339</td></tr>
+    <tr>                <td>C</td><td>0.204</td></tr>
+    <tr>                <td>G</td><td>0.153</td></tr>
+    <tr>                <td>T</td><td>0.304</td></tr>
+
+    <tr><td rowspan="4"><b>G</b></td><td>A</td><td>0.326</td></tr>
+    <tr>                <td>C</td><td>0.196</td></tr>
+    <tr>                <td>G</td><td>0.203</td></tr>
+    <tr>                <td>T</td><td>0.275</td></tr>
+
+    <tr><td rowspan="4"><b>T</b></td><td>A</td><td>0.241</td></tr>
+    <tr>                <td>C</td><td>0.201</td></tr>
+    <tr>                <td>G</td><td>0.208</td></tr>
+    <tr>                <td>T</td><td>0.350</td></tr>
+  </tbody>
 </table>
+ 
+
+
+  
+
+    

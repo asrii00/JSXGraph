@@ -24,7 +24,7 @@
 
   <div class="flex-container">
     <div id="box" class="jxgbox"></div>
-    <iframe src="bigram_prob_table.html" width="250" height="600"></iframe>
+    <iframe src="bigram_prob_table.html" width="400" height="600"></iframe>
   </div>
   <div>
     <button onclick="step()">Generoi seuraava</button>
@@ -36,47 +36,22 @@
       axis: false,
       showNavigation: false,
     });
-    const yData = [];
-    const bigramCounts = [
-      [['AA', 1320952],
-      ['AC', 639445],
-      ['AG', 708838],
-      ['AT', 1097113]],
-      [['CA', 786382],
-      ['CC', 473632],
-      ['CG', 355299],
-      ['CT', 705263]],
-      [['GA', 756041],
-      ['GC', 453386],
-      ['GG', 470541],
-      ['GT', 637132]],
-      [['TA', 902974],
-      ['TC', 754112],
-      ['TG', 782422],
-      ['TT', 1313572]]
-    ];
 
-    const labels = [
-      'AA', 'AC', 'AG', 'AT',
-      'CA', 'CC', 'CG', 'CT',
-      'GA', 'GC', 'GG', 'GT',
-      'TA', 'TC', 'TG', 'TT'
-    ];
+    const baseTransitionMatrix = {
+      'A': { 'A': 0.351, 'C': 0.170, 'G': 0.188, 'T': 0.291 },
+      'C': { 'A': 0.339, 'C': 0.204, 'G': 0.153, 'T': 0.304 },
+      'G': { 'A': 0.326, 'C': 0.196, 'G': 0.203, 'T': 0.275 },
+      'T': { 'A': 0.241, 'C': 0.201, 'G': 0.208, 'T': 0.350 }
+    };
 
-    const xPositions = labels.map((_, i) => 1.5 * i + 1);
-    const percentageData = [];
-
-    bigramCounts.forEach(group => {
-      const total = group[0][1] + group[1][1] + group[2][1] + group[3][1];
-      group.forEach(bigram => {
-        percent = bigram[1] / total;
-        percentageData.push(percent)
-      })
-    })
-
+    const baseColors = {
+      A: '#D35A5F',
+      C: '#D278B5',
+      G: '#9B84D2',
+      T: '#6FA3E6'
+    };
 
     const radius = 3;
-    const color = '#CA1F26'; // e.g., red for Adenine
     const columns = 20;
     const startX = 10;
     const startY = 10;
@@ -85,7 +60,7 @@
     const circles = [];
     const circleLabels = [];
 
-    function drawCircle(x, y, base) {
+    function drawCircle(x, y, base, color) {
       circles.push(board.create('circle', [
         [x, y], radius
       ], {
@@ -104,43 +79,46 @@
         fixed: true
       }));
     }
-    
-  
-    function getPositionForIndex(index){
-      const x = startX + 2* radius * (index % columns);
-      const y = startY + ySpacing *Math.floor(index / columns);
-      return {x: x, y: y};
+
+
+    function getPositionForIndex(index) {
+      const x = startX + 2 * radius * (index % columns);
+      const y = startY + ySpacing * Math.floor(index / columns);
+      return { x: x, y: y };
     }
 
-    function getBase(previousBase){
-      if (previousBase === 'A'){
+    function getBase(previousBase) {
+      const probs = baseTransitionMatrix[previousBase];
+      const rand = Math.random();
+      let cumulative = 0;
 
+      for (const base in probs) {
+        cumulative += probs[base];
+        if (rand <= cumulative) {
+          return { base, color: baseColors[base] };
+        }
       }
-      else if ( previousBase === 'T'){
-        
-      }
-      else if ( previousBase === 'T'){
-
-      }
-      else if ( previousBase === 'T'){
-
-      }
+      return { base: 'A', color: baseColors['A'] };
     }
-
+   
     let index = 0;
-    const bases =[];
+    const bases = [];
 
-    function step(){
-    // get new position
+    function step() {
+      //get new position
       const pos = getPositionForIndex(index);
       //get random base using probability matrix
-      const base = 'A' // getBase(bases[index-1].base? bases[index-1].base : 'A')
+      const base = getBase(bases[index - 1] ? bases[index - 1].base : 'A')
 
-      drawCircle(pos.x, pos.y, base);
-      bases.push({index: index, x: pos.x, y: pos.y, base: base})
-      index ++;
+      drawCircle(pos.x, pos.y, base.base, base.color);
+      bases.push({ index: index, x: pos.x, y: pos.y, base: base.base })
+      index++;
     }
-    console.log(percentageData)
+    const firstpos= getPositionForIndex(0);
+    //always begin with an A
+    drawCircle(firstpos.x, firstpos.y, 'A', '#D35A5F')
+    index++;
+  
   </script>
 
 </body>
