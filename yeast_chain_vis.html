@@ -21,7 +21,6 @@
 </head>
 
 <body>
-
   <div class="flex-container">
     <div id="box" class="jxgbox"></div>
     <iframe src="bigram_prob_table.html" width="400" height="600"></iframe>
@@ -32,8 +31,18 @@
   </div>
   <div style="margin-top: 1em;">
     <label for="base-output">Sekvenssi tekstinä</label><br>
-    <textarea id="base-output" rows="4" cols="50" readonly style="resize: none; font-family: monospace;">A</textarea>
+    <textarea id="base-output" rows="4" cols="99" readonly style="resize: none; font-family: monospace;">A</textarea>
   </div>
+  <p>
+    Vastaa kysymyksiin taulukon perusteella ja olettaen, että ensimmäinen emäs on A kuten yllä olevassa simulaatiossa. <br>
+    1. Millä todennäköisyydellä 2. emäs on G? (18.8%)<br>
+    2. Millä todennäköisyydellä ensimmäiset neljä emästä ovat ACTG? ( 1 * 0.170 * 0.304 * 0.208 = 0.011 eli 1,1%) <br>
+    3. a) Minkä arvelisit olevan todennäköisin 5 emäksen ketju? (AAAAA)<br>
+       b) Kuinka todennäköistä sen muodostuminen on? (0.015 eli 1,5%) <br>
+    4. a) Montako erilaista tapaa on muodostaa 5 emäksen ketju? (4^5 eli 1024) <br>
+    b) Montako erilaista tapaa on muodostaa 10 emäksen ketju? (4^10 eli 1 048 576)<br>
+    c) Montako erilaista tapaa on muodostaa 50 emäksen ketju? (4^50 eli 1 267 650 600 228 229 401 496 703 205 376)<br>
+  </p>
   <script>
     const board = JXG.JSXGraph.initBoard('box', {
       boundingbox: [0, 0, 133, 100],
@@ -146,6 +155,8 @@
     }
 
     addFirstBase();
+
+    //currently there's no limit to base chain length, it just keeps going beyond the bounds of the board. 
 
   </script>
 
