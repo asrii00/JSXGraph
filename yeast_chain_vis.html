@@ -27,6 +27,7 @@
   </div>
   <div>
     <button onclick="step()">Generoi seuraava</button>
+    <button onclick="tenSteps()">Generoi kymmenen</button>
     <button onclick="clearEverything()">Tyhjennä</button>
   </div>
   <div style="margin-top: 1em;">
@@ -34,11 +35,12 @@
     <textarea id="base-output" rows="4" cols="99" readonly style="resize: none; font-family: monospace;">A</textarea>
   </div>
   <p>
-    Vastaa kysymyksiin taulukon perusteella ja olettaen, että ensimmäinen emäs on A kuten yllä olevassa simulaatiossa. <br>
+    Vastaa kysymyksiin taulukon perusteella ja olettaen, että ensimmäinen emäs on A kuten yllä olevassa simulaatiossa.
+    <br>
     1. Millä todennäköisyydellä 2. emäs on G? (18.8%)<br>
     2. Millä todennäköisyydellä ensimmäiset neljä emästä ovat ACTG? ( 1 * 0.170 * 0.304 * 0.208 = 0.011 eli 1,1%) <br>
     3. a) Minkä arvelisit olevan todennäköisin 5 emäksen ketju? (AAAAA)<br>
-       b) Kuinka todennäköistä sen muodostuminen on? (0.015 eli 1,5%) <br>
+    b) Kuinka todennäköistä sen muodostuminen on? (0.015 eli 1,5%) <br>
     4. a) Montako erilaista tapaa on muodostaa 5 emäksen ketju? (4^5 eli 1024) <br>
     b) Montako erilaista tapaa on muodostaa 10 emäksen ketju? (4^10 eli 1 048 576)<br>
     c) Montako erilaista tapaa on muodostaa 50 emäksen ketju? (4^50 eli 1 267 650 600 228 229 401 496 703 205 376)<br>
@@ -118,19 +120,25 @@
       return { base: 'A', color: baseColors['A'] };
     }
 
-
-
     function step() {
-      //get new position
-      const pos = getPositionForIndex(index);
-      //get random base using probability matrix
-      const base = getBase(bases[index - 1] ? bases[index - 1].base : 'A')
+      if (index < 180) {
+        //get new position
+        const pos = getPositionForIndex(index);
+        //get random base using probability matrix
+        const base = getBase(bases[index - 1] ? bases[index - 1].base : 'A')
 
-      drawCircle(pos.x, pos.y, base.base, base.color);
-      bases.push({ index: index, x: pos.x, y: pos.y, base: base.base })
-      baseString += base.base;
-      document.getElementById('base-output').value = baseString;
-      index++;
+        drawCircle(pos.x, pos.y, base.base, base.color);
+        bases.push({ index: index, x: pos.x, y: pos.y, base: base.base })
+        baseString += base.base;
+        document.getElementById('base-output').value = baseString;
+        index++;
+      }
+    }
+
+    function tenSteps(){
+      for (i=0; i<10;i++){
+        step()
+      }
     }
 
     function addFirstBase() {
