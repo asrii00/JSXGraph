@@ -29,6 +29,10 @@
     <button onclick="step()">Generoi seuraava</button>
     <button onclick="tenSteps()">Generoi kymmenen</button>
     <button onclick="clearEverything()">Tyhjennä</button>
+    <button onclick="setStartBase('A')">Aloitusemäs: A</button>
+    <button onclick="setStartBase('T')">Aloitusemäs: T</button>
+    <button onclick="setStartBase('C')">Aloitusemäs: C</button>
+    <button onclick="setStartBase('G')">Aloitusemäs: G</button>
   </div>
   <div style="margin-top: 1em;">
     <label for="base-output">Sekvenssi tekstinä</label><br>
@@ -78,6 +82,7 @@
     let index = 0;
     const bases = [];
     let baseString = 'A';
+    let startingBase = 'A';
 
     function drawCircle(x, y, base, color) {
       circles.push(board.create('circle', [
@@ -107,6 +112,7 @@
     }
 
     function getBase(previousBase) {
+      console.log('previous: ', previousBase)
       const probs = baseTransitionMatrix[previousBase];
       const rand = Math.random();
       let cumulative = 0;
@@ -114,6 +120,7 @@
       for (const base in probs) {
         cumulative += probs[base];
         if (rand <= cumulative) {
+          console.log(base);
           return { base, color: baseColors[base] };
         }
       }
@@ -121,11 +128,12 @@
     }
 
     function step() {
-      if (index < 180) {
+      //only progress if the board is neither full nor empty (have to choose starting base)
+      if (index < 180 && circles.length != 0) {
         //get new position
         const pos = getPositionForIndex(index);
         //get random base using probability matrix
-        const base = getBase(bases[index - 1] ? bases[index - 1].base : 'A')
+        const base = getBase(bases[index - 1] ? bases[index - 1].base : startingBase)
 
         drawCircle(pos.x, pos.y, base.base, base.color);
         bases.push({ index: index, x: pos.x, y: pos.y, base: base.base })
@@ -141,28 +149,36 @@
       }
     }
 
-    function addFirstBase() {
+    function addFirstBase(base) {
       const firstpos = getPositionForIndex(0);
-      //always begin with an A
-      drawCircle(firstpos.x, firstpos.y, 'A', '#D35A5F')
+      drawCircle(firstpos.x, firstpos.y, base, baseColors[base])
+      bases.push({ index: index, x: firstpos.x, y: firstpos.y, base: base })
       index++;
     }
 
+    function setStartBase(base){
+      clearEverything();
+      baseString = base;
+      startingBase = base;
+      addFirstBase(base);
+      document.getElementById('base-output').value = baseString;
+    }
+
     function clearEverything() {
+
       bases.length = 0;
       index = 0;
-      baseString = 'A';
-      document.getElementById('base-output').value = baseString;
+      baseString = '';
+      document.getElementById('base-output').value = '';
 
       circles.forEach(circle => board.removeObject(circle));
       circleLabels.forEach(label => board.removeObject(label));
       circles.length = 0;
       circleLabels.length = 0;
-
-      addFirstBase();
+      
     }
 
-    addFirstBase();
+    addFirstBase('A');
 
     //currently there's no limit to base chain length, it just keeps going beyond the bounds of the board. 
 
