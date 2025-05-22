@@ -105,9 +105,6 @@
     // - auto growth button for x amount of steps
     // - limit height/ size??
 
-
-
-
     function getDirection(num, prevDir, selectedBias) {
       //console.log(selectedBias)
       const probabilities = probabilitySets[selectedBias]?.[prevDir] || probabilitySets.neutral.Up;
@@ -167,7 +164,7 @@
               dir: dir
             };
             const key = `${newPoint.x},${newPoint.y}`;
-            if (!occupied.has(key)) {
+            if (!occupied.has(key) && newPoint.y < 50) {
               occupied.add(key);
               points.push(newPoint);
               growPointsQueue.push(newPoint);
