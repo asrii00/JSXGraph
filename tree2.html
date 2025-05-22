@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>JSXGraph Example</title>
+  <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+  <script src="probabilities-for-tree.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+  <style>
+    #box {
+      width: 1200px;
+      height: 600px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 50%;
+      margin-top: 1em;
+    }
+
+    th,
+    td {
+      border: 1px solid #aaa;
+      padding: 6px 10px;
+      text-align: center;
+    }
+
+    thead {
+      background-color: #eee;
+    }
+
+    .group-header {
+      background-color: #ccc;
+      font-weight: bold;
+      text-align: left;
+    }
+
+    .subgroup-header {
+      background-color: #ddd;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="box" class="jxgbox"></div>
+  <div>
+    <button onclick="step()">Take step</button>
+    <button onclick="step10()">Take 10 steps</button>
+    <br>
+    The direction was:
+    <div id="dir">-</div>
+  </div>
+  <div>
+    <form>
+      <label>
+        <input type="radio" name="prob" value="left"> <i>Skew left</i>
+      </label>
+      <label>
+        <input type="radio" name="prob" value="neutral" checked> <i>Neutral probabilities</i>
+      </label>
+      <label>
+        <input type="radio" name="prob" value="right"> <i> Skew right</i>
+      </label>
+    </form>
+  </div>
+  <div id="probability-table-container"></div>
+
+  <script>
+    const board = JXG.JSXGraph.initBoard('box', {
+      boundingbox: [-50, 50, 50, -1],
+      axis: true
+    });
+
+    const radios = document.querySelectorAll('input[name="prob"]');
+
+    const points = [];
+    const drawnPoints = [];
+    const lines = [];
+    const growPoints = [];
+    let selectedSkew = "neutral";
+
+    radios.forEach(radio => {
+      radio.addEventListener('change', () => {
+        if (radio.checked) {
+          if (radio.value == "right") {
+            selectedSkew = "right"
+          }
+          else if (radio.value == "left") {
+            selectedSkew = "left"
+          }
+          else {
+            selectedSkew = "neutral"
+          }
+        }
+      });
+    });
+
+
+    //NEXT STEPS?
+    // - alter probability based on location (low trunk -> up, left side -> avoid right, vice versa)
+    // for fun/visual: add leaves, add gradient color
+    // - horizontal / 90 degree growth? or more angle possibilities (maybe additive/dynamic angles??)
+    // - auto growth button for x amount of steps
+    // - limit height/ size??
+
+
+
+
+    function getDirection(num, prevDir, selectedBias) {
+      //console.log(selectedBias)
+      const probabilities = probabilitySets[selectedBias]?.[prevDir] || probabilitySets.neutral.Up;
+
+      let cumulative = 0;
+      for (const [label, prob] of probabilities) {
+        cumulative += prob;
+        if (num < cumulative) {
+          return label;
+        }
+      }
+
+      // Fallback for rounding error
+      return probabilities[probabilities.length - 1][0];
+    }
+
+    function getNewPoint(dir) {
+      if (dir === 'Up') {
+        return [0, 1];
+      }
+      else if (dir === 'Right') {
+        return [1, 1];
+      }
+      else if (dir === 'Left') {
+        return [-1, 1];
+      }
+      else if (dir === 'End') {
+        return [0, 0];
+      }
+    }
+
+    const root = {
+      x: 0,
+      y: 0,
+      dir: 'Up'
+    };
+    points.push(root);
+    growPoints.push(root);
+    drawnPoints.push(board.create('point', [root.x, root.y], { color: 'green', name: 'root' }));
+
+    const occupied = new Set(); //Set - fast lookup, apparently, so I'm trying this. 
+
+    function step() {
+      const growPointsQueue = []
+      while (growPoints.length > 0) {
+        const point = growPoints.pop(); //returns last item, which it removed
+        const numBranches = Math.random() > 0.9 ? 2 : 1;
+
+        for (let i = 0; i < numBranches; i++) {
+          const dir = getDirection(Math.random(), point.dir, selectedSkew);
+          document.getElementById('dir').textContent = dir;
+          if (dir != 'End') {
+            const [dx, dy] = getNewPoint(dir);
+            const newPoint = {
+              x: point.x + dx,
+              y: point.y + dy,
+              dir: dir
+            };
+            const key = `${newPoint.x},${newPoint.y}`;
+            if (!occupied.has(key)) {
+              occupied.add(key);
+              points.push(newPoint);
+              growPointsQueue.push(newPoint);
+
+              drawnPoints.push(board.create('point', [newPoint.x, newPoint.y], { size: 1, fixed: true, color: 'green', name: '' }));
+              lines.push(board.create('line', [[point.x, point.y], [newPoint.x, newPoint.y]], {
+                straightFirst: false, straightLast: false, strokeWidth: 1
+              }));
+
+            }
+            else {
+              console.log('point was occupied')
+            }
+          }
+
+        }
+      }
+      growPoints.push(...growPointsQueue);
+
+    }
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function step10() {
+      for (let i = 0; i < 10; i++) {
+        step();
+        await sleep(100); // Delay 100ms between steps
+      }
+    }
+
+    fetch('probability-table.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('probability-table-container').innerHTML = html;
+      });
+
+  </script>
+
+</body>
+
+</html>
