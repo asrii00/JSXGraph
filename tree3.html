@@ -106,15 +106,16 @@
     });
 
     function getWeightedProbabilities(previousDir) {
-      baseProbs = baseProbabilityMatrix.neutral[previousDir];
+      const baseProbs = baseProbabilityMatrix.neutral[previousDir];
+      const biases = getBiases(userChosenBias(selectedSkew));
 
       const weighted = {};
       let total = 0;
       for (const dir of DIRECTIONS) {
-        const w = baseProbs[dir] || 0;
-        //const base = baseProbs[dir] || 0;
-        //const bias = biases[dir] || 1;
-        //const w = base * bias;
+        //const w = baseProbs[dir] || 0;
+        const base = baseProbs[dir] || 0;
+        const bias = biases[dir] || 1;
+        const w = base * bias;
         weighted[dir] = w;
         total += w;
       }
@@ -122,7 +123,22 @@
       return weighted;
     }
 
-    function getBiases() {
+    function getBiases(...biasObjects) {
+      const combined = {};
+      for (const bias of biasObjects) {
+        for (const [dir, weight] of Object.entries(bias)) {
+          combined[dir] = (combined[dir] || 1) * weight;
+        }
+      }
+      return combined;
+    }
+
+    function userChosenBias(skew) {
+      switch (skew) {
+        case 'left': return { Left: 1.5, Right: 0.7 };
+        case 'right': return { Right: 1.5, Left: 0.7 };
+        default: return {};
+      }
 
     }
 
