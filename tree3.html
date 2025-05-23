@@ -105,9 +105,9 @@
       });
     });
 
-    function getWeightedProbabilities(previousDir) {
+    function getWeightedProbabilities(previousDir, x, y) {
       const baseProbs = baseProbabilityMatrix.neutral[previousDir];
-      const biases = getBiases(userChosenBias(selectedSkew));
+      const biases = getBiases(userChosenBias(selectedSkew), biasFromPrevDir(previousDir), biasFromPosition(x, y));
 
       const weighted = {};
       let total = 0;
@@ -118,6 +118,10 @@
         const w = base * bias;
         weighted[dir] = w;
         total += w;
+      }
+
+      for (const dir of DIRECTIONS) {
+        weighted[dir] = weighted[dir] / total;
       }
 
       return weighted;
@@ -139,13 +143,32 @@
         case 'right': return { Right: 1.5, Left: 0.7 };
         default: return {};
       }
+    }
 
+    function biasFromPrevDir(prevDir) {
+      return { [prevDir]: 1.2 };
+    }
+
+    function biasFromPosition(x, y) {
+      const dist = getDistanceFromOrigin(x, y);
+      console.log(dist)
+      const bias = {};
+      if (x > 2) bias.Right = 1.5;
+      if (x < -2) bias.Left = 1.5;
+      if (y < 5) bias.Up = 2;
+      if (y > 25) bias.Up = 0.5;
+      if (dist < 0.5) {
+        bias.End = 0.001;
+      }
+      if (dist > 0.93) {
+        bias.End = 50;
+        console.log('dist more than 0.93, increasing likelihood of ending')
+      }
+     
+      return bias;
     }
 
     function getDirection(rand, finalProbMap) {
-      //console.log(selectedBias)
-      const probabilities = {} //calcultated probabilities
-
       let cumulative = 0;
       for (const dir of DIRECTIONS) {
         cumulative += finalProbMap[dir];
@@ -153,7 +176,6 @@
           return dir;
         }
       }
-
       // Fallback for rounding error
       return DIRECTIONS[DIRECTIONS.length - 1];
     }
@@ -185,7 +207,8 @@
       while (growPoints.length > 0) {
         const point = growPoints.pop(); //returns last item, which it removed
         const numBranches = Math.random() > 0.9 ? 2 : 1;
-        const finalProbabilityMap = getWeightedProbabilities(point.dir);
+        const finalProbabilityMap = getWeightedProbabilities(point.dir, point.x, point.y);
+        //console.log(finalProbabilityMap);
 
         for (let i = 0; i < numBranches; i++) {
           const dir = getDirection(Math.random(), finalProbabilityMap);
@@ -214,6 +237,10 @@
             else {
               console.log('point was occupied')
             }
+
+          }
+          else {
+            console.log('Ended')
           }
 
         }
