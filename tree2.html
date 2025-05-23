@@ -136,6 +136,11 @@
       }
     }
 
+    function getDistanceFromOrigin(x,y){
+      let c = Math.sqrt(x*x + y*y);
+      return Math.max(0.1, Math.min(c / 45, 1));
+    }
+
     const root = {
       x: 0,
       y: 0,
@@ -168,10 +173,12 @@
               occupied.add(key);
               points.push(newPoint);
               growPointsQueue.push(newPoint);
+              const dist = getDistanceFromOrigin(newPoint.x,newPoint.y)
+              const strokeWidth = 1 + (1-dist) * (4); //1 is minimum width, 5(=4+1) is max
 
-              drawnPoints.push(board.create('point', [newPoint.x, newPoint.y], { size: 1, fixed: true, color: 'green', name: '' }));
+              drawnPoints.push(board.create('point', [newPoint.x, newPoint.y], { size: 1, fixed: true, color: 'darkgreen', name: '' }));
               lines.push(board.create('line', [[point.x, point.y], [newPoint.x, newPoint.y]], {
-                straightFirst: false, straightLast: false, strokeWidth: 1
+                straightFirst: false, straightLast: false, strokeWidth: strokeWidth, color: 'darkgreen'
               }));
 
             }
