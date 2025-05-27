@@ -8,7 +8,7 @@
   <style>
     #box {
       width: 1200px;
-      height: 600px;
+      height: 780px;
     }
 
     .flex-container {
@@ -21,33 +21,32 @@
 </head>
 
 <body>
+  <div> <b>Simulated series of 40 coin tosses: Lengths of continuous runs of the same side repeating. </b> <br>
+    <p></p>Bar graph: Number of runs of lengths 1-10 in one series of 40 coin flips (cumulative average over simulations). <br> Dashed blue line: Fixed-Length Run Approximation (n = 40 flips):
+    P(k) ∝ 2 × (40 − k + 1) × (1/2)^(k + 1). (Source: ChatGPT, seems to be accurate) </p> <p> <u>Note:</u> Performance may decline when the number of generated sequences gets large </p> 
+  </div>
   <div class="flex-container">
     <div id="box" class="jxgbox"></div>
   </div>
   <div>
-    <button onclick="setRandom()">Generate random</button>
-
+    <button onclick="setRandom()">Generate random series</button>
   </div>
   <div style="margin-top: 1em;">
-    <label for="base-output">Sekvenssi tekstinä</label><br>
+    <label for="base-output">Coin sequence, A = heads, B = tails</label><br>
     <textarea id="base-output" rows="4" cols="99" readonly style="resize: none; font-family: monospace;"></textarea>
   </div>
 
   <script>
-    //TODO: 
-    //  think about sensible scaling
-    // also draw graphs of made up sequences 
-    // figure out how to compare them in a good way
 
     const board = JXG.JSXGraph.initBoard('box', {
-      boundingbox: [-125, 150, 200, -10],
+      boundingbox: [-9, 12, 11, -1],
       axis: true,
       showNavigation: true,
       defaultAxes: {
         x: {
           ticks: {
-            ticksDistance: 250,  //hide ticks
-            minorTicks: 0,
+            //hide ticks
+            minorTicks: 4,
             drawLabels: false, //hide numbers along x axis
             majorHeight: 0 //hide vertical grid lines
           }
@@ -55,41 +54,43 @@
       }
     });
 
-    const madeUpSeries = 'ABBAAABABABBBABABABBABABABBABBBABABAAABB'
-
     const coinColors = {
-      A: '#EA8B1E',
-      B: '#E8B927'
+      H: '#EA8B1E',
+      T: '#E8B927'
     };
 
-    const radius = 5;
+    //coins
+    const radius = 0.4;
     const columns = 10;
-    const startX = -110;
-    const startY = 65;
-    const ySpacing = 15;
-    const columnWidth = 7;
+    const startX = -8.25;
+    const startY = 4;
+    const ySpacing = 1;
+
+
+    const columnWidth = 0.4;
+    const columnGap = 0.2;
 
     const circles = [];
     const circleLabels = [];
     let results = {};
 
     const labels = [
-      '1', '1', '2', '2', '3', '3', '4', '4',
-      '5', '5', '6', '6', '7', '7','8', '8',
-      '9', '9', '10', '10'
+      '1H', '1T', '2H', '2T', '3H', '3T', '4H', '4T',
+      '5H', '5T', '6H', '6T', '7H', '7T', '8H', '8T',
+      '9H', '9T', '10H', '10T'
     ];
 
     const xPositions = labels.map((_, i) => {
       const group = Math.floor(i / 2);      // 0 for i=0,1; 1 for i=2,3; etc.
       const offsetInGroup = i % 2;          // 0 for first in pair, 1 for second
-      return (2 * columnWidth + 4) * group + columnWidth * offsetInGroup + 10;
+      return (2 * columnWidth + columnGap) * group + columnWidth * offsetInGroup + 0.80;
     });
 
     xPositions.forEach((x, i) => {
-      board.create('text', [x, -1, labels[i]], {
+      board.create('text', [x, -0.1, labels[i]], {
         anchorX: 'middle',
         anchorY: 'top',
-        fontSize: 14
+        fontSize: 13
       });
     });
 
@@ -122,7 +123,7 @@
     function randomize() {
       let randomString = '';
       for (let i = 0; i < 40; i++) {
-        randomString += ((Math.random() > 0.5) ? 'A' : 'B')
+        randomString += ((Math.random() > 0.5) ? 'H' : 'T')
       }
       return randomString;
     }
@@ -132,7 +133,7 @@
       let generated = randomize();
       draw(generated);
       results = countRuns(generated, results)
-      //console.log(results);
+      console.log(results);
       updateChart();
     }
 
@@ -164,28 +165,27 @@
 
     function updateChart() {
       board.removeObject(chart);
-      const letters = Object.keys(results); // A, B
+      const letters = Object.keys(results); // H, T
       let newData = [];
 
-      const A = results.A;
-      const B = results.B;
+      const H = results.H;
+      const T = results.T;
       let total = 0;
 
       for (let i = 1; i <= 10; i++) {
         const key = i.toString();
-        newData.push(A[key] || 0);  // value from A, or 0 if missing
-        total += (A[key] || 0);
-        newData.push(B[key] || 0);  // value from B, or 0 if missing
-        total += (B[key] || 0);
+        newData.push(H[key] || 0);  // value from A, or 0 if missing
+        total += (H[key] || 0);
+        newData.push(T[key] || 0);  // value from B, or 0 if missing
+        total += (T[key] || 0);
       }
-      //console.log(newData);
-      const dividedArray = newData.map(num => num / total * 100);
+      const dividedArray = newData.map(num => 40 * num / total);
       //console.log('divided ', dividedArray)
 
-      chart = board.create('chart', [xPositions, newData],
+      chart = board.create('chart', [xPositions, dividedArray],
         {
           chartStyle: 'bar', width: columnWidth,
-          colors: [coinColors.A, coinColors.B]
+          colors: [coinColors.H, coinColors.T]
         });
     }
 
@@ -210,8 +210,13 @@
       circles.length = 0;
       circleLabels.length = 0;
     }
-    //draw(madeUpSeries);
 
+    board.create('functiongraph', [
+      function (k) {
+        return (40 - k + 1) * Math.pow(0.5, k + 1);
+      },
+      1, 10
+    ], { strokeColor: 'blue', dash: 2, name: 'Fixed-Length' });
 
   </script>
 

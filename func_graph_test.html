@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>JSXGraph Example</title>
+  <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+  <style>
+    #box {
+      width: 1000px;
+      height: 600px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="box" class="jxgbox"></div>
+
+  <script>
+    const board = JXG.JSXGraph.initBoard('box', {
+      boundingbox: [-1, 12, 10, -1],
+      axis: true
+    });
+
+    board.create('functiongraph', [
+      function (x) {
+        return Math.pow(0.5, x);
+      },
+      0, 10 // domain: x from 0 to 10
+    ], { strokeColor: 'orange', name: 'Geometric Decay' });
+
+    board.create('functiongraph', [
+      function (k) {
+        return (40 - k + 1) * Math.pow(0.5, k + 1);
+      },
+      1, 10
+    ], { strokeColor: 'blue', dash: 2, name: 'Fixed-Length' });
+
+  </script>
+
+</body>
+
+</html>
