@@ -24,21 +24,12 @@
   <div class="flex-container">
     <div id="box" class="jxgbox"></div>
   </div>
-  <div>
-    <button onclick="setRandom()">Generate random</button>
-
-  </div>
   <div style="margin-top: 1em;">
     <label for="base-output">Sekvenssi tekstinä</label><br>
     <textarea id="base-output" rows="4" cols="99" readonly style="resize: none; font-family: monospace;"></textarea>
   </div>
 
   <script>
-    //TODO: 
-    //  think about sensible scaling
-    // also draw graphs of made up sequences 
-    // figure out how to compare them in a good way
-
     const board = JXG.JSXGraph.initBoard('box', {
       boundingbox: [-125, 150, 200, -10],
       axis: true,
@@ -55,11 +46,17 @@
       }
     });
 
-    const madeUpSeries = 'ABBAAABABABBBABABABBABABABBABBBABABAAABB'
+    const madeUpData = [
+      'ABABBAABABABABAABABBABAABABABBABAABBABAA',
+      'ABAAAAABBABBBAABABBBAAABBBABBAABABBABBAA',
+      'ABBAAABABABBBABABABBABABABBABBBABABAAABB',
+      'ABBBABAABAABABBABABAAABBABABBBBABABABBAB',
+      'ABBAAAABABBABBAAABBABABABAAAAABBBBBABAAA'
 
+    ]
     const coinColors = {
-      A: '#EA8B1E',
-      B: '#E8B927'
+      A: '#99b9ef',
+      B: '#a499ef'
     };
 
     const radius = 5;
@@ -75,7 +72,7 @@
 
     const labels = [
       '1', '1', '2', '2', '3', '3', '4', '4',
-      '5', '5', '6', '6', '7', '7','8', '8',
+      '5', '5', '6', '6', '7', '7', '8', '8',
       '9', '9', '10', '10'
     ];
 
@@ -117,23 +114,6 @@
       const x = startX + 2 * radius * (index % columns);
       const y = startY - ySpacing * Math.floor(index / columns);
       return { x: x, y: y };
-    }
-
-    function randomize() {
-      let randomString = '';
-      for (let i = 0; i < 40; i++) {
-        randomString += ((Math.random() > 0.5) ? 'A' : 'B')
-      }
-      return randomString;
-    }
-
-    function setRandom() {
-      clearEverything();
-      let generated = randomize();
-      draw(generated);
-      results = countRuns(generated, results)
-      //console.log(results);
-      updateChart();
     }
 
     function countRuns(seq, result) { //By ChatGPT, couldn't figure this bit out by myself.
@@ -178,9 +158,6 @@
         newData.push(B[key] || 0);  // value from B, or 0 if missing
         total += (B[key] || 0);
       }
-      //console.log(newData);
-      const dividedArray = newData.map(num => num / total * 100);
-      //console.log('divided ', dividedArray)
 
       chart = board.create('chart', [xPositions, newData],
         {
@@ -202,16 +179,15 @@
       document.getElementById('base-output').value = string;
     }
 
-    function clearEverything() {
-      document.getElementById('base-output').value = '';
-
-      circles.forEach(circle => board.removeObject(circle));
-      circleLabels.forEach(label => board.removeObject(label));
-      circles.length = 0;
-      circleLabels.length = 0;
-    }
-    //draw(madeUpSeries);
-
+    function loadData() {
+      madeUpData.map((_, i) => {
+        results = countRuns(madeUpData[i], results);
+      });
+      draw(madeUpData[0])//draw just one for example
+     } 
+  
+    loadData();
+    updateChart();
 
   </script>
 
