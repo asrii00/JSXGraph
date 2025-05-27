@@ -25,7 +25,7 @@
     <div id="box" class="jxgbox"></div>
   </div>
   <div>
-    <button onclick="">Start</button>
+    <button onclick="step()">Step</button>
 
   </div>
   <div style="margin-top: 1em;">
@@ -34,13 +34,14 @@
   </div>
 
   <script>
+    //this version: instead of changing to another letter, mutated base just changes to M
     const board = JXG.JSXGraph.initBoard('box', {
       boundingbox: [0, 0, 250, 100],
       axis: false,
       showNavigation: false,
     });
 
-    const fasta = 'CCACACCACACCCACACACCCACACACCACACCACACACCACACCACACCCACACACACACATCCTAACACTACCCTAACACAGCCCTAATCTAACCCTGGCCAACCTGTCTCTCAACTTACCCTCCATTACCCTGCCTCCACTCGTTACCCTGTCCCATTCAACCATACCACTCCGAACCACCATCCATCCCTCTACTT'
+    let fasta = 'CCACACCACACCCACACACCCACACACCACACCACACACCACACCACACCCACACACACACATCCTAACACTACCCTAACACAGCCCTAATCTAACCCTGGCCAACCTGTCTCTCAACTTACCCTCCATTACCCTGCCTCCACTCGTTACCCTGTCCCATTCAACCATACCACTCCGAACCACCATCCATCCCTCTACTT'
 
     const baseColors = {
       A: '#D35A5F',
@@ -57,8 +58,7 @@
 
     const circles = [];
     const circleLabels = [];
-    //const bases = [];
-    
+   
     function drawCircle(x, y, base, color) {
       circles.push(board.create('circle', [
         [x, y], radius
@@ -87,18 +87,48 @@
 
     function drawBase(base, index, color) {
       const pos = getPositionForIndex(index);
-      drawCircle(pos.x, pos.y, base, 'lightgrey');
-      //bases.push({ index: index, x: pos.x, y: pos.y, base: base })
+      drawCircle(pos.x, pos.y, base, color);
     }
 
     function draw() {
       for (let i = 0; i < fasta.length; i++) {
         const base = fasta[i];
-        drawBase(base, i, baseColors[base]) // not using colors atm
+        if (base === 'M'){
+          drawBase(base, i, 'red') 
+        }else {
+           drawBase(base, i, 'lightgrey') 
+        }
       }
       document.getElementById('base-output').value = fasta;
     }
 
+    function replaceCharAt(str, index, newChar) {
+      return str.substring(0, index) + newChar + str.substring(index + 1);
+    }
+
+    function step() {
+      console.log(circles)
+      for (let i = 0; i < circles.length; i++) {
+        const base = fasta[i];
+        if (Math.random() > 0.99) {
+          console.log('mutation')
+          fasta = replaceCharAt(fasta, i, 'M')
+
+        }
+      }
+      clearEverything()
+      draw()
+
+    }
+
+    function clearEverything() {
+      document.getElementById('base-output').value = '';
+
+      circles.forEach(circle => board.removeObject(circle));
+      circleLabels.forEach(label => board.removeObject(label));
+      circles.length = 0;
+      circleLabels.length = 0;
+    }
     draw();
 
   </script>
