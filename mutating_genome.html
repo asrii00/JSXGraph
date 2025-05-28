@@ -29,7 +29,11 @@
 
   </div>
   <div style="margin-top: 1em;">
-    <label for="base-output">Sekvenssi tekstinä</label><br>
+    <label for="original">Original sequence</label><br>
+    <textarea id="original" rows="4" cols="99" readonly style="resize: none; font-family: monospace;"></textarea>
+  </div>
+  <div style="margin-top: 1em;">
+    <label for="base-output">Mutated sequence</label><br>
     <textarea id="base-output" rows="4" cols="99" readonly style="resize: none; font-family: monospace;">A</textarea>
   </div>
 
@@ -41,6 +45,7 @@
       showNavigation: false,
     });
 
+    const originalFasta = 'CCACACCACACCCACACACCCACACACCACACCACACACCACACCACACCCACACACACACATCCTAACACTACCCTAACACAGCCCTAATCTAACCCTGGCCAACCTGTCTCTCAACTTACCCTCCATTACCCTGCCTCCACTCGTTACCCTGTCCCATTCAACCATACCACTCCGAACCACCATCCATCCCTCTACTT'
     let fasta = 'CCACACCACACCCACACACCCACACACCACACCACACACCACACCACACCCACACACACACATCCTAACACTACCCTAACACAGCCCTAATCTAACCCTGGCCAACCTGTCTCTCAACTTACCCTCCATTACCCTGCCTCCACTCGTTACCCTGTCCCATTCAACCATACCACTCCGAACCACCATCCATCCCTCTACTT'
 
     const baseColors = {
@@ -48,6 +53,19 @@
       C: '#D278B5',
       G: '#9B84D2',
       T: '#6FA3E6'
+    };
+    const baseColorsBright = {
+      A: '#E63946',  // Brighter, more vivid red
+      C: '#E057C2',  // More saturated pink-purple
+      G: '#7A5FD2',  // Deeper, punchier purple
+      T: '#469DFF'   // Brighter, saturated blue
+    };
+
+    const baseColorsLight = {
+      A: '#F4C5C7',
+      C: '#F3CCE5',
+      G: '#D9D1F0',
+      T: '#CDE1F7'
     };
 
     const radius = 2.4;
@@ -58,7 +76,7 @@
 
     const circles = [];
     const circleLabels = [];
-   
+
     function drawCircle(x, y, base, color) {
       circles.push(board.create('circle', [
         [x, y], radius
@@ -93,10 +111,10 @@
     function draw() {
       for (let i = 0; i < fasta.length; i++) {
         const base = fasta[i];
-        if (base === 'M'){
-          drawBase(base, i, 'red') 
-        }else {
-           drawBase(base, i, 'lightgrey') 
+        if (mutatedIndexes.includes(i)) {
+          drawBase(base, i, baseColorsBright[base])
+        } else {
+          drawBase(base, i, baseColorsLight[base])
         }
       }
       document.getElementById('base-output').value = fasta;
@@ -106,13 +124,37 @@
       return str.substring(0, index) + newChar + str.substring(index + 1);
     }
 
+    function mutate(base) {
+      const mutationType = (Math.random() > 0.67) ? 'transversion' : 'translation';
+      switch (base) {
+        case 'A':
+          if (mutationType === 'translation') { return 'T'; }
+          else { return (Math.random() > 0.5) ? 'C' : 'G' }
+        case 'T':
+          if (mutationType === 'translation') { return 'A'; }
+          else { return (Math.random() > 0.5) ? 'C' : 'G' }
+        case 'C':
+          if (mutationType === 'translation') { return 'G'; }
+          else { return (Math.random() > 0.5) ? 'A' : 'T' }
+        case 'G':
+          if (mutationType === 'translation') { return 'C'; }
+          else { return (Math.random() > 0.5) ? 'A' : 'T' }
+        default:
+          return base;
+      }
+    }
+
+    const mutatedIndexes = [];
+
     function step() {
-      console.log(circles)
       for (let i = 0; i < circles.length; i++) {
         const base = fasta[i];
         if (Math.random() > 0.99) {
-          console.log('mutation')
-          fasta = replaceCharAt(fasta, i, 'M')
+          console.log('mutating ', base);
+          const newBase = mutate(base);
+          console.log('->', newBase);
+          mutatedIndexes.push(i);
+          fasta = replaceCharAt(fasta, i, newBase);
 
         }
       }
@@ -130,6 +172,7 @@
       circleLabels.length = 0;
     }
     draw();
+     document.getElementById('original').value = originalFasta;
 
   </script>
 
