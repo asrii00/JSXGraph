@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>JSXGraph Example</title>
+  <script src="codon_to_aa.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+  <style>
+    #box {
+      width: 1200px;
+      height: 450px;
+    }
+
+    .flex-container {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      padding: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="flex-container">
+    <div id="box" class="jxgbox"></div>
+  </div>
+  <div>
+    <button onclick="step()">Step</button>
+    <button onclick="updateAA()">Update amino acid chain</button>
+  </div>
+  <div style="margin-top: 1em;">
+    <label for="original">Original sequence</label><br>
+    <textarea id="original" rows="4" cols="99" readonly style="resize: none; font-family: monospace;"></textarea>
+  </div>
+  <div style="margin-top: 1em;">
+    <label for="base-output">Mutated sequence</label><br>
+    <textarea id="base-output" rows="4" cols="99" readonly style="resize: none; font-family: monospace;">A</textarea>
+  </div>
+
+  <script>
+    //flaw: if you press step too often, the last bases become 'undefined' and it messes up the display
+
+    const board = JXG.JSXGraph.initBoard('box', {
+      boundingbox: [0, 0, 250, 150],
+      axis: false,
+      showNavigation: false,
+    });
+
+    let fasta = 'AUGUGGAGUACUGUUUUAUGGCGCUUAUGUGUAUUCGUAUGCGCAGAAUGUGGGAAUGCCAAUUAUAGGGGUGCCGAGGUGCCUUAUAAAACCCUUUUCUGUGCCUGUGACAUUUCCUUUUUCGGUCAAAAAGAAUAUCCGAAUUUUAGAUUUGGACCCUCGUACAGAAGCUUAUUGUCUAAGCCUGAAUUCAGUCUGCUUUAA'
+    const originalFasta = 'AUGUGGAGUACUGUUUUAUGGCGCUUAUGUGUAUUCGUAUGCGCAGAAUGUGGGAAUGCCAAUUAUAGGGGUGCCGAGGUGCCUUAUAAAACCCUUUUCUGUGCCUGUGACAUUUCCUUUUUCGGUCAAAAAGAAUAUCCGAAUUUUAGAUUUGGACCCUCGUACAGAAGCUUAUUGUCUAAGCCUGAAUUCAGUCUGCUUUAA'
+
+    const baseColorsBright = {
+      A: '#E63946', 
+      C: '#E057C2',  
+      G: '#7A5FD2', 
+      U: '#469DFF'   
+    };
+
+    const baseColorsLight = {
+      A: '#F4C5C7',
+      C: '#F3CCE5',
+      G: '#D9D1F0',
+      U: '#CDE1F7'
+    };
+
+    const circles = [];
+    const circleLabels = [];
+    const mutatedIndexes = [];
+
+    const codons = [];
+    let aminoAcids = [];
+
+    function drawCircle(x, y, base, color, radius = 2.4) {
+      circles.push(board.create('circle', [
+        [x, y], radius
+      ], {
+        strokeColor: color,
+        fillColor: color,
+        fillOpacity: 0.8,
+        strokeWidth: 2,
+        fixed: true
+      }));
+      circleLabels.push(board.create('text', [
+        x, y, base
+      ], {
+        anchorX: 'middle',
+        anchorY: 'middle',
+        fontSize: 14,
+        fixed: true
+      }));
+    }
+
+    function getPositionForIndex(index, startX = 7, startY = 15, radius = 2.4, columns = 50, ySpacing = 10) {
+      const x = startX + 2 * radius * (index % columns);
+      const y = startY + ySpacing * Math.floor(index / columns);
+      return { x: x, y: y };
+    }
+
+    function drawBase(base, index, color) {
+      const pos = getPositionForIndex(index);
+      drawCircle(pos.x, pos.y, base, color);
+    }
+
+    function drawAmino(amino, index, color) {
+      const pos = getPositionForIndex(index, startX= 10, startY = 80, radius = 6, columns = 20, ySpacing = 20);
+      drawCircle(pos.x, pos.y, amino, color, 6);
+    }
+
+    function draw() {
+      for (let i = 0; i < fasta.length; i++) {
+        const base = fasta[i];
+        if (mutatedIndexes.includes(i)) {
+          drawBase(base, i, baseColorsBright[base])
+        } else {
+          drawBase(base, i, baseColorsLight[base])
+        }
+      }
+      document.getElementById('base-output').value = fasta;
+    }
+    function drawAllAminos() {
+      for (let i = 0; i < aminoAcids.length; i++) {
+        const amino = aminoAcids[i];
+        console.log(amino)
+        drawAmino(amino, i, 'lightgrey');
+      }
+    }
+
+    function replaceCharAt(str, index, newChar) {
+      return str.substring(0, index) + newChar + str.substring(index + 1);
+    }
+
+    function mutate(base) {
+      const mutationType = (Math.random() > 0.67) ? 'transversion' : 'translation';
+      switch (base) {
+        case 'A':
+          if (mutationType === 'translation') { return 'U'; }
+          else { return (Math.random() > 0.5) ? 'C' : 'G' }
+        case 'U':
+          if (mutationType === 'translation') { return 'A'; }
+          else { return (Math.random() > 0.5) ? 'C' : 'G' }
+        case 'C':
+          if (mutationType === 'translation') { return 'G'; }
+          else { return (Math.random() > 0.5) ? 'A' : 'U' }
+        case 'G':
+          if (mutationType === 'translation') { return 'C'; }
+          else { return (Math.random() > 0.5) ? 'A' : 'U' }
+        default:
+          return base;
+      }
+    }
+
+
+    function step() {
+      for (let i = 0; i < circles.length; i++) {
+        const base = fasta[i];
+        if (Math.random() > 0.99) {
+          console.log('mutating ', base);
+          const newBase = mutate(base);
+          console.log('->', newBase);
+          mutatedIndexes.push(i);
+          fasta = replaceCharAt(fasta, i, newBase);
+        }
+      }
+      clearEverything()
+      draw()
+    }
+
+    function clearEverything() {
+      document.getElementById('base-output').value = '';
+
+      circles.forEach(circle => board.removeObject(circle));
+      circleLabels.forEach(label => board.removeObject(label));
+      circles.length = 0;
+      circleLabels.length = 0;
+    }
+
+    function basesToCodons() {
+      for (let i = 0; i < fasta.length; i += 3) {
+        const a = fasta[i];
+        const b = fasta[i + 1];
+        const c = fasta[i + 2];
+        if (a !== undefined && b !== undefined && c !== undefined) {
+          const codon = a + b + c;
+          codons.push(codon);
+        }
+      }
+      console.log(codons);
+    }
+
+    function codonsToAminoAcids() {
+      aminoAcids = codons.map(codon => codonTable[codon] || 'Error');
+      console.log(aminoAcids);
+    }
+
+    function updateAA() {
+      basesToCodons();
+      codonsToAminoAcids();
+      drawAllAminos();
+    }
+
+    draw();
+    document.getElementById('original').value = originalFasta;
+    updateAA();
+
+    //unused now
+    function dnaToRna(dnaSequence) {
+      return dnaSequence.replace(/T/g, 'U');
+    }
+
+  </script>
+
+</body>
+
+</html>
