@@ -80,11 +80,15 @@
 
     const DIRECTIONS = ['Up', 'Right', 'Left', 'End'];
     const offwhite = '#fcf3e5';
+    let ceiling = 50;
+    let maxDistFromRoot = 45;
 
     let leafMutationRate = 0.01;
     let leafInheritedMutationRate = 0.01;
     let dwarfismMutationRate = 0.01;
     let overrideAllLeaves = false;
+    let drawfismActive = false;
+    let branchingProbability = 0.1;
 
     const points = [];
     const drawnPoints = [];
@@ -110,7 +114,7 @@
 
     function getWeightedProbabilities(previousDir, x, y) {
       const baseProbs = baseProbabilityMatrix.neutral[previousDir];
-      const biases = getBiases(userChosenBias(selectedSkew), biasFromPrevDir(previousDir), biasFromPosition(x, y));
+      const biases = getBiases(userChosenBias(selectedSkew), biasFromPrevDir(previousDir), biasFromPosition(x, y), dwarfismBias(drawfismActive));
 
       const weighted = {};
       let total = 0;
@@ -146,8 +150,8 @@
       }
     }
 
-    function dwarfismBias(){
-
+    function dwarfismBias(isDwarf){
+      return isDwarf? {Up: 0.2, End: 1.5} : {};
     }
 
     function biasFromPrevDir(prevDir) {
@@ -201,21 +205,33 @@
 
     function getDistanceFromOrigin(x, y) {
       let c = Math.sqrt(x * x + y * y);
-      return Math.max(0.1, Math.min(c / 45, 1));
+      return Math.max(0.1, Math.min(c / maxDistFromRoot, 1));
     }
 
     const occupied = new Set(); //Set - fast lookup, apparently, so I'm trying this. 
 
-    function step() {
-      console.log(leafInheritedMutationRate)
-      if (drawnPoints.length == 1 && (Math.random() < leafInheritedMutationRate) ){
+    function checkMutations(){
+      if (Math.random() < leafInheritedMutationRate){
         console.log('white leaves mutation inherited')
         overrideAllLeaves = true;
+      }
+      if (Math.random() < dwarfismMutationRate){
+        console.log('dwarfism mutation inherited')
+        drawfismActive = true;
+        ceiling = 20;
+        maxDistFromRoot = 23;
+        branchingProbability = 0.4;
+      }
+    }
+
+    function step() {
+      if (drawnPoints.length == 1){
+        checkMutations();
       }
       const growPointsQueue = []
       while (growPoints.length > 0) {
         const point = growPoints.pop(); //returns last item, which it removed
-        const numBranches = Math.random() > 0.9 ? 2 : 1;
+        const numBranches = Math.random() > (1 - branchingProbability) ? 2 : 1;
         const finalProbabilityMap = getWeightedProbabilities(point.dir, point.x, point.y);
 
         for (let i = 0; i < numBranches; i++) {
@@ -229,7 +245,7 @@
               dir: dir
             };
             const key = `${newPoint.x},${newPoint.y}`;
-            if (!occupied.has(key) && newPoint.y < 50) {
+            if (!occupied.has(key) && newPoint.y < ceiling) {
               occupied.add(key);
               points.push(newPoint);
               growPointsQueue.push(newPoint);
