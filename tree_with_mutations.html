@@ -83,6 +83,7 @@
 
     let leafMutationRate = 0.01;
     let leafInheritedMutationRate = 0.01;
+    let dwarfismMutationRate = 0.01;
     let overrideAllLeaves = false;
 
     const points = [];
@@ -145,13 +146,16 @@
       }
     }
 
+    function dwarfismBias(){
+
+    }
+
     function biasFromPrevDir(prevDir) {
       return { [prevDir]: 1.2 };
     }
 
     function biasFromPosition(x, y) {
       const dist = getDistanceFromOrigin(x, y);
-      console.log(dist)
       const bias = {};
       if (x > 2) bias.Right = 1.5;
       if (x < -2) bias.Left = 1.5;
@@ -203,7 +207,8 @@
     const occupied = new Set(); //Set - fast lookup, apparently, so I'm trying this. 
 
     function step() {
-      if (lines.length = 0 && (Math.random() < leafInheritedMutationRate) ){
+      console.log(leafInheritedMutationRate)
+      if (drawnPoints.length == 1 && (Math.random() < leafInheritedMutationRate) ){
         console.log('white leaves mutation inherited')
         overrideAllLeaves = true;
       }
@@ -359,12 +364,29 @@
     ], {
       snapWidth: 0.5, 
       precision: 1,
-      name: 'Leaf inherited mutation rate %',
+      name: 'Chance of inherited  leaf mutation %',
       showValue: true
     });
 
-    slider.on('drag', () => {
-      leafInheritedMutationRate = (slider.Value() / 100);
+    slider2.on('drag', () => {
+      leafInheritedMutationRate = (slider2.Value() / 100);
+      console.log('Slider changed:', leafInheritedMutationRate);
+    });
+
+    const slider3 = board.create('slider', [
+      [19, 36], // start coords
+      [43, 36], // end coords
+      [0, 0.5, 100] // [min, initial value, max]
+    ], {
+      snapWidth: 0.5, 
+      precision: 1,
+      name: 'Dwarfism mutation rate %',
+      showValue: true
+    });
+
+    slider3.on('drag', () => {
+      dwarfismMutationRate = (slider3.Value() / 100);
+      console.log('Slider changed:', dwarfismMutationRate);
     });
 
     const root = {
