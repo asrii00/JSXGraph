@@ -20,3 +20,27 @@ const aminoAcidNames = {
   W: "Tryptophan",
   Y: "Tyrosine"
 };
+
+const aminoAcidNamesFIN = {
+  A: "Alaniini",
+  C: "Kysteiini",
+  D: "Asparagiinihappo",
+  E: "Glutamaattihappo",
+  F: "Fenyylialaniini",
+  G: "Glysiini",
+  H: "Histidiini",
+  I: "Isoleusiini",
+  K: "Lysiini",
+  L: "Leusiini",
+  M: "Metioniini",
+  N: "Asparagiini",
+  P: "Proliini",
+  Q: "Glutamiini",
+  R: "Arginiini",
+  S: "Seriini",
+  T: "Treoniini",
+  V: "Valiini",
+  W: "Tryptofaani",
+  Y: "Tyrosiini"
+};
+
