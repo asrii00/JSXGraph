@@ -94,6 +94,7 @@
     const drawnPoints = [];
     const lines = [];
     const growPoints = [];
+    const activeLabels = [];
     let selectedSkew = "neutral";
 
     radios.forEach(radio => {
@@ -150,8 +151,8 @@
       }
     }
 
-    function dwarfismBias(isDwarf){
-      return isDwarf? {Up: 0.2, End: 1.5} : {};
+    function dwarfismBias(isDwarf) {
+      return isDwarf ? { Up: 0.2, End: 1.5 } : {};
     }
 
     function biasFromPrevDir(prevDir) {
@@ -210,22 +211,23 @@
 
     const occupied = new Set(); //Set - fast lookup, apparently, so I'm trying this. 
 
-    function checkMutations(){
-      if (Math.random() < leafInheritedMutationRate){
+    function checkMutations() {
+      if (Math.random() < leafInheritedMutationRate) {
         console.log('white leaves mutation inherited')
         overrideAllLeaves = true;
       }
-      if (Math.random() < dwarfismMutationRate){
+      if (Math.random() < dwarfismMutationRate) {
         console.log('dwarfism mutation inherited')
         drawfismActive = true;
         ceiling = 20;
         maxDistFromRoot = 23;
         branchingProbability = 0.4;
       }
+      showMutationLabels(dwarf = drawfismActive, albino= overrideAllLeaves);
     }
 
     function step() {
-      if (drawnPoints.length == 1){
+      if (drawnPoints.length == 1) {
         checkMutations();
       }
       const growPointsQueue = []
@@ -281,10 +283,10 @@
     function addLeaf(x, y, dir) {
       let color = 'green'
       let points = [];
-      if (Math.random() < leafMutationRate){
+      if (Math.random() < leafMutationRate) {
         color = offwhite;
       }
-      if (overrideAllLeaves){
+      if (overrideAllLeaves) {
         color = offwhite;
       }
       if (dir === 'right') {
@@ -306,7 +308,7 @@
       leaves.push(board.create('ellipse', points, {
         strokeColor: 'green',
         fillColor: color,
-        fillOpacity: ((color === offwhite)? 0.95 : 0.6),
+        fillOpacity: ((color === offwhite) ? 0.95 : 0.6),
         strokeWidth: 2
       }));
 
@@ -362,7 +364,7 @@
       [43, 46], // end coords
       [0, 1, 100] // [min, initial value, max]
     ], {
-      snapWidth: 0.5, 
+      snapWidth: 0.5,
       precision: 1,
       name: 'Leaf somatic mutation rate %',
       showValue: true
@@ -378,7 +380,7 @@
       [43, 41], // end coords
       [0, 0.5, 100] // [min, initial value, max]
     ], {
-      snapWidth: 0.5, 
+      snapWidth: 0.5,
       precision: 1,
       name: 'Chance of inherited  leaf mutation %',
       showValue: true
@@ -394,7 +396,7 @@
       [43, 36], // end coords
       [0, 0.5, 100] // [min, initial value, max]
     ], {
-      snapWidth: 0.5, 
+      snapWidth: 0.5,
       precision: 1,
       name: 'Dwarfism mutation rate %',
       showValue: true
@@ -404,6 +406,42 @@
       dwarfismMutationRate = (slider3.Value() / 100);
       console.log('Slider changed:', dwarfismMutationRate);
     });
+
+    function showMutationLabels(dwarf, albino) {
+      if (dwarf) {
+        const dwarfismLabel = board.create('text', [-47, 48, 'Dwarf'], {
+          anchorX: 'left',
+          anchorY: 'top',
+          fontSize: 16,
+          fixed: true,
+          highlight: false,
+          cssStyle: `
+      background-color: rgba(211, 90, 95, 0.3);
+      padding: 4px;
+      border-radius: 4px;
+    `
+        });
+        activeLabels.push(dwarfismLabel);
+      }
+      if (albino) {
+        const albinoLabel = board.create('text', [-42, 48, 'All white leaves'], {
+          anchorX: 'left',
+          anchorY: 'top',
+          fontSize: 16,
+          fixed: true,
+          highlight: false,
+          cssStyle: `
+      background-color: rgba(111, 163, 230, 0.3);
+      padding: 4px;
+      border-radius: 4px;
+    `
+        });
+        activeLabels.push(albinoLabel);
+      }
+
+
+    }
+
 
     const root = {
       x: 0,
