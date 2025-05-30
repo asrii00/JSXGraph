@@ -48,6 +48,7 @@
   <div>
     <button onclick="step()">Take step</button>
     <button onclick="step10()">Take 10 steps</button>
+    <button onclick="clearEverything()">Reset</button>
     <br>
     The direction was:
     <div id="dir">-</div>
@@ -97,6 +98,17 @@
     const activeLabels = [];
     let selectedSkew = "neutral";
 
+    const leaves = [];
+    const tips = [];
+    const d = 10;
+    const occupied = new Set(); //Set for better performance, hopefully.
+
+    const root = {
+      x: 0,
+      y: 0,
+      dir: 'Up'
+    };
+
     radios.forEach(radio => {
       radio.addEventListener('change', () => {
         if (radio.checked) {
@@ -145,8 +157,8 @@
 
     function userChosenBias(skew) {
       switch (skew) {
-        case 'left': return { Left: 1.5, Right: 0.7 };
-        case 'right': return { Right: 1.5, Left: 0.7 };
+        case 'left': return { Left: 1.9, Right: 0.5 };
+        case 'right': return { Right: 1.9, Left: 0.5 };
         default: return {};
       }
     }
@@ -209,8 +221,6 @@
       return Math.max(0.1, Math.min(c / maxDistFromRoot, 1));
     }
 
-    const occupied = new Set(); //Set - fast lookup, apparently, so I'm trying this. 
-
     function checkMutations() {
       if (Math.random() < leafInheritedMutationRate) {
         console.log('white leaves mutation inherited')
@@ -223,7 +233,7 @@
         maxDistFromRoot = 23;
         branchingProbability = 0.4;
       }
-      showMutationLabels(dwarf = drawfismActive, albino= overrideAllLeaves);
+      showMutationLabels(dwarf = drawfismActive, albino = overrideAllLeaves);
     }
 
     function step() {
@@ -276,9 +286,6 @@
 
     }
 
-    const leaves = [];
-    const tips = [];
-    const d = 10;
 
     function addLeaf(x, y, dir) {
       let color = 'green'
@@ -361,7 +368,7 @@
 
     const slider = board.create('slider', [
       [19, 46], // start coords
-      [43, 46], // end coords
+      [42, 46], // end coords
       [0, 1, 100] // [min, initial value, max]
     ], {
       snapWidth: 0.5,
@@ -372,12 +379,11 @@
 
     slider.on('drag', () => {
       leafMutationRate = (slider.Value() / 100);
-      console.log('Slider changed:', leafMutationRate);
     });
 
     const slider2 = board.create('slider', [
       [19, 41], // start coords
-      [43, 41], // end coords
+      [42, 41], // end coords
       [0, 0.5, 100] // [min, initial value, max]
     ], {
       snapWidth: 0.5,
@@ -388,12 +394,11 @@
 
     slider2.on('drag', () => {
       leafInheritedMutationRate = (slider2.Value() / 100);
-      console.log('Slider changed:', leafInheritedMutationRate);
     });
 
     const slider3 = board.create('slider', [
       [19, 36], // start coords
-      [43, 36], // end coords
+      [42, 36], // end coords
       [0, 0.5, 100] // [min, initial value, max]
     ], {
       snapWidth: 0.5,
@@ -404,7 +409,6 @@
 
     slider3.on('drag', () => {
       dwarfismMutationRate = (slider3.Value() / 100);
-      console.log('Slider changed:', dwarfismMutationRate);
     });
 
     function showMutationLabels(dwarf, albino) {
@@ -438,20 +442,45 @@
         });
         activeLabels.push(albinoLabel);
       }
-
-
     }
 
+    function createRootPoint() {
+      points.push(root);
+      growPoints.push(root);
+      drawnPoints.push(board.create('point', [root.x, root.y], { color: 'green', name: 'root' }));
+    }
 
-    const root = {
-      x: 0,
-      y: 0,
-      dir: 'Up'
-    };
-    points.push(root);
-    growPoints.push(root);
-    drawnPoints.push(board.create('point', [root.x, root.y], { color: 'green', name: 'root' }));
+    function clearEverything() {
+      ceiling = 50;
+      maxDistFromRoot = 45;
+      overrideAllLeaves = false;
+      drawfismActive = false;
+      branchingProbability = 0.1;
+      occupied.clear();
+      //performance
+      board.suspendUpdate();
+
+      [...drawnPoints, ...lines, ...leaves, ...tips, ...activeLabels].forEach(obj => {
+        if (obj && typeof obj === 'object') {
+          board.removeObject(obj);
+        }
+      });
+
+      points.length = 0;
+      drawnPoints.length = 0;
+      lines.length = 0;
+      growPoints.length = 0;
+      activeLabels.length = 0;
+      leaves.length = 0;
+      tips.length = 0;
+
+      board.unsuspendUpdate();
+      createRootPoint();
+    }
+
     //board.create('point', [-30, 35], { color: 'orange', size: 10, })
+
+    createRootPoint();
 
   </script>
 
