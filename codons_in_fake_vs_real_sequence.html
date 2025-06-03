@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>JSXGraph Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+    <script src="usage_tables_fake_vs_real.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+    <style>
+        #box {
+            width: 1850px;
+            height: 600px;
+        }
+
+        table {
+            margin: 1%;
+            border: 1px solid black;
+        }
+
+        th,
+        td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        .flex {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            padding: 10px;
+
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="box" class="jxgbox"></div>
+    <div class="flex">
+        <table id="realTable" cellpadding="6" cellspacing="0"
+            style="border-collapse: collapse; font-family: sans-serif;">
+            <thead style="background-color: #b1eba2;">
+                <tr>
+                    <th>Kodoni</th>
+                    <th>Aminohappo</th>
+                    <th>Käyttö (%)</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+            <table id="realNoncodingTable" cellpadding="6" cellspacing="0"
+                style="border-collapse: collapse; font-family: sans-serif;">
+                <thead style="background-color: #8aa9e0;">
+                    <tr>
+                        <th>Kodoni</th>
+                        <th>Aminohappo</th>
+                        <th>Käyttö (%)</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                <table id="fakeSeqTable" cellpadding="6" cellspacing="0"
+                    style="border-collapse: collapse; font-family: sans-serif;">
+                    <thead style="background-color: #cf7385;">
+                        <tr>
+                            <th>Kodoni</th>
+                            <th>Aminohappo</th>
+                            <th>Käyttö (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+    </div>
+
+    <script>
+        const board = JXG.JSXGraph.initBoard("box", {
+            boundingbox: [-2, 1.1, 215, -0.1],
+            axis: true,
+            showNavigation: false,
+            defaultAxes: {
+                x: {
+                    ticks: {
+                        ticksDistance: 250,  //hide ticks
+                        minorTicks: 0,
+                        drawLabels: false, //hide numbers along x axis
+                        majorHeight: 0 //hide vertical grid lines
+                    }
+                }
+            }
+        });
+
+
+        const codons = ['GCA', 'GCC', 'GCG', 'GCT', 'AGA', 'AGG', 'CGA', 'CGC', 'CGG', 'CGT', 'AAC', 'AAT', 'GAC', 'GAT', 'TGC', 'TGT', 'TAA', 'TAG', 'TGA', 'CAA', 'CAG', 'GAA', 'GAG', 'GGA', 'GGC', 'GGG', 'GGT', 'CAC', 'CAT', 'ATA', 'ATC', 'ATT', 'CTA', 'CTC', 'CTG', 'CTT', 'TTA', 'TTG', 'AAA', 'AAG', 'ATG', 'TTC', 'TTT', 'CCA', 'CCC', 'CCG', 'CCT', 'AGC', 'AGT', 'TCA', 'TCC', 'TCG', 'TCT', 'ACA', 'ACC', 'ACG', 'ACT', 'TGG', 'TAC', 'TAT', 'GTA', 'GTC', 'GTG', 'GTT']
+        const aminoacids = ['Ala', 'Ala', 'Ala', 'Ala', 'Arg', 'Arg', 'Arg', 'Arg', 'Arg', 'Arg', 'Asn', 'Asn', 'Asp', 'Asp', 'Cys', 'Cys', 'End', 'End', 'End', 'Gln', 'Gln', 'Glu', 'Glu', 'Gly', 'Gly', 'Gly', 'Gly', 'His', 'His', 'Ile', 'Ile', 'Ile', 'Leu', 'Leu', 'Leu', 'Leu', 'Leu', 'Leu', 'Lys', 'Lys', 'Met', 'Phe', 'Phe', 'Pro', 'Pro', 'Pro', 'Pro', 'Ser', 'Ser', 'Ser', 'Ser', 'Ser', 'Ser', 'Thr', 'Thr', 'Thr', 'Thr', 'Trp', 'Tyr', 'Tyr', 'Val', 'Val', 'Val', 'Val']
+        const colors = ['green', 'royalblue', 'crimson'];
+        const barWidth = 0.8;
+
+        data = [realCodingOnly, realNonCodingToo, fakeSequence];
+        data.forEach((set, j) => {
+            set.forEach((entry, i) => {
+                console.log(entry[i])
+
+                const height = set[i].usage ?? 0;
+                const x0 = i * 3.3 + (j * 1);
+                const x1 = x0 + barWidth;
+                const polygon = board.create('polygon', [
+                    [x0, 0], [x1, 0], [x1, height], [x0, height]
+                ], {
+                    fillColor: colors[j],
+                    highlight: false,
+                    borders: { strokeWidth: 0.5 },
+                    fillOpacity: 0.9,
+                    vertices: { visible: false }  // hides corner dots
+                });
+            });
+        })
+
+        //TODO: more accurate placement math
+        for (const [index, codon] of codons.entries()) {
+            board.create('text', [index * (3.302), -0.03, codon], { fontSize: 11 });
+        }
+        for (const [index, aminoacid] of aminoacids.entries()) {
+            board.create('text', [0.1 + index * (3.31), -0.05, aminoacid], { fontSize: 11 });
+        }
+
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const datasets = [
+                { data: realCodingOnly, tableId: "realTable" },
+                { data: realNonCodingToo, tableId: "realNoncodingTable" },
+                { data: fakeSequence, tableId: "fakeSeqTable" },
+            ];
+
+            for (const { data, tableId } of datasets) {
+                const tableBody = document.querySelector(`#${tableId} tbody`);
+                if (!tableBody) {
+                    console.warn(`Table body not found for #${tableId}`);
+                    continue;
+                }
+
+                for (const { aa, codon, usage } of data) {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `<td>${aa}</td><td>${codon}</td><td>${usage.toFixed(2)}</td>`;
+                    tableBody.appendChild(row);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

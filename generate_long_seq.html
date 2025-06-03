@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>2000 nt generator</title>
+  <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+  <style>
+    #box {
+      width: 1000px;
+      height: 600px;
+    }
+
+    .flex-container {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      padding: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  Generate 2000 nucleotides (always starts with A)
+  <div style="margin-top: 1em;">
+    <label for="base-output">Sequence</label><br>
+    <textarea id="base-output" rows="10" cols="500" readonly style="resize: none; font-family: monospace;">A</textarea>
+  </div>
+
+  <script>
+
+    const baseTransitionMatrix = {
+      'A': { 'A': 0.351, 'C': 0.170, 'G': 0.188, 'T': 0.291 },
+      'C': { 'A': 0.339, 'C': 0.204, 'G': 0.153, 'T': 0.304 },
+      'G': { 'A': 0.326, 'C': 0.196, 'G': 0.203, 'T': 0.275 },
+      'T': { 'A': 0.241, 'C': 0.201, 'G': 0.208, 'T': 0.350 }
+    };
+
+
+    let index = 0;
+    const bases = [];
+    let baseString = 'A';
+    let startingBase = 'A';
+
+  
+    function getBase(previousBase) {
+      console.log('previous: ', previousBase)
+      const probs = baseTransitionMatrix[previousBase];
+      const rand = Math.random();
+      let cumulative = 0;
+
+      for (const base in probs) {
+        cumulative += probs[base];
+        if (rand <= cumulative) {
+          console.log(base);
+          return { base };
+        }
+      }
+      return { base: 'A'};
+    }
+
+    function step() {
+        const base = getBase(bases[index - 1] ? bases[index - 1].base : startingBase)
+        baseString += base.base;
+      
+    }
+
+    function twothSteps(){
+      for (i=0; i<3144;i++){
+        step()
+      }
+      document.getElementById('base-output').value = baseString;
+    }
+    twothSteps();
+
+
+  </script>
+
+</body>
+
+</html>
