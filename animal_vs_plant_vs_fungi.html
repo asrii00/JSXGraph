@@ -19,13 +19,13 @@
 </head>
 
 <body>
-    Amino acid percentage composition, fungus (blue) vs. plant (green) vs. animal (red).
+    Aminohapposisältö prosentteina, sieni (sininen) vs. kasvi (vihreä) vs. eläin (punainen).
     <div id="box" class="jxgbox" style="width: 1000px; height: 500px;"></div>
     <table id="aminoTable" cellpadding="6" cellspacing="0" style="border-collapse: collapse; font-family: sans-serif;">
         <thead style="background-color: #f0f0f0;">
             <tr>
-                <th>Letter</th>
-                <th>Amino acid name</th>
+                <th>Kirjain</th>
+                <th>Aminohapon nimi</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -88,7 +88,7 @@
         });
 
         const tableBody = document.querySelector("#aminoTable tbody");
-        for (const [letter, name] of Object.entries(aminoAcidNames)) {
+        for (const [letter, name] of Object.entries(aminoAcidNamesFIN)) {
             const row = document.createElement("tr");
             row.innerHTML = `<td>${letter}</td><td>${name}</td>`;
             tableBody.appendChild(row);
