@@ -10,6 +10,7 @@
         #box {
             width: 1850px;
             height: 600px;
+            font-family: 'Courier New', Courier, monospace;
         }
 
         table {
@@ -39,7 +40,8 @@
     <div class="flex">
         <table id="realTable" cellpadding="6" cellspacing="0"
             style="border-collapse: collapse; font-family: sans-serif;">
-            <thead style="background-color: #b1eba2;">
+            <thead style="background-color: #ebd0a2;">
+                <tr> <th colspan="3"> Aito, koodaava</th></tr>
                 <tr>
                     <th>Kodoni</th>
                     <th>Aminohappo</th>
@@ -50,6 +52,7 @@
             <table id="realNoncodingTable" cellpadding="6" cellspacing="0"
                 style="border-collapse: collapse; font-family: sans-serif;">
                 <thead style="background-color: #8aa9e0;">
+                    <tr> <th colspan="3"> Aito, koodaava ja ei-koodaava</th></tr>
                     <tr>
                         <th>Kodoni</th>
                         <th>Aminohappo</th>
@@ -60,6 +63,7 @@
                 <table id="fakeSeqTable" cellpadding="6" cellspacing="0"
                     style="border-collapse: collapse; font-family: sans-serif;">
                     <thead style="background-color: #cf7385;">
+                        <tr> <th colspan="3"> Satunnaisgeneroitu</th></tr>
                         <tr>
                             <th>Kodoni</th>
                             <th>Aminohappo</th>
@@ -71,6 +75,8 @@
     </div>
 
     <script>
+        JXG.Options.text.cssDefaultStyle = ''; //falls back to global styling, to use monospace font
+
         const board = JXG.JSXGraph.initBoard("box", {
             boundingbox: [-2, 1.1, 215, -0.1],
             axis: true,
@@ -87,19 +93,25 @@
             }
         });
 
-
         const codons = ['GCA', 'GCC', 'GCG', 'GCT', 'AGA', 'AGG', 'CGA', 'CGC', 'CGG', 'CGT', 'AAC', 'AAT', 'GAC', 'GAT', 'TGC', 'TGT', 'TAA', 'TAG', 'TGA', 'CAA', 'CAG', 'GAA', 'GAG', 'GGA', 'GGC', 'GGG', 'GGT', 'CAC', 'CAT', 'ATA', 'ATC', 'ATT', 'CTA', 'CTC', 'CTG', 'CTT', 'TTA', 'TTG', 'AAA', 'AAG', 'ATG', 'TTC', 'TTT', 'CCA', 'CCC', 'CCG', 'CCT', 'AGC', 'AGT', 'TCA', 'TCC', 'TCG', 'TCT', 'ACA', 'ACC', 'ACG', 'ACT', 'TGG', 'TAC', 'TAT', 'GTA', 'GTC', 'GTG', 'GTT']
         const aminoacids = ['Ala', 'Ala', 'Ala', 'Ala', 'Arg', 'Arg', 'Arg', 'Arg', 'Arg', 'Arg', 'Asn', 'Asn', 'Asp', 'Asp', 'Cys', 'Cys', 'End', 'End', 'End', 'Gln', 'Gln', 'Glu', 'Glu', 'Gly', 'Gly', 'Gly', 'Gly', 'His', 'His', 'Ile', 'Ile', 'Ile', 'Leu', 'Leu', 'Leu', 'Leu', 'Leu', 'Leu', 'Lys', 'Lys', 'Met', 'Phe', 'Phe', 'Pro', 'Pro', 'Pro', 'Pro', 'Ser', 'Ser', 'Ser', 'Ser', 'Ser', 'Ser', 'Thr', 'Thr', 'Thr', 'Thr', 'Trp', 'Tyr', 'Tyr', 'Val', 'Val', 'Val', 'Val']
-        const colors = ['green', 'royalblue', 'crimson'];
+        const colors = ['orange', 'royalblue', 'crimson'];
+        const tripletWidth = 3.3;
         const barWidth = 0.8;
+
+        const codonMap = {};
+        for (let i = 0; i < codons.length; i++) {
+            codonMap[codons[i]] = aminoacids[i];
+        }
 
         data = [realCodingOnly, realNonCodingToo, fakeSequence];
         data.forEach((set, j) => {
-            set.forEach((entry, i) => {
-                console.log(entry[i])
+            set.forEach((entry) => {
+                const codonIndex = codons.indexOf(entry.codon);
+                if (codonIndex === -1) return;
 
-                const height = set[i].usage ?? 0;
-                const x0 = i * 3.3 + (j * 1);
+                const height = entry.usage ?? 0;
+                const x0 = codonIndex * tripletWidth + (j * 1);
                 const x1 = x0 + barWidth;
                 const polygon = board.create('polygon', [
                     [x0, 0], [x1, 0], [x1, height], [x0, height]
@@ -108,19 +120,17 @@
                     highlight: false,
                     borders: { strokeWidth: 0.5 },
                     fillOpacity: 0.9,
-                    vertices: { visible: false }  // hides corner dots
+                    vertices: { visible: false }
                 });
             });
         })
 
-        //TODO: more accurate placement math
-        for (const [index, codon] of codons.entries()) {
-            board.create('text', [index * (3.302), -0.03, codon], { fontSize: 11 });
+        let index = 0;
+        for (const [codon, aminoacid] of Object.entries(codonMap)) {
+            board.create('text', [0.2 + index * tripletWidth, -0.03, codon], { fontSize: 12 });
+            board.create('text', [0.2 + index * tripletWidth, -0.05, aminoacid], { fontSize: 12 });
+            index++;
         }
-        for (const [index, aminoacid] of aminoacids.entries()) {
-            board.create('text', [0.1 + index * (3.31), -0.05, aminoacid], { fontSize: 11 });
-        }
-
 
         document.addEventListener("DOMContentLoaded", () => {
             const datasets = [
