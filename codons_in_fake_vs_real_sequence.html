@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>JSXGraph Example</title>
+    <title>Kodonien käyttö</title>
     <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
     <script src="usage_tables_fake_vs_real.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
@@ -35,6 +35,7 @@
 </head>
 
 <body>
+    <div> Kodonien käyttö, aito koodaava sekvenssi (yksittäinen lukukehys) vs. aito sekvenssi sisältäen myös ei-koodaavaa aluetta vs. satunnaisgeneroitu sekvenssi, jossa nukleotidit generoitu yksinkertaisen todennäköisyysmallin mukaan edellisen nukleotidin perusteella. Organismi: Hiiva (<i>Saccharomyces cerevisiae</i>), kunkin sekvenssin pituus n. 3000 nt</div>
 
     <div id="box" class="jxgbox"></div>
     <div class="flex">
@@ -72,7 +73,42 @@
                     </thead>
                     <tbody></tbody>
                 </table>
+                <table id="expectedTable" cellpadding="6" cellspacing="0"
+                    style="border-collapse: collapse; font-family: sans-serif;">
+                    <thead style="background-color: #bde090;">
+                        <tr> <th colspan="3"> Odotetut arvot / koko genomi </th></tr>
+                        <tr>
+                            <th>Kodoni</th>
+                            <th>Aminohappo</th>
+                            <th>Käyttö (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
     </div>
+    <p><pre> Tehtäväideoita:
+        <u>Helppo/nopea, ei laskentaa</u>
+        1. Taulukko ja kuvaaja kuvaavat eri kodonien suhteellista käyttöä (1 = 100%) samaa aminohappoa koodaavien eri kodonien muodostaman ryhmän sisällä*. //* Onko liian epäselvästi sanottu?
+        Aito koodaavaa sekvenssi alkaa aina metioniinista (Met) mutta voi sisältää myös useampia metioniineja eli useampia aloituskohtia, mutta sillä on aina vain yksi lopetuskodoni (End).
+        Mikä esitetyistä sekvensseistä on aito koodaava sekvenssi?
+        (Keltainen, koska se käyttää 100% TAA-kodonia. Muut käyttävät muitakin lopetuskodoneita, joten niissä on useampi kuin yksi lopetuskodoni.)
+        
+        <u>Yksinkertaista/nopeaa laskentaa</u>
+        2. Tarkastele valiini-aminohappoa (Val) koodaavien kodonien käyttöä eri näytesekvenssien välillä. Odotusarvot aidossa sekvenssissä ovat:  GTA: 0.22, GTC: 0.20, GTG: 0.19, GTT: 0.39.
+        Tee jokaiselle annetulle sekvenssille khiin neliö -testi verrattuna odotusarvoihin. Mikä niistä on aito sekvenssi?
+
+        <u> Avoimemmat/vaikeammat kysymykset / vaativat enemmän laskentaa</u>
+        3. Tarkastele (kuvaajaa ja) neljää eri taulukkoa, joista viimeinen kuvaa aidon koodaavan sekvenssin kodonikäytön odotusarvoja.
+        Miten voit päätellä, mikä kolmesta näytesekvenssisä on aito? Mitä tilastollista testiä tai tunnuslukua voit käyttää perustellaksesi päätelmäsi? 
+        Tee valitsemasi testi tai laskelma ja tulkitse sen tulos. 
+        4. Minkä aminohapon kodoniryhmän sisällä on suurin hajonta eri näytesekvenssien välillä?
+        5. Onko satunnaisgeneroidun sekvenssin ja aidon mutta sekä koodaavia että ei-koodaavia alueita sisältävän sekvenssin välillä tilastollisesti merkittävää eroa? /
+        Onko pelkästään koodaavaa aluetta sisältävän aidon sekvenssin ja sekä koodaavia että ei-koodaavia alueita sisältävän aidon sekvenssin välillä tilastollisesti merkittävää eroa?
+        6. Onko yksinkertaisiin todennäköisyyksiin perustuva malli, jossa sekvenssin seuraava nukleotidi generoidaan vain edellisen nukleotidin perusteella, aidosta datasta 
+        laskettujen nukleotidiparien (AA, AT, AC, AG, CA, CT...) yleisyyksien mukaisesti, mielestäsi riittävän hyvä simuloimaan aitoa koodaavaa sekvenssiä? Luuletko, että aito sekvenssi
+        muotoutuu tätä monimutkaisempien sääntöjen mukaan, eikä vain edellisen nukleotidin perusteella?
+    </pre>
+    </p>
 
     <script>
         JXG.Options.text.cssDefaultStyle = ''; //falls back to global styling, to use monospace font
@@ -137,6 +173,7 @@
                 { data: realCodingOnly, tableId: "realTable" },
                 { data: realNonCodingToo, tableId: "realNoncodingTable" },
                 { data: fakeSequence, tableId: "fakeSeqTable" },
+                { data: expected, tableId: "expectedTable" },
             ];
 
             for (const { data, tableId } of datasets) {

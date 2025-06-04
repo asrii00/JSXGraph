@@ -199,3 +199,91 @@ const fakeSequence = [
     { aa: 'Val', codon: 'GTT', usage: 0.25 },
 ];
 
+const expected = [
+    { aa: 'Ala', codon: 'GCA', usage: 0.30 },
+    { aa: 'Ala', codon: 'GCC', usage: 0.22 },
+    { aa: 'Ala', codon: 'GCG', usage: 0.11 },
+    { aa: 'Ala', codon: 'GCT', usage: 0.37 },
+
+    { aa: 'Arg', codon: 'AGA', usage: 0.48 },
+    { aa: 'Arg', codon: 'AGG', usage: 0.21 },
+    { aa: 'Arg', codon: 'CGA', usage: 0.07 },
+    { aa: 'Arg', codon: 'CGC', usage: 0.06 },
+    { aa: 'Arg', codon: 'CGG', usage: 0.04 },
+    { aa: 'Arg', codon: 'CGT', usage: 0.14 },
+
+    { aa: 'Asn', codon: 'AAC', usage: 0.40 },
+    { aa: 'Asn', codon: 'AAT', usage: 0.60 },
+
+    { aa: 'Asp', codon: 'GAC', usage: 0.35 },
+    { aa: 'Asp', codon: 'GAT', usage: 0.65 },
+
+    { aa: 'Cys', codon: 'TGC', usage: 0.38 },
+    { aa: 'Cys', codon: 'TGT', usage: 0.62 },
+
+    { aa: 'End', codon: 'TAA', usage: 0.47 },
+    { aa: 'End', codon: 'TAG', usage: 0.22 },
+    { aa: 'End', codon: 'TGA', usage: 0.31 },
+
+    { aa: 'Gln', codon: 'CAA', usage: 0.69 },
+    { aa: 'Gln', codon: 'CAG', usage: 0.31 },
+
+    { aa: 'Glu', codon: 'GAA', usage: 0.70 },
+    { aa: 'Glu', codon: 'GAG', usage: 0.30 },
+
+    { aa: 'Gly', codon: 'GGA', usage: 0.23 },
+    { aa: 'Gly', codon: 'GGC', usage: 0.20 },
+    { aa: 'Gly', codon: 'GGG', usage: 0.12 },
+    { aa: 'Gly', codon: 'GGT', usage: 0.46 },
+
+    { aa: 'His', codon: 'CAC', usage: 0.36 },
+    { aa: 'His', codon: 'CAT', usage: 0.64 },
+
+    { aa: 'Ile', codon: 'ATC', usage: 0.26 },
+    { aa: 'Ile', codon: 'ATA', usage: 0.28 },
+    { aa: 'Ile', codon: 'ATT', usage: 0.46 },
+
+    { aa: 'Leu', codon: 'CTA', usage: 0.14 },
+    { aa: 'Leu', codon: 'CTC', usage: 0.06 },
+    { aa: 'Leu', codon: 'CTG', usage: 0.11 },
+    { aa: 'Leu', codon: 'CTT', usage: 0.13 },
+    { aa: 'Leu', codon: 'TTA', usage: 0.28 },
+    { aa: 'Leu', codon: 'TTG', usage: 0.28 },
+
+    { aa: 'Lys', codon: 'AAA', usage: 0.58 },
+    { aa: 'Lys', codon: 'AAG', usage: 0.42 },
+
+    { aa: 'Met', codon: 'ATG', usage: 1.00 },
+
+    { aa: 'Phe', codon: 'TTC', usage: 0.41 },
+    { aa: 'Phe', codon: 'TTT', usage: 0.59 },
+
+    { aa: 'Pro', codon: 'CCA', usage: 0.41 },
+    { aa: 'Pro', codon: 'CCC', usage: 0.16 },
+    { aa: 'Pro', codon: 'CCG', usage: 0.12 },
+    { aa: 'Pro', codon: 'CCT', usage: 0.31 },
+
+    { aa: 'Ser', codon: 'AGC', usage: 0.11 },
+    { aa: 'Ser', codon: 'AGT', usage: 0.16 },
+    { aa: 'Ser', codon: 'TCA', usage: 0.21 },
+    { aa: 'Ser', codon: 'TCC', usage: 0.16 },
+    { aa: 'Ser', codon: 'TCG', usage: 0.10 },
+    { aa: 'Ser', codon: 'TCT', usage: 0.26 },
+
+    { aa: 'Thr', codon: 'ACA', usage: 0.31 },
+    { aa: 'Thr', codon: 'ACC', usage: 0.21 },
+    { aa: 'Thr', codon: 'ACG', usage: 0.14 },
+    { aa: 'Thr', codon: 'ACT', usage: 0.34 },
+
+    { aa: 'Trp', codon: 'TGG', usage: 1.00 },
+
+    { aa: 'Tyr', codon: 'TAC', usage: 0.43 },
+    { aa: 'Tyr', codon: 'TAT', usage: 0.57 },
+
+    { aa: 'Val', codon: 'GTA', usage: 0.22 },
+    { aa: 'Val', codon: 'GTC', usage: 0.20 },
+    { aa: 'Val', codon: 'GTG', usage: 0.19 },
+    { aa: 'Val', codon: 'GTT', usage: 0.39 }
+];
+
+
