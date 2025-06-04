@@ -199,6 +199,7 @@ const fakeSequence = [
     { aa: 'Val', codon: 'GTT', usage: 0.25 },
 ];
 
+//http://sgd-archive.yeastgenome.org/unpublished_data/codon/s_cerevisiae-codonusage.txt
 const expected = [
     { aa: 'Ala', codon: 'GCA', usage: 0.30 },
     { aa: 'Ala', codon: 'GCC', usage: 0.22 },
