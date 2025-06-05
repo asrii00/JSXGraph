@@ -16,10 +16,12 @@
 <body>
 
   <div id="box" class="jxgbox"></div>
-  <div class="flex" >
-    <button onclick="begin()">Start simulation</button>
+  <div class="flex">
+    <button onclick="begin()">Start simulation</button> 
+    <button onclick="step()">Step</button> 
   </div>
-  <p><pre>
+  <p>
+  <pre>
     To begin, click on the gray cells to cause a mutation. If the cell turns green, a beneficial mutation occurred. If it turns red, 
     a harmful mutation occurred. A neutral mutation (no effect) leaves the cell grey. You can choose how many mutations you want to activate.
     When you want to calculate the fitness and start the simulation, click 'Start simulation'. 100% fitness = average fitness.
@@ -42,24 +44,33 @@
     const cells = [];
 
     const baseFitness = 100;
+    let fitness = 100;
 
     let startedFlag = false;
 
     let positiveMutationsActive = 0;
     let negativeMutationsActive = 0;
 
+    let xAtStep = [0];
+    let populationSizeY = [5];
+
     const fitnessLabel = board.create('text', [7.5, 19.5, 'Fitness:'], {
-          anchorX: 'left',
-          anchorY: 'top',
-          fontSize: 16,
-          fixed: true,
-          highlight: false,
-          cssStyle: `
+      anchorX: 'left',
+      anchorY: 'top',
+      fontSize: 16,
+      fixed: true,
+      highlight: false,
+      cssStyle: `
       background-color: rgba(111, 163, 230, 0.3);
       padding: 4px;
       border-radius: 4px;
     `
-        });
+    });
+
+    const curve = board.create('curve', [xAtStep, populationSizeY], {
+      strokeColor: 'blue',
+      strokeWidth: 2
+    });
 
     function getMutationType() {
       const rand = Math.random();
@@ -78,19 +89,36 @@
       }
     }
 
-    function calculateFitness(){
-      return  baseFitness - (5*negativeMutationsActive) + (10*positiveMutationsActive);
+    function calculateFitness() {
+      return baseFitness - (7.5 * negativeMutationsActive) + (15 * positiveMutationsActive);
     }
 
-    function begin(){
-      if (!startedFlag){
+    function begin() {
+      if (!startedFlag) {
         startedFlag = true;
-        const fitness = calculateFitness();
+        fitness = calculateFitness();
         console.log(fitness)
         fitnessLabel.setText("Fitness: " + fitness.toString() + "%");
-        
       }
+    }
 
+    let t = 1; //timestep
+
+    function simulationStep() {
+      const prevPopulation = populationSizeY[populationSizeY.length - 1];
+      const randTreshold = Math.random();  //0-1
+
+      const noise = (Math.random() - 0.5) ; // random noise
+      let newPop = Math.max(0, (prevPopulation * (fitness/100) + noise));
+      xAtStep.push(t)
+      populationSizeY.push(newPop)
+      curve.updateDataArray();
+      board.update();
+      t++;
+    }
+
+    function step(){
+      simulationStep();
     }
 
 
@@ -123,7 +151,7 @@
             if (cell.customState === 'neutral') {
               cell.setAttribute({ fillColor: 'lightgrey' });
             }
-          } 
+          }
         });
         cell.customState = 'hidden';
 
