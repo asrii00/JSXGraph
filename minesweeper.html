@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>JSXGraph Example</title>
+  <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+  <style>
+    #box {
+      width: 600px;
+      height: 600px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="box" class="jxgbox"></div>
+  <div class="flex" >
+    <button onclick="begin()">Start simulation</button>
+  </div>
+  <p><pre>
+    To begin, click on the gray cells to cause a mutation. If the cell turns green, a beneficial mutation occurred. If it turns red, 
+    a harmful mutation occurred. A neutral mutation (no effect) leaves the cell grey. You can choose how many mutations you want to activate.
+    When you want to calculate the fitness and start the simulation, click 'Start simulation'. 100% fitness = average fitness.
+  </pre>
+  </p>
+
+  <script>
+    const board = JXG.JSXGraph.initBoard('box', {
+      boundingbox: [0, 20, 20, 0],
+      axis: true,
+      showNavigation: false,
+      showCopyright: false,
+    });
+
+    const gridSize = 6;
+    const cellRadius = 0.45;
+    const mineGridYStart = 13.5;
+    const mineGridXStart = 0.5;
+
+    const cells = [];
+
+    const baseFitness = 100;
+
+    let startedFlag = false;
+
+    let positiveMutationsActive = 0;
+    let negativeMutationsActive = 0;
+
+    const fitnessLabel = board.create('text', [7.5, 19.5, 'Fitness:'], {
+          anchorX: 'left',
+          anchorY: 'top',
+          fontSize: 16,
+          fixed: true,
+          highlight: false,
+          cssStyle: `
+      background-color: rgba(111, 163, 230, 0.3);
+      padding: 4px;
+      border-radius: 4px;
+    `
+        });
+
+    function getMutationType() {
+      const rand = Math.random();
+      if (rand < 0.06) return 'positive';
+      else if (rand < 0.9) return 'neutral';
+      else return 'negative';
+
+    }
+
+    function addMutationEffect(mutationType) {
+      if (mutationType === 'positive') {
+        positiveMutationsActive++;
+      }
+      if (mutationType === 'negative') {
+        negativeMutationsActive++;
+      }
+    }
+
+    function calculateFitness(){
+      return  baseFitness - (5*negativeMutationsActive) + (10*positiveMutationsActive);
+    }
+
+    function begin(){
+      if (!startedFlag){
+        startedFlag = true;
+        const fitness = calculateFitness();
+        console.log(fitness)
+        fitnessLabel.setText("Fitness: " + fitness.toString() + "%");
+        
+      }
+
+    }
+
+
+
+    for (let row = 0; row < gridSize; row++) {
+      cells[row] = [];
+      for (let col = 0; col < gridSize; col++) {
+        const x = col + 0.5 + mineGridXStart;
+        const y = row + 0.5 + mineGridYStart;
+
+        const cell = board.create('point', [x, y], {
+          fixed: true,
+          size: 10,
+          name: '',
+          color: 'grey',
+          highlight: false,
+        });
+        cell.on('down', () => {
+          console.log(`Clicked cell [${row}, ${col}]`);
+          if (cell.customState === 'hidden') {
+            cell.customState = getMutationType();
+            addMutationEffect(cell.customState);
+
+            if (cell.customState === 'positive') {
+              cell.setAttribute({ fillColor: 'green' });
+            }
+            if (cell.customState === 'negative') {
+              cell.setAttribute({ fillColor: 'crimson' });
+            }
+            if (cell.customState === 'neutral') {
+              cell.setAttribute({ fillColor: 'lightgrey' });
+            }
+          } 
+        });
+        cell.customState = 'hidden';
+
+        cells[row][col] = cell;
+      }
+    }
+  </script>
+
+</body>
+
+</html>
