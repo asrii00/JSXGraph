@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>JSXGraph Example</title>
+  <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+  <script src="altitudeMapSmall.js"></script>
+  <script src="predationMapSmall.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+  <style>
+    #box {
+      width: 600px;
+      height: 600px;
+    }
+    div {
+      margin: 7px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="box" class="jxgbox"></div>
+  <div class="flex">
+    <button onClick="step()"> Step </button>
+    <button onClick="tenStep()"> 10 steps </button>
+  </div>
+
+  <script>
+
+    //TODO: Limit points from spreading outside grid
+    //TODO: implement environment conditions in probability
+    const board = JXG.JSXGraph.initBoard('box', {
+      boundingbox: [-1, 21, 21, -1],
+      axis: true, 
+      showCopyright: false, 
+      showNavigation: false
+    });
+
+    const gridSize = 20;
+    const cellSize = 1;
+    const baseDeathProbability = 0.05;
+    const baseOffspringProbability = 0.4;
+
+    const startX = 9.5; //square x = 10
+    const startY = 10.5;
+
+    let individuals = [];
+    const rectangles = [];
+
+    const occupied = new Set();
+
+
+    for (let y = 0; y < gridSize; y++) {
+      for (let x = 0; x < gridSize; x++) {
+
+        const altitude = altitudeMapSmall[y][x];
+        const predation = predationMapSmall[y][x];
+
+        const b = Math.floor(255 - predation * 255);
+        const g = Math.floor(255 - altitude * 255);
+        const r = 200;
+        const color = `rgb(${r},${g},${b})`;
+
+        const rect = board.create('polygon', [
+          [x, y],
+          [x + cellSize, y],
+          [x + cellSize, y + cellSize],
+          [x, y + cellSize]
+        ], {
+          fillColor: color,
+          fillOpacity: 1.0,
+          borders: { strokeWidth: 1 },
+          vertices: { visible: false }
+        });
+      }
+    }
+
+    function createIndividual(x, y) {
+      const key = `${x},${y}`;
+      if (!occupied.has(key)) {
+        occupied.add(key);
+        const individual = board.create('point', [x, y], { color: 'green', size: 8, fixed: true, showInfobox: false, name: '' });
+        individual.dead = false;
+        individuals.push(individual);
+      }
+      else { console.log('occupied') }
+    }
+
+    function getOffspringPosition(oldX, oldY) {
+      const deltaX = (Math.random() > 0.5) ? -1 : 1;
+      const deltaY = (Math.random() > 0.5) ? -1 : 1;
+      let newX = oldX;
+      let newY = oldY;
+      const rand = Math.random();
+
+      if (rand < 0.33) {
+        newX += deltaX;
+      }
+      else if (rand < 0.66) {
+        newY += deltaY;
+      }
+      else {
+        newX += deltaX;
+        newY += deltaY;
+      }
+      const posObject = { x: newX, y: newY };
+      return posObject;
+    }
+
+    function kill(i) {
+      individuals[i].setAttribute({ color: 'grey' })
+      individuals[i].dead = true;
+    }
+
+    function reproduce(i) {
+      const newPos = getOffspringPosition(individuals[i].X(), individuals[i].Y());
+      createIndividual(newPos.x, newPos.y);
+    }
+
+    function step() {
+      for (let i = 0; i < individuals.length; i++) {
+        const randomHazardValue = Math.random()
+        const randomOffspringValue = Math.random()
+        if (!individuals[i].dead) {
+          if (randomHazardValue < baseDeathProbability) {
+            kill(i);
+          }
+
+          if (randomOffspringValue < baseOffspringProbability) {
+            reproduce(i);
+          }
+        }
+      }
+    }
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function tenStep(){
+      for (let i = 0; i < 10; i++) {
+        step();
+        await sleep(100); // Delay 100ms between steps
+      }
+
+    }
+
+    createIndividual(startX, startY);
+
+
+
+  </script>
+
+</body>
+
+</html>
