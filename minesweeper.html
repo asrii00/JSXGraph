@@ -35,9 +35,6 @@
   </p>
 
   <script>
-    //TODO: add a flag so autorun can't be activated while already running, plus maybe substract manual steps from autorun length (not critical)
-    //TODO: maybe add a clearer visual and/or round score upon round reset
-    //TODO: count rounds and limit to 10
     const board = JXG.JSXGraph.initBoard('box', {
       boundingbox: [-1, 20, 20, -1],
       axis: true,
@@ -191,14 +188,12 @@
       }
     }
 
-
     function sleep(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     async function autoRun() {
       if (!autoRunningFlag) {
-        console.log('autorunning')
         autoRunningFlag = true;
         try {
           for (let i = 0; i < 40; i++) {
