@@ -10,6 +10,9 @@
       width: 500px;
       height: 500px;
     }
+    div {
+      margin:7px;
+    }
   </style>
 </head>
 
@@ -20,6 +23,7 @@
     <button onclick="begin()">Apply mutations to fitness</button>
     <button onclick="simulationStep()">Step</button>
     <button onclick="autoRun()">Autorun round</button>
+    <button onclick="resetGame()">Reset</button>
   </div>
   <p>
   <pre>
@@ -204,6 +208,15 @@
       calculateScore();
       await sleep(2000);
       resetRound();
+      gameRound++;
+
+    }
+
+    function resetGame(){
+      resetRound();
+      gameRound = 1;
+      gameScore = 0;
+      gameScoreLabel.setText('Score: 0');
 
     }
 
@@ -234,7 +247,6 @@
       populationSizeY.length = 0;
       xAtStep.push(0);
       populationSizeY.push(1);
-      gameRound = 1;
       t = 0.5;
     }
 
