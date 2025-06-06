@@ -7,8 +7,8 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
   <style>
     #box {
-      width: 600px;
-      height: 600px;
+      width: 500px;
+      height: 500px;
     }
   </style>
 </head>
@@ -17,20 +17,24 @@
 
   <div id="box" class="jxgbox"></div>
   <div class="flex">
-    <button onclick="begin()">Start simulation</button> 
-    <button onclick="step()">Step</button> 
+    <button onclick="begin()">Apply mutations to fitness</button>
+    <button onclick="simulationStep()">Step</button>
+    <button onclick="autoRun()">Autorun round</button>
   </div>
   <p>
   <pre>
     To begin, click on the gray cells to cause a mutation. If the cell turns green, a beneficial mutation occurred. If it turns red, 
     a harmful mutation occurred. A neutral mutation (no effect) leaves the cell grey. You can choose how many mutations you want to activate.
-    When you want to calculate the fitness and start the simulation, click 'Start simulation'. 100% fitness = average fitness.
+    When you want to calculate the fitness and start the simulation, click 'Apply mutations to fitness'. 100% fitness = average fitness.
   </pre>
   </p>
 
   <script>
+    //TODO: add a flag so autorun can't be activated while already running, plus maybe substract manual steps from autorun length (not critical)
+    //TODO: maybe add a clearer visual and/or round score upon round reset
+    //TODO: count rounds and limit to 10
     const board = JXG.JSXGraph.initBoard('box', {
-      boundingbox: [0, 20, 20, 0],
+      boundingbox: [-1, 20, 20, -1],
       axis: true,
       showNavigation: false,
       showCopyright: false,
@@ -47,14 +51,19 @@
     let fitness = 100;
 
     let startedFlag = false;
+    let canContinue = true;
 
     let positiveMutationsActive = 0;
     let negativeMutationsActive = 0;
 
     let xAtStep = [0];
-    let populationSizeY = [5];
+    let populationSizeY = [1];
+    let t = 0.5; //timestep
 
-    const fitnessLabel = board.create('text', [7.5, 19.5, 'Fitness:'], {
+    let gameScore = 0;
+    let gameRound = 1;
+
+    const fitnessLabel = board.create('text', [7.5, 19.5, 'Fitness: 100%'], {
       anchorX: 'left',
       anchorY: 'top',
       fontSize: 16,
@@ -63,8 +72,44 @@
       cssStyle: `
       background-color: rgba(111, 163, 230, 0.3);
       padding: 4px;
-      border-radius: 4px;
-    `
+      border-radius: 4px;`
+    });
+    const gameInsLabel = board.create('text', [13.5, 19.5, 'Choose mutations'], {
+      anchorX: 'left',
+      anchorY: 'top',
+      fontSize: 16,
+      fixed: true,
+      highlight: false,
+      cssStyle: `
+      background-color: rgba(182, 226, 143, 0.8);
+      padding: 4px;
+      border-radius: 4px;`
+    });
+
+    const popZeroLabel = board.create('text', [7.5, 17.5, 'Population died out'], {
+      anchorX: 'left',
+      anchorY: 'top',
+      fontSize: 16,
+      fixed: true,
+      highlight: false,
+      visible: false,
+      cssStyle: `
+      background-color: rgba(227, 122, 113, 0.8);
+      padding: 4px;
+      border-radius: 4px;`
+    });
+
+    const gameScoreLabel = board.create('text', [14.5, 17.5, 'Score: 0'], {
+      anchorX: 'left',
+      anchorY: 'top',
+      fontSize: 16,
+      fixed: true,
+      highlight: false,
+      visible: true,
+      cssStyle: `
+      background-color: rgba(222, 156, 232, 0.8);
+      padding: 4px;
+      border-radius: 4px;`
     });
 
     const curve = board.create('curve', [xAtStep, populationSizeY], {
@@ -74,8 +119,8 @@
 
     function getMutationType() {
       const rand = Math.random();
-      if (rand < 0.06) return 'positive';
-      else if (rand < 0.9) return 'neutral';
+      if (rand < 0.1) return 'positive';
+      else if (rand < 0.85) return 'neutral';
       else return 'negative';
 
     }
@@ -90,39 +135,110 @@
     }
 
     function calculateFitness() {
-      return baseFitness - (7.5 * negativeMutationsActive) + (15 * positiveMutationsActive);
+      return baseFitness - (5 * negativeMutationsActive) + (1.5 * positiveMutationsActive);
     }
 
     function begin() {
       if (!startedFlag) {
         startedFlag = true;
         fitness = calculateFitness();
-        console.log(fitness)
         fitnessLabel.setText("Fitness: " + fitness.toString() + "%");
       }
     }
 
-    let t = 1; //timestep
-
     function simulationStep() {
-      const prevPopulation = populationSizeY[populationSizeY.length - 1];
-      const randTreshold = Math.random();  //0-1
+      if (canContinue) {
+        gameInsLabel.setText("Round in progress");
+        const prevPopulation = populationSizeY[populationSizeY.length - 1];
 
-      const noise = (Math.random() - 0.5) ; // random noise
-      let newPop = Math.max(0, (prevPopulation * (fitness/100) + noise));
-      xAtStep.push(t)
-      populationSizeY.push(newPop)
+        const noise = (Math.random() - 0.5); // random noise
+        const startBoost = (t < 7) ? (0.5 * (1 / t)) : 0;
+        console.log(startBoost);
+        let newPop = Math.max(0, (prevPopulation * (fitness / 100) + noise + startBoost));
+        xAtStep.push(t)
+        populationSizeY.push(newPop)
+        curve.updateDataArray();
+        board.update();
+        t += 0.5; 0
+
+        if (newPop == 0) {
+          canContinue = false;
+          showPopZero();
+          finishRound();
+        }
+        if (t > 20) {
+          canContinue = false;
+          finishRound();
+        }
+      }
+    }
+
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function autoRun() {
+      for (i = 0; i < 40; i++) {
+        if (canContinue) {
+          simulationStep();
+          await sleep(75);
+        }
+      }
+    }
+
+    function showPopZero() {
+      popZeroLabel.setAttribute({ visible: true });
+    }
+
+    function calculateScore() {
+      const roundScore = populationSizeY[populationSizeY.length - 1] * 100;
+      console.log(roundScore);
+      gameScore += roundScore;
+      gameScoreLabel.setText('Score: ' + gameScore.toFixed(0));
+
+    }
+
+    async function finishRound() {
+      gameInsLabel.setText("Round over");
+      calculateScore();
+      await sleep(2000);
+      resetRound();
+
+    }
+
+    function resetRound() {
+      resetLetValues();
+      gameInsLabel.setText("Choose mutations");
+      fitnessLabel.setText('Fitness: 100%')
+
+      for (let row = 0; row < gridSize; row++) {
+        for (let col = 0; col < gridSize; col++) {
+          const cell = cells[row][col];
+          cell.customState = 'hidden';
+          cell.setAttribute({ fillColor: 'grey' });
+        }
+      }
       curve.updateDataArray();
       board.update();
-      t++;
+
     }
 
-    function step(){
-      simulationStep();
+    function resetLetValues() {
+      fitness = 100;
+      startedFlag = false;
+      canContinue = true;
+      positiveMutationsActive = 0; //could make these carry over?
+      negativeMutationsActive = 0;
+      xAtStep.length = 0;
+      populationSizeY.length = 0;
+      xAtStep.push(0);
+      populationSizeY.push(1);
+      gameRound = 1;
+      t = 0.5;
     }
 
-
-
+    //Draw "minesweeper" grid for mutations
     for (let row = 0; row < gridSize; row++) {
       cells[row] = [];
       for (let col = 0; col < gridSize; col++) {
@@ -135,6 +251,7 @@
           name: '',
           color: 'grey',
           highlight: false,
+          showInfobox: false
         });
         cell.on('down', () => {
           console.log(`Clicked cell [${row}, ${col}]`);
