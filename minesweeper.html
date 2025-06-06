@@ -10,8 +10,9 @@
       width: 500px;
       height: 500px;
     }
+
     div {
-      margin:7px;
+      margin: 7px;
     }
   </style>
 </head>
@@ -55,6 +56,7 @@
     let fitness = 100;
 
     let startedFlag = false;
+    let autoRunningFlag = false;
     let canContinue = true;
 
     let positiveMutationsActive = 0;
@@ -78,7 +80,8 @@
       padding: 4px;
       border-radius: 4px;`
     });
-    const gameInsLabel = board.create('text', [13.5, 19.5, 'Choose mutations'], {
+
+    const gameInsLabel = board.create('text', [13, 19.5, 'Choose mutations'], {
       anchorX: 'left',
       anchorY: 'top',
       fontSize: 16,
@@ -112,6 +115,18 @@
       visible: true,
       cssStyle: `
       background-color: rgba(222, 156, 232, 0.8);
+      padding: 4px;
+      border-radius: 4px;`
+    });
+    const flashScoreLabel = board.create('text', [10, 10, 'Score from this round: +'], {
+      anchorX: 'middle',
+      anchorY: 'middle',
+      fontSize: 22,
+      fixed: true,
+      highlight: false,
+      visible: false,
+      cssStyle: `
+      background-color: rgba(182, 226, 143, 0.8);
       padding: 4px;
       border-radius: 4px;`
     });
@@ -152,12 +167,11 @@
 
     function simulationStep() {
       if (canContinue) {
-        gameInsLabel.setText("Round in progress");
+        gameInsLabel.setText("Round " + gameRound.toFixed() +" in progress");
         const prevPopulation = populationSizeY[populationSizeY.length - 1];
 
         const noise = (Math.random() - 0.5); // random noise
         const startBoost = (t < 7) ? (0.5 * (1 / t)) : 0;
-        console.log(startBoost);
         let newPop = Math.max(0, (prevPopulation * (fitness / 100) + noise + startBoost));
         xAtStep.push(t)
         populationSizeY.push(newPop)
@@ -183,11 +197,22 @@
     }
 
     async function autoRun() {
-      for (i = 0; i < 40; i++) {
-        if (canContinue) {
-          simulationStep();
-          await sleep(75);
+      if (!autoRunningFlag) {
+        console.log('autorunning')
+        autoRunningFlag = true;
+        try {
+          for (let i = 0; i < 40; i++) {
+            if (canContinue) {
+              simulationStep();
+              await sleep(75);
+            }
+          }
+        } finally {
+          autoRunningFlag = false;
         }
+      }
+      else {
+        console.log('autorun already in progress')
       }
     }
 
@@ -197,26 +222,40 @@
 
     function calculateScore() {
       const roundScore = populationSizeY[populationSizeY.length - 1] * 100;
-      console.log(roundScore);
       gameScore += roundScore;
       gameScoreLabel.setText('Score: ' + gameScore.toFixed(0));
+      flashScoreLabel.setText('Score from this round:  +' + roundScore.toFixed(0));
 
     }
 
     async function finishRound() {
+      canContinue = false;
       gameInsLabel.setText("Round over");
       calculateScore();
+      flashScoreLabel.setAttribute({ visible: true })
+
       await sleep(2000);
       resetRound();
-      gameRound++;
-
+      
+      if (gameRound < 5) {
+        canContinue = true;
+        flashScoreLabel.setAttribute({ visible: false })
+        gameRound++;
+      }
+      else {
+        flashScoreLabel.setText('Final score: ' + gameScore.toFixed(0));
+      }
+      
     }
 
-    function resetGame(){
+    function resetGame() {
       resetRound();
       gameRound = 1;
       gameScore = 0;
       gameScoreLabel.setText('Score: 0');
+      flashScoreLabel.setAttribute({visible: false});
+      popZeroLabel.setAttribute({ visible: false });
+      canContinue = true;
 
     }
 
@@ -240,7 +279,6 @@
     function resetLetValues() {
       fitness = 100;
       startedFlag = false;
-      canContinue = true;
       positiveMutationsActive = 0; //could make these carry over?
       negativeMutationsActive = 0;
       xAtStep.length = 0;
@@ -266,7 +304,6 @@
           showInfobox: false
         });
         cell.on('down', () => {
-          console.log(`Clicked cell [${row}, ${col}]`);
           if (cell.customState === 'hidden') {
             cell.customState = getMutationType();
             addMutationEffect(cell.customState);
