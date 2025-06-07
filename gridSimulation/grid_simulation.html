@@ -9,9 +9,10 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
   <style>
     #box {
-      width: 600px;
+      width: 900px;
       height: 600px;
     }
+
     div {
       margin: 7px;
     }
@@ -23,16 +24,15 @@
   <div class="flex">
     <button onClick="step()"> Step </button>
     <button onClick="tenStep()"> 10 steps </button>
+    <!-- <button onClick="set()"> Set chosen traits </button> -->
   </div>
 
   <script>
-
-    //TODO: Limit points from spreading outside grid
     //TODO: implement environment conditions in probability
     const board = JXG.JSXGraph.initBoard('box', {
-      boundingbox: [-1, 21, 21, -1],
-      axis: true, 
-      showCopyright: false, 
+      boundingbox: [-1, 21, 31, -1],
+      axis: true,
+      showCopyright: false,
       showNavigation: false
     });
 
@@ -48,6 +48,17 @@
     const rectangles = [];
 
     const occupied = new Set();
+
+    let hasStarted = false;
+
+    const budget = 1.2;
+    let altitudePref = 0.33;
+    let predationResistance = 0.33;
+    let droughtResistance = 0.33;
+
+    const s1 = board.create('slider', [[21, 4], [25, 4], [0, 0.33, 1]], { name: 'Altitude preference' });
+    const s2 = board.create('slider', [[21, 3], [25, 3], [0, 0.33, 1]], { name: 'Predation resistance' });
+    const s3 = board.create('slider', [[21, 2], [25, 2], [0, 0.33, 1]], { name: 'Drought resistance' });
 
 
     for (let y = 0; y < gridSize; y++) {
@@ -87,6 +98,7 @@
     }
 
     function getOffspringPosition(oldX, oldY) {
+
       const deltaX = (Math.random() > 0.5) ? -1 : 1;
       const deltaY = (Math.random() > 0.5) ? -1 : 1;
       let newX = oldX;
@@ -103,6 +115,7 @@
         newX += deltaX;
         newY += deltaY;
       }
+
       const posObject = { x: newX, y: newY };
       return posObject;
     }
@@ -114,10 +127,17 @@
 
     function reproduce(i) {
       const newPos = getOffspringPosition(individuals[i].X(), individuals[i].Y());
-      createIndividual(newPos.x, newPos.y);
+      if (newPos.x < 0 || newPos.x > 20 || newPos.y < 0 || newPos.y > 20) {
+        console.log('Out of bounds')
+      }
+      else {
+        createIndividual(newPos.x, newPos.y);
+      }
+
     }
 
     function step() {
+      hasStarted = true;
       for (let i = 0; i < individuals.length; i++) {
         const randomHazardValue = Math.random()
         const randomOffspringValue = Math.random()
@@ -137,13 +157,52 @@
       return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    async function tenStep(){
+    async function tenStep() {
       for (let i = 0; i < 10; i++) {
         step();
         await sleep(100); // Delay 100ms between steps
       }
 
     }
+
+    function set() {
+      console.log('traits set');
+      altitudePref = s1.Value();
+      predationResistance = s2.Value();
+      droughtResistance = s3.Value();
+      console.log('altitude: ', altitudePref);
+
+    }
+
+    function updateLimits(changedSlider) {
+      const v1 = s1.Value();
+      const v2 = s2.Value();
+      const v3 = s3.Value();
+      const remainingBudget = budget;
+
+      // Enforce budget
+      if (changedSlider !== s1) {
+        const max1 = Math.max(0, remainingBudget - v2 - v3);
+        if (v1 > max1) s1.setValue(max1);
+      }
+      if (changedSlider !== s2) {
+        const max2 = Math.max(0, remainingBudget - v1 - v3);
+        if (v2 > max2) s2.setValue(max2);
+      }
+      if (changedSlider !== s3) {
+        const max3 = Math.max(0, remainingBudget - v1 - v2);
+        if (v3 > max3) s3.setValue(max3);
+      }
+
+      if (!hasStarted) {
+        set();
+      }
+    }
+
+    s1.on('drag', () => updateLimits(s1));
+    s2.on('drag', () => updateLimits(s2));
+    s3.on('drag', () => updateLimits(s3));
+
 
     createIndividual(startX, startY);
 

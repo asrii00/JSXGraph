@@ -1,6 +1,6 @@
 from PIL import Image
 import numpy as np
-
+#by GPT
 # Load greyscale image
 img = Image.open('predation_small.png').convert('L')  # 'L' = greyscale
 
