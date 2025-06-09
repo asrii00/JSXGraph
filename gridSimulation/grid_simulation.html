@@ -24,11 +24,9 @@
   <div class="flex">
     <button onClick="step()"> Step </button>
     <button onClick="tenStep()"> 10 steps </button>
-    <!-- <button onClick="set()"> Set chosen traits </button> -->
   </div>
 
   <script>
-    //TODO: implement environment conditions in probability
     const board = JXG.JSXGraph.initBoard('box', {
       boundingbox: [-1, 21, 31, -1],
       axis: true,
@@ -53,13 +51,14 @@
 
     const budget = 1.2;
     let altitudePref = 0.33;
-    let altitudeLeeway = 0.4;
+    let altitudeLeeway = 0.33;
     let predationResistance = 0.33;
     let droughtResistance = 0.33;
 
-    const s1 = board.create('slider', [[21, 4], [25, 4], [0, 0.33, 1]], { name: 'Altitude preference' });
-    const s2 = board.create('slider', [[21, 3], [25, 3], [0, 0.33, 1]], { name: 'Predation resistance' });
-    const s3 = board.create('slider', [[21, 2], [25, 2], [0, 0.33, 1]], { name: 'Drought resistance' });
+    const s0 = board.create('slider', [[21, 5], [25, 5], [0, 0.33, 1]], { name: 'Altitude preference' });
+    const s1 = board.create('slider', [[21, 4], [25, 4], [0.2, 0.4, 1]], { name: 'Altitude range width' });
+    const s2 = board.create('slider', [[21, 3], [25, 3], [0, 0.4, 1]], { name: 'Predation resistance' });
+    const s3 = board.create('slider', [[21, 2], [25, 2], [0, 0.4, 1]], { name: 'Drought resistance' });
 
 
     for (let y = 0; y < gridSize; y++) {
@@ -67,7 +66,6 @@
 
         const altitude = altitudeMapSmall[y][x];
         const predation = predationMapSmall[y][x];
-
         const b = Math.floor(255 - predation * 255);
         const g = Math.floor(255 - altitude * 255);
         const r = 200;
@@ -139,14 +137,18 @@
       return Math.random() * (max - min) + min;
     }
 
-    //test version
-    function getSurvivalSuccess(altitude, predation, drought) {
-      const baseSurvival = 1.3 + (Math.random() - 0.5); //0.5-1.5
-      const baseSurvivalRequirement = (Math.random()); //0.0-1.0
-      return baseSurvival > baseSurvivalRequirement;
+    // function getDroughtSuccess() {
+    //   const resistance = 0.5 + droughtResistance; 
+    //   const droughtseverity = 1 + getRandomArbitrary(0.5, 1.5);
+    //   return resistance > droughtseverity;
+    // }
+
+    function getPredationSurvivalSuccess(basePredation) {
+      const predationWithJitter = basePredation + getRandomArbitrary(-0.5, 0.5); // 0-1 + jitter
+      return (predationResistance + 0.5) > predationWithJitter;
     }
 
-    function getAltitudeSurvivalSuccess(altitude, predation, drought) {
+    function getAltitudeSurvivalSuccess(altitude) {
       const altitudePrefMin = altitudePref - altitudeLeeway;
       const altitudePrefMax = altitudePref + altitudeLeeway;
       const randomJitter = getRandomArbitrary(-0.25, 0.25);
@@ -164,12 +166,12 @@
           const gridY = Math.floor(individuals[i].Y());
 
           // ChatGPT recommended guard: skip if out of bounds (defensive check)
-          if (gridX < 0 || gridX >= gridSize || gridY < 0 || gridY >= gridSize) continue;
+          if (gridX < 0 || gridX >= gridSize || gridY < 0 || gridY  >= gridSize) continue;
           //
 
           const altitude = altitudeMapSmall[gridY][gridX];
           const predation = predationMapSmall[gridY][gridX];
-          if (!getAltitudeSurvivalSuccess(altitude)) {
+          if (!getAltitudeSurvivalSuccess(altitude) || !getPredationSurvivalSuccess(predation) ) {
             kill(i);
           }
 
@@ -194,7 +196,8 @@
 
     function set() {
       console.log('traits set');
-      altitudePref = s1.Value();
+      altitudePref = s0.Value();
+      altitudeLeeway = s1.Value() + 0.1;
       predationResistance = s2.Value();
       droughtResistance = s3.Value();
       console.log('altitude: ', altitudePref);
@@ -202,6 +205,7 @@
     }
 
     function updateLimits(changedSlider) {
+      const v0 = s0.Value();
       const v1 = s1.Value();
       const v2 = s2.Value();
       const v3 = s3.Value();
