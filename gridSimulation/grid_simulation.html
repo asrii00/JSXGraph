@@ -48,6 +48,8 @@
     const occupied = new Set();
 
     let hasStarted = false;
+    let stepCounter = 0;
+    let droughtActive = false;
 
     const budget = 1.2;
     let altitudePref = 0.33;
@@ -59,6 +61,20 @@
     const s1 = board.create('slider', [[21, 4], [25, 4], [0.2, 0.4, 1]], { name: 'Altitude range width' });
     const s2 = board.create('slider', [[21, 3], [25, 3], [0, 0.4, 1]], { name: 'Predation resistance' });
     const s3 = board.create('slider', [[21, 2], [25, 2], [0, 0.4, 1]], { name: 'Drought resistance' });
+
+    const droughtLabel = board.create('text', [21, 19.5, 'Drought!'], {
+      anchorX: 'left',
+      anchorY: 'top',
+      fontSize: 20,
+      fixed: true,
+      highlight: false,
+      visible: false,
+      cssStyle: `
+      background-color: rgba(111, 163, 230, 0.3);
+      padding: 4px;
+      border-radius: 4px;
+    `
+    });
 
 
     for (let y = 0; y < gridSize; y++) {
@@ -137,11 +153,11 @@
       return Math.random() * (max - min) + min;
     }
 
-    // function getDroughtSuccess() {
-    //   const resistance = 0.5 + droughtResistance; 
-    //   const droughtseverity = 1 + getRandomArbitrary(0.5, 1.5);
-    //   return resistance > droughtseverity;
-    // }
+    function getDroughtSuccess() {
+      const resistance = 0.8 + droughtResistance;
+      const droughtseverity = getRandomArbitrary(0.5, 1.5);
+      return resistance > droughtseverity;
+    }
 
     function getPredationSurvivalSuccess(basePredation) {
       const predationWithJitter = basePredation + getRandomArbitrary(-0.5, 0.5); // 0-1 + jitter
@@ -159,6 +175,19 @@
 
     function step() {
       hasStarted = true;
+
+      stepCounter++;
+      if (stepCounter % 10 === 0) {
+        console.log('10th')
+        droughtActive = true;
+        console.log(droughtActive);
+        droughtLabel.setAttribute({ visible: true });
+      }
+      else {
+        droughtActive = false;
+        droughtLabel.setAttribute({ visible: false });
+      }
+
       for (let i = 0; i < individuals.length; i++) {
         const randomOffspringValue = Math.random()
         if (!individuals[i].dead) {
@@ -166,12 +195,12 @@
           const gridY = Math.floor(individuals[i].Y());
 
           // ChatGPT recommended guard: skip if out of bounds (defensive check)
-          if (gridX < 0 || gridX >= gridSize || gridY < 0 || gridY  >= gridSize) continue;
+          if (gridX < 0 || gridX >= gridSize || gridY < 0 || gridY >= gridSize) continue;
           //
 
           const altitude = altitudeMapSmall[gridY][gridX];
           const predation = predationMapSmall[gridY][gridX];
-          if (!getAltitudeSurvivalSuccess(altitude) || !getPredationSurvivalSuccess(predation) ) {
+          if (!getAltitudeSurvivalSuccess(altitude) || !getPredationSurvivalSuccess(predation) || (droughtActive && !getDroughtSuccess())) {
             kill(i);
           }
 
@@ -189,6 +218,9 @@
     async function tenStep() {
       for (let i = 0; i < 10; i++) {
         step();
+        if (droughtActive){
+          await sleep(1000);
+        }
         await sleep(100); // Delay 100ms between steps
       }
 
