@@ -26,30 +26,34 @@
     <button onClick="tenStep()"> 10 steps </button>
     <button onClick="reset()"> Reset </button>
   </div>
-
-  <p><pre>
+  <div>
+    <p>
+    <pre>
 How to play:
 1. Choose a starting location by clicking on the grid, or keep the default location. 
 Adjust the sliders to find a combination of traits you like. You can't max them all out at the same time.
-2. Click on the 'Step' or '10 steps' button to begin the simulation. Progress the simulation until your 'species' has
-spread over the whole map, reached the limits of its ability to spread, or died out. 
+2. Click on the 'Step' or '10 steps' button to begin the simulation. Progress the simulation until your 'species' 
+has spread over the whole map, reached the limits of its ability to spread, or died out. 
 
 Each dot represents an individual. 
 
-During each timestep of the simulation, it has a chance to die from predation, which is 
-affected by its own predation resistance and the predator activity in its location on the map. An individual that 
-died from predation is marked with a dark reddish dot. Predation activity is represented by yellow/orange tones on the map.
+During each timestep of the simulation, it has a chance to die from predation, which is affected by its own 
+predation resistance and the predator activity in its location on the map. An individual that died from 
+predation is marked with a dark reddish dot. Predation activity is represented by yellow and orange tones on
+the map.
 
 The individual also has a chance of dying due to an unsuitable altitude. The chance is determined by its altitude
 preference, its altitude range width, and the altitude at its location on the map. An individual that died from 
-an unsuitable altitude is marked with a bluish grey dot. Altitude is represented by purple tones on the map.
+an unsuitable altitude is marked with a bluish grey dot. Altitude is represented by purple tones on the map. 
+(Red = both high altitude and high predation, light blue = low altitude and low predation)
 
 Once every 9 timesteps, a drought occurs. The individual has a chance of surviving it that's affected by its 
 drought resistance. An individual that died from the drought is marked with a yellowish brown dot. 
 If the individual survived, it has a chance to reproduce and create more individuals near it.
 
   </pre>
-  </p>
+    </p>
+  </div>
   <div class="flex">
     <img src="altitudemap.PNG" alt="Altitude map">
     <img src="predationmap.png" alt="Predation map"> <br>
@@ -99,18 +103,25 @@ If the individual survived, it has a chance to reproduce and create more individ
     const s2 = board.create('slider', [[21, 3], [25, 3], [0, 0.4, 1]], { name: 'Predation resistance' });
     const s3 = board.create('slider', [[21, 2], [25, 2], [0, 0.4, 1]], { name: 'Drought resistance' });
 
-    const droughtLabel = board.create('text', [21, 19.5, 'Drought!'], {
+    const droughtLabel = board.create('text', [21, 17.5, 'Drought!'], {
       anchorX: 'left',
       anchorY: 'top',
       fontSize: 20,
       fixed: true,
       highlight: false,
       visible: false,
-      cssStyle: `
-      background-color: rgba(111, 163, 230, 0.3);
-      padding: 4px;
-      border-radius: 4px;
-    `
+      cssStyle: `background-color: rgba(111, 163, 230, 0.3); padding: 4px; border-radius: 4px;`
+    });
+
+    const stepLabel = board.create('text', [21, 19.5, function () {
+      return 'Current timestep: ' + stepCounter;
+    }], {
+      anchorX: 'left',
+      anchorY: 'top',
+      fontSize: 20,
+      fixed: true,
+      highlight: false,
+      cssStyle: `background-color: rgba(111, 163, 230, 0.3); padding: 4px; border-radius: 4px;`
     });
 
 
@@ -122,10 +133,10 @@ If the individual survived, it has a chance to reproduce and create more individ
         // const b = Math.floor(255 - predation * 255) ;
         // const g = (Math.floor(255 - predation * 255)) ;
         // const r = Math.floor(255 - altitude * 255);
-        const b = Math.floor(255 - predation * 255) ;
-        const g = Math.floor(255 - altitude * 255) ;
+        const b = Math.floor(255 - predation * 255);
+        const g = Math.floor(255 - altitude * 255);
         const r = 200;
-        
+
         const color = `rgb(${r},${g},${b})`;
 
         const rect = board.create('polygon', [
@@ -243,6 +254,7 @@ If the individual survived, it has a chance to reproduce and create more individ
       hasStarted = true;
 
       stepCounter++;
+      board.update();
       if (stepCounter % 9 === 0) {
         droughtActive = true;
         droughtLabel.setAttribute({ visible: true });
