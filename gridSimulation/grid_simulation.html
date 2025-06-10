@@ -24,6 +24,7 @@
   <div class="flex">
     <button onClick="step()"> Step </button>
     <button onClick="tenStep()"> 10 steps </button>
+    <button onClick="reset()"> Reset </button>
   </div>
 
   <script>
@@ -55,9 +56,9 @@
 
     const budget = 1.2;
     let altitudePref = 0.33;
-    let altitudeLeeway = 0.33;
-    let predationResistance = 0.33;
-    let droughtResistance = 0.33;
+    let altitudeLeeway = 0.40;
+    let predationResistance = 0.40;
+    let droughtResistance = 0.40;
 
     const aliveColor = "#68C93E";
     const deadFromPredation = "#622525";
@@ -231,13 +232,13 @@
           const altitude = altitudeMapSmall[gridY][gridX];
           const predation = predationMapSmall[gridY][gridX];
 
-          if (!getAltitudeSurvivalSuccess(altitude)){
+          if (!getAltitudeSurvivalSuccess(altitude)) {
             kill(i, deadFromAltitude)
           }
-          else if (!getPredationSurvivalSuccess(predation)){
+          else if (!getPredationSurvivalSuccess(predation)) {
             kill(i, deadFromPredation)
           }
-          else if (droughtActive && !getDroughtSuccess()){
+          else if (droughtActive && !getDroughtSuccess()) {
             kill(i, deadFromDrought)
           }
 
@@ -268,6 +269,30 @@
       altitudeLeeway = s1.Value() + 0.1;
       predationResistance = s2.Value();
       droughtResistance = s3.Value();
+    }
+
+    function reset() {
+      hasStarted = false;
+      stepCounter = 0;
+      droughtActive = false;
+
+      board.suspendUpdate();
+
+      individuals.forEach(obj => board.removeObject(obj));
+      occupied.clear();
+      individuals.length = 0;
+
+      altitudePref = 0.33;
+      altitudeLeeway = 0.40;
+      predationResistance = 0.40;
+      droughtResistance = 0.40;
+      s0.setValue(0.33);
+      s1.setValue(0.4);    
+      s2.setValue(0.4);
+      s3.setValue(0.4);
+
+      createIndividual(startX, startY);
+      board.unsuspendUpdate();
     }
 
     function updateLimits(changedSlider) {
