@@ -54,11 +54,38 @@ If the individual survived, it has a chance to reproduce and create more individ
   </pre>
     </p>
   </div>
+
   <div class="flex">
     <img src="altitudemap.PNG" alt="Altitude map">
     <img src="predationmap.png" alt="Predation map"> <br>
     <div>Left: Altitude (deep blue = high altitude), right: Predation (deep red = high predation).</div>
   </div>
+
+  <div> <pre>
+
+--------------------------------------------------------------------------------------------------------------------
+Exercises [FIN]
+
+function getDroughtSuccess() {
+      const resistance = 0.3 + droughtResistance;
+      const droughtseverity = getRandomBetween(0, 1);
+      return resistance > droughtseverity;
+    }
+
+
+Kuivan kauden iskiessä jokaisen yksilön selviytyminen lasketaan yllä olevan funktion mukaan. 
+Resistanssilla* on pohja-arvo 0,3, johon lisätään yksilön oma resistanssi-arvo. 
+Kuivan kauden vakavuus on 0 ja 1 välisestä tasaisesta jakaumasta arvottu lukuarvo. 
+Jos kokonaisresistanssi on arvoltaan suurempi kuin kuivan kauden vakavuus, yksilö selviää. Jos ei, yksilö kuolee kuivuuteen. 
+
+a) Jos yksilön oma kuivuusresistanssi on 0,2, millä todennäköisyydellä se selviää yhdestä kuivasta kaudesta? 
+a) Jos yksilön oma kuivuusresistanssi on 0,5, millä todennäköisyydellä se selviää yhdestä kuivasta kaudesta? 
+b) Jos yksilön oma kuivuusresistanssi on 0,6, millä todennäköisyydellä se selviää viidestä kuivasta kaudesta? Oleta, että kuivan kauden vakavuus arvotaan joka kerta uudelleen itsenäisesti.
+d) Kun valitset liukusäätimien arvoja ja yrität saada simuloidun lajin selviämään ja leviämään mahdollisimman hyvin, kannattaako kuivuusresistanssi nostaa arvoon 1 asti? Miksi/miksi ei? 
+
+
+
+  </pre></div>
 
   <script>
 
@@ -226,25 +253,25 @@ If the individual survived, it has a chance to reproduce and create more individ
       }
 
     }
-    function getRandomArbitrary(min, max) {
+    function getRandomBetween(min, max) {
       return Math.random() * (max - min) + min;
     }
 
     function getDroughtSuccess() {
-      const resistance = 0.8 + droughtResistance;
-      const droughtseverity = getRandomArbitrary(0.5, 1.5);
+      const resistance = 0.3 + droughtResistance;
+      const droughtseverity = getRandomBetween(0, 1);
       return resistance > droughtseverity;
     }
 
     function getPredationSurvivalSuccess(basePredation) {
-      const predationWithJitter = basePredation + getRandomArbitrary(-0.5, 0.5); // 0-1 + jitter
+      const predationWithJitter = basePredation + getRandomBetween(-0.5, 0.5); // 0-1 + jitter
       return (predationResistance + 0.5) > predationWithJitter;
     }
 
     function getAltitudeSurvivalSuccess(altitude) {
       const altitudePrefMin = altitudePref - altitudeLeeway - 0.05;
       const altitudePrefMax = altitudePref + altitudeLeeway + 0.05;
-      const randomJitter = getRandomArbitrary(-0.25, 0.25);
+      const randomJitter = getRandomBetween(-0.25, 0.25);
       const altitudeSurvivalMin = altitude - randomJitter;
       const altitudeSurvivalMax = altitude + randomJitter;
       return (altitudeSurvivalMin > altitudePrefMin && altitudeSurvivalMax < altitudePrefMax); //returns boolean :)
