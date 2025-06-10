@@ -27,6 +27,35 @@
     <button onClick="reset()"> Reset </button>
   </div>
 
+  <p><pre>
+How to play:
+1. Choose a starting location by clicking on the grid, or keep the default location. 
+Adjust the sliders to find a combination of traits you like. You can't max them all out at the same time.
+2. Click on the 'Step' or '10 steps' button to begin the simulation. Progress the simulation until your 'species' has
+spread over the whole map, reached the limits of its ability to spread, or died out. 
+
+Each dot represents an individual. 
+
+During each timestep of the simulation, it has a chance to die from predation, which is 
+affected by its own predation resistance and the predator activity in its location on the map. An individual that 
+died from predation is marked with a dark reddish dot. Predation activity is represented by yellow/orange tones on the map.
+
+The individual also has a chance of dying due to an unsuitable altitude. The chance is determined by its altitude
+preference, its altitude range width, and the altitude at its location on the map. An individual that died from 
+an unsuitable altitude is marked with a bluish grey dot. Altitude is represented by purple tones on the map.
+
+Once every 9 timesteps, a drought occurs. The individual has a chance of surviving it that's affected by its 
+drought resistance. An individual that died from the drought is marked with a yellowish brown dot. 
+If the individual survived, it has a chance to reproduce and create more individuals near it.
+
+  </pre>
+  </p>
+  <div class="flex">
+    <img src="altitudemap.PNG" alt="Altitude map">
+    <img src="predationmap.png" alt="Predation map"> <br>
+    <div>Left: Altitude (deep blue = high altitude), right: Predation (deep red = high predation).</div>
+  </div>
+
   <script>
 
     //TODO: make altitude component less strict
@@ -54,9 +83,9 @@
     let stepCounter = 0;
     let droughtActive = false;
 
-    const budget = 1.2;
+    const budget = 1.3;
     let altitudePref = 0.33;
-    let altitudeLeeway = 0.40;
+    let altitudeLeeway = 0.50;
     let predationResistance = 0.40;
     let droughtResistance = 0.40;
 
@@ -66,7 +95,7 @@
     const deadFromAltitude = "#5F5F64";
 
     const s0 = board.create('slider', [[21, 5], [25, 5], [0, 0.33, 1]], { name: 'Altitude preference' });
-    const s1 = board.create('slider', [[21, 4], [25, 4], [0.2, 0.4, 1]], { name: 'Altitude range width' });
+    const s1 = board.create('slider', [[21, 4], [25, 4], [0.3, 0.5, 1]], { name: 'Altitude range width' });
     const s2 = board.create('slider', [[21, 3], [25, 3], [0, 0.4, 1]], { name: 'Predation resistance' });
     const s3 = board.create('slider', [[21, 2], [25, 2], [0, 0.4, 1]], { name: 'Drought resistance' });
 
@@ -90,9 +119,13 @@
 
         const altitude = altitudeMapSmall[y][x];
         const predation = predationMapSmall[y][x];
-        const b = Math.floor(255 - predation * 255);
-        const g = Math.floor(255 - altitude * 255);
+        // const b = Math.floor(255 - predation * 255) ;
+        // const g = (Math.floor(255 - predation * 255)) ;
+        // const r = Math.floor(255 - altitude * 255);
+        const b = Math.floor(255 - predation * 255) ;
+        const g = Math.floor(255 - altitude * 255) ;
         const r = 200;
+        
         const color = `rgb(${r},${g},${b})`;
 
         const rect = board.create('polygon', [
@@ -198,10 +231,10 @@
     }
 
     function getAltitudeSurvivalSuccess(altitude) {
-      const altitudePrefMin = altitudePref - altitudeLeeway;
-      const altitudePrefMax = altitudePref + altitudeLeeway;
+      const altitudePrefMin = altitudePref - altitudeLeeway - 0.05;
+      const altitudePrefMax = altitudePref + altitudeLeeway + 0.05;
       const randomJitter = getRandomArbitrary(-0.25, 0.25);
-      const altitudeSurvivalMin = altitude + randomJitter;
+      const altitudeSurvivalMin = altitude - randomJitter;
       const altitudeSurvivalMax = altitude + randomJitter;
       return (altitudeSurvivalMin > altitudePrefMin && altitudeSurvivalMax < altitudePrefMax); //returns boolean :)
     }
@@ -242,7 +275,7 @@
             kill(i, deadFromDrought)
           }
 
-          if (randomOffspringValue < baseOffspringProbability) {
+          if (randomOffspringValue < baseOffspringProbability && !individuals[i].dead) {
             reproduce(i);
           }
         }
@@ -284,10 +317,10 @@
 
       altitudePref = 0.33;
       altitudeLeeway = 0.40;
-      predationResistance = 0.40;
+      predationResistance = 0.50;
       droughtResistance = 0.40;
       s0.setValue(0.33);
-      s1.setValue(0.4);    
+      s1.setValue(0.5);
       s2.setValue(0.4);
       s3.setValue(0.4);
 
