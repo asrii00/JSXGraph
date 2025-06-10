@@ -27,6 +27,8 @@
   </div>
 
   <script>
+
+    //TODO: make altitude component less strict
     const board = JXG.JSXGraph.initBoard('box', {
       boundingbox: [-1, 21, 31, -1],
       axis: true,
@@ -56,6 +58,11 @@
     let altitudeLeeway = 0.33;
     let predationResistance = 0.33;
     let droughtResistance = 0.33;
+
+    const aliveColor = "#68C93E";
+    const deadFromPredation = "#622525";
+    const deadFromDrought = "#6D5F3E";
+    const deadFromAltitude = "#5F5F64";
 
     const s0 = board.create('slider', [[21, 5], [25, 5], [0, 0.33, 1]], { name: 'Altitude preference' });
     const s1 = board.create('slider', [[21, 4], [25, 4], [0.2, 0.4, 1]], { name: 'Altitude range width' });
@@ -101,11 +108,38 @@
       }
     }
 
+    board.on('down', function (e) {
+      if (hasStarted) return;
+
+      const coords = board.getUsrCoordsOfMouse(e);
+      const x = Math.floor(coords[0]) + 0.5;
+      const y = Math.floor(coords[1]) + 0.5;
+
+      if (x < 0 || x >= gridSize || y < 0 || y >= gridSize) {
+        console.log("click out of bounds");
+        return;
+      }
+
+      console.log(`Picked start point at (${x}, ${y})`);
+      board.suspendUpdate();
+      individuals.forEach(ind => board.removeObject(ind));
+      individuals = [];
+      occupied.clear();
+
+
+      createIndividual(x, y);
+      board.update();
+      board.unsuspendUpdate();
+
+      startingX = x;
+      startingY = y;
+    });
+
     function createIndividual(x, y) {
       const key = `${x},${y}`;
       if (!occupied.has(key)) {
         occupied.add(key);
-        const individual = board.create('point', [x, y], { color: 'green', size: 8, fixed: true, showInfobox: false, name: '' });
+        const individual = board.create('point', [x, y], { color: aliveColor, size: 8, fixed: true, showInfobox: false, name: '' });
         individual.dead = false;
         individuals.push(individual);
       }
@@ -134,17 +168,15 @@
       return posObject;
     }
 
-    function kill(i) {
-      individuals[i].setAttribute({ color: 'grey' })
+    function kill(i, cause) {
+
+      individuals[i].setAttribute({ color: cause })
       individuals[i].dead = true;
     }
 
     function reproduce(i) {
       const newPos = getOffspringPosition(individuals[i].X(), individuals[i].Y());
-      if (newPos.x < 0 || newPos.x > 20 || newPos.y < 0 || newPos.y > 20) {
-        //console.log('Out of bounds')
-      }
-      else {
+      if (newPos.x > 0 && newPos.x < 20 && newPos.y > 0 && newPos.y < 20) {
         createIndividual(newPos.x, newPos.y);
       }
 
@@ -177,10 +209,8 @@
       hasStarted = true;
 
       stepCounter++;
-      if (stepCounter % 10 === 0) {
-        console.log('10th')
+      if (stepCounter % 9 === 0) {
         droughtActive = true;
-        console.log(droughtActive);
         droughtLabel.setAttribute({ visible: true });
       }
       else {
@@ -200,8 +230,15 @@
 
           const altitude = altitudeMapSmall[gridY][gridX];
           const predation = predationMapSmall[gridY][gridX];
-          if (!getAltitudeSurvivalSuccess(altitude) || !getPredationSurvivalSuccess(predation) || (droughtActive && !getDroughtSuccess())) {
-            kill(i);
+
+          if (!getAltitudeSurvivalSuccess(altitude)){
+            kill(i, deadFromAltitude)
+          }
+          else if (!getPredationSurvivalSuccess(predation)){
+            kill(i, deadFromPredation)
+          }
+          else if (droughtActive && !getDroughtSuccess()){
+            kill(i, deadFromDrought)
           }
 
           if (randomOffspringValue < baseOffspringProbability) {
@@ -218,7 +255,7 @@
     async function tenStep() {
       for (let i = 0; i < 10; i++) {
         step();
-        if (droughtActive){
+        if (droughtActive) {
           await sleep(1000);
         }
         await sleep(100); // Delay 100ms between steps
@@ -227,13 +264,10 @@
     }
 
     function set() {
-      console.log('traits set');
       altitudePref = s0.Value();
       altitudeLeeway = s1.Value() + 0.1;
       predationResistance = s2.Value();
       droughtResistance = s3.Value();
-      console.log('altitude: ', altitudePref);
-
     }
 
     function updateLimits(changedSlider) {
