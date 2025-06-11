@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>JSXGraph Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+    <style>
+        #box {
+            width: 500px;
+            height: 450px;
+        }
+
+        div {
+            margin: 1%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="box" class="jxgbox"></div>
+    <div>
+        <button onclick="generate20(true)">Roll 20 true dice</button>
+        <button onclick="generate20(false)">Roll 20 weighted dice</button>
+        <button onclick="reset()">Reset</button>
+    </div>
+    <div style="margin-top: 1em;">
+        <label for="dice-output">Result</label><br>
+        <textarea id="dice-output" rows="4" cols="25" readonly style="resize: none; font-family: monospace;"></textarea>
+    </div>
+
+    <script>
+        const board = JXG.JSXGraph.initBoard('box', {
+            boundingbox: [0, 9, 10, 0],
+            axis: false,
+            showNavigation: false,
+            showCopyright: false
+        });
+
+        const resultArray = [];
+        const diceRectangles = [];
+        const dicePoints = [];
+
+        const radius = 1;
+        const columns = 5;
+        const startX = 0.5;
+        const startY = 1;
+        const ySpacing = 2;
+
+        let isReset = true;
+
+        //x, y is bottom left corner
+        function drawDie(board, x, y, value) {
+            const size = 1; 
+            const r = 0.08; 
+            const center = [x + size / 2, y + size / 2];
+
+            const dieRectangle = board.create('polygon', [
+                [x, y],
+                [x + size, y],
+                [x + size, y + size],
+                [x, y + size]
+            ], { fillColor: 'white', strokeWidth: 2, vertices: { visible: false } });
+            diceRectangles.push(dieRectangle);
+
+            const positions = {
+                1: [[0.5, 0.5]],
+                2: [[0.25, 0.25], [0.75, 0.75]],
+                3: [[0.25, 0.25], [0.5, 0.5], [0.75, 0.75]],
+                4: [[0.25, 0.25], [0.75, 0.25], [0.25, 0.75], [0.75, 0.75]],
+                5: [[0.25, 0.25], [0.75, 0.25], [0.5, 0.5], [0.25, 0.75], [0.75, 0.75]],
+                6: [[0.25, 0.25], [0.75, 0.25], [0.25, 0.5], [0.75, 0.5], [0.25, 0.75], [0.75, 0.75]]
+            };
+
+            for (const [px, py] of positions[value] || []) {
+                const point = board.create('point', [x + px * size, y + py * size], {
+                    size: r * 40, 
+                    fixed: true,
+                    showInfobox: false,
+                    withLabel: false,
+                    color: 'black'
+                });
+                dicePoints.push(point);
+            }
+        }
+
+        function getPositionFromIndex(index) {
+            const x = startX + 2 * radius * (index % columns);
+            const y = startY + ySpacing * Math.floor(index / columns);
+            return { x: x, y: y };
+        }
+
+        //not the most elegant way to do this, but it works
+        function getWeightedNumber() {
+            const rand = Math.random();
+            if (rand < 0.15) {
+                return 1;
+            }
+            else if (rand < 0.3) {
+                return 2;
+            }
+            else if (rand < 0.45) {
+                return 3;
+            }
+            else if (rand < 0.57) {
+                return 4;
+            }
+            else if (rand < 0.90) {
+                return 5;
+            }
+            else {
+                return 6;
+            }
+        }
+
+        function generate20(isTrue) {
+            if (!isReset) reset();
+            isReset = false;
+            board.suspendUpdate();
+            for (let i = 0; i < 20; i++) {
+                let dieNumber = 1;
+                if (isTrue) {
+                    dieNumber = (Math.floor(Math.random() * 6)) + 1;
+                }
+                else {
+                    dieNumber = getWeightedNumber();
+                }
+                resultArray.push(dieNumber);
+                const pos = getPositionFromIndex(i);
+                drawDie(board, pos.x, pos.y, dieNumber)
+            }
+            board.unsuspendUpdate();
+            const str = resultArray.join(', ');
+            document.getElementById('dice-output').value = str;
+        }
+
+        function reset(){
+            console.log('resetting');
+            board.suspendUpdate();
+            diceRectangles.forEach(obj => board.removeObject(obj));
+            dicePoints.forEach(obj => board.removeObject(obj));
+            diceRectangles.length = 0;
+            dicePoints.length = 0;
+            resultArray.length = 0;
+            document.getElementById('dice-output').value = '';
+            board.unsuspendUpdate();
+            isReset = true; 
+        }
+
+
+    </script>
+
+</body>
+
+</html>
