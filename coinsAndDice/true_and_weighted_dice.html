@@ -29,6 +29,24 @@
         <label for="dice-output">Result</label><br>
         <textarea id="dice-output" rows="4" cols="25" readonly style="resize: none; font-family: monospace;"></textarea>
     </div>
+    <div>
+        Number of ones: <span id="ones"></span> <br>
+        Number of twos: <span id="twos"></span><br>
+        Number of threes: <span id="threes"></span><br>
+        Number of fours: <span id="fours"></span><br>
+        Number of fives: <span id="fives"></span><br>
+        Number of sixes: <span id="sixes"></span>
+    </div>
+    <pre>
+-----------------------------------------------------
+    
+Exercises [FIN] [WIP]:
+1. Generoi 100 tulosta virtuaalinopalla (5 x generoi 20). Käytä khiin neliötä verrattuna reilun nopan odotusarvoihin
+ja päättele, onko virtuaalinoppa reilu vai painotettu suosimaan joitain noppalukuja enemmän kuin toisia. 
+(Confidence interval?)
+2. Selvitä, millä todennäköisyydellä painotettu noppa antaa minkäkin noppaluvun [jollain tarkkuudella]
+
+    </pre>
 
     <script>
         const board = JXG.JSXGraph.initBoard('box', {
@@ -37,6 +55,8 @@
             showNavigation: false,
             showCopyright: false
         });
+
+        const labels = ['ones', 'twos', 'threes', 'fours', 'fives', 'sixes'];
 
         const resultArray = [];
         const diceRectangles = [];
@@ -52,8 +72,8 @@
 
         //x, y is bottom left corner
         function drawDie(board, x, y, value) {
-            const size = 1; 
-            const r = 0.08; 
+            const size = 1;
+            const r = 0.08;
             const center = [x + size / 2, y + size / 2];
 
             const dieRectangle = board.create('polygon', [
@@ -75,7 +95,7 @@
 
             for (const [px, py] of positions[value] || []) {
                 const point = board.create('point', [x + px * size, y + py * size], {
-                    size: r * 40, 
+                    size: r * 40,
                     fixed: true,
                     showInfobox: false,
                     withLabel: false,
@@ -85,6 +105,7 @@
             }
         }
 
+        //currently draws the die in order from bottom row to top row, maybe fix that later
         function getPositionFromIndex(index) {
             const x = startX + 2 * radius * (index % columns);
             const y = startY + ySpacing * Math.floor(index / columns);
@@ -133,9 +154,18 @@
             board.unsuspendUpdate();
             const str = resultArray.join(', ');
             document.getElementById('dice-output').value = str;
+
+            const counts = {};
+
+            for (const val of resultArray) {
+                counts[val] = (counts[val] || 0) + 1;
+            }
+            labels.forEach((id, index) => {
+                document.getElementById(id).innerText = counts[index + 1] || 0;
+            });
         }
 
-        function reset(){
+        function reset() {
             console.log('resetting');
             board.suspendUpdate();
             diceRectangles.forEach(obj => board.removeObject(obj));
@@ -145,7 +175,10 @@
             resultArray.length = 0;
             document.getElementById('dice-output').value = '';
             board.unsuspendUpdate();
-            isReset = true; 
+            isReset = true;
+            labels.forEach((id, index) => {
+                document.getElementById(id).innerText = '';
+            });
         }
 
 
