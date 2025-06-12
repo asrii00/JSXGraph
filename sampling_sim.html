@@ -16,6 +16,9 @@
 <body>
 
     <div id="box" class="jxgbox"></div>
+    <div>
+        <button onclick="reveal()"> Reveal</button>
+    </div>
 
     <script>
         const board = JXG.JSXGraph.initBoard('box', {
@@ -30,17 +33,23 @@
 
         const cells = [];
         const bars = [];
+        const labels = [];
 
         const frequencies = {
             white: 0,
-            lightblue: 0, 
-            pink: 0
+            lightblue: 0,
+            orange: 0,
+            plum: 0,
+            pink: 0,
+
         }
 
         function getColor() {
             const rand = Math.random();
             if (rand < 0.2) return 'white';
-            else if (rand < 0.7) return 'lightblue';
+            else if (rand < 0.6) return 'lightblue';
+            else if (rand < 0.7) return 'orange';
+            else if (rand < 0.75) return 'plum';
             else return 'pink';
 
         }
@@ -60,50 +69,66 @@
                     highlight: false,
                     showInfobox: false
                 });
+                const color = getColor();
+                cell.customState = { color: color, hidden: true }
                 cell.on('down', () => {
-                    if (cell.customState === 'hidden') {
-                        const color = getColor();
-                        cell.customState = color;
+                    if (cell.customState.hidden) {
                         cell.setAttribute({ fillColor: color });
                         addToFreq(color);
                         updateBars();
                     }
                 });
-                cell.customState = 'hidden';
                 cells[row][col] = cell;
             }
         }
 
-        function getBarColor(n){
+        function getBarColor(n) {
             if (n == 0) {
-                return 'white';}
-            else if (n == 1)
-            {return 'lightblue';}
-            else {return 'pink';}
+                return 'white';
+            }
+            else if (n == 1) { return 'lightblue'; }
+            else if (n == 2) { return '#FFA500'; }
+            else if (n == 3) { return 'plum'; }
+            else { return 'pink'; }
         }
 
-        function updateBars(){
+        function reveal() {
+            board.suspendUpdate();
+            for (let row = 0; row < cells.length; row++) {
+                for (let col = 0; col < cells[row].length; col++) {
+                    const cell = cells[row][col];
+                    cell.setAttribute({ fillColor: cell.customState.color });
+                    addToFreq(cell.customState.color);
+                }
+            }
+            board.unsuspendUpdate();
+            updateBars();
+
+        }
+
+        function updateBars() {
             const freqArray = Object.values(frequencies);
             bars.forEach(obj => board.removeObject(obj));
             bars.length = 0;
-            drawHistogram(board, freqArray )
-
+            labels.forEach(obj => board.removeObject(obj));
+            labels.length = 0;
+            drawHistogram(board, freqArray)
 
         }
-    
 
-        function addToFreq(color){
+
+        function addToFreq(color) {
             frequencies[color] = (frequencies[color] || 0) + 1;
-            
+
         }
 
         function drawHistogram(board, frequencies, baseX = 20, baseY = 2, maxHeight = 15) {
-            
+
             const barWidth = 0.8;
             const maxCount = Math.max(...frequencies);
 
             for (let i = 0; i < frequencies.length; i++) {
-                const color = getBarColor(i % 3);
+                const color = getBarColor(i % 5);
                 const x0 = baseX + i * (barWidth + 0.2);
                 const x1 = x0 + barWidth;
                 const y1 = baseY + (frequencies[i] / maxCount) * maxHeight;
@@ -118,20 +143,18 @@
                     fillOpacity: 0.6,
                     strokeColor: '#339',
                     strokeWidth: 1,
-                    fixed: true, 
-                    vertices: {visible: false}
+                    fixed: true,
+                    vertices: { visible: false }
                 }));
 
-                // board.create('text', [x0 + barWidth / 2, y1 + 0.2, `${frequencies[i]}`], {
-                //     anchorX: 'middle',
-                //     anchorY: 'bottom',
-                //     fixed: true
-                // });
+                labels.push(board.create('text', [x0 + barWidth / 2, y1 + 0.2, `${frequencies[i]}`], {
+                    anchorX: 'middle',
+                    anchorY: 'bottom',
+                    fixed: true
+                }));
             }
         }
 
-
-        
 
     </script>
 
