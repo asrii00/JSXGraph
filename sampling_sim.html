@@ -43,6 +43,14 @@
             pink: 0,
 
         }
+        const finalrequencies = {
+            white: 0,
+            lightblue: 0,
+            orange: 0,
+            plum: 0,
+            pink: 0,
+
+        }
 
         function getColor() {
             const rand = Math.random();
@@ -98,14 +106,19 @@
                 for (let col = 0; col < cells[row].length; col++) {
                     const cell = cells[row][col];
                     cell.setAttribute({ fillColor: cell.customState.color });
-                    addToFreq(cell.customState.color);
+                    addToFinalFreq(cell.customState.color);
                 }
             }
             board.unsuspendUpdate();
-            updateBars();
+            showFinalBars();
 
         }
 
+        function showFinalBars() {
+            const freqArray = Object.values(finalrequencies);
+            drawHistogram(board, freqArray, baseX = 30)
+
+        }
         function updateBars() {
             const freqArray = Object.values(frequencies);
             bars.forEach(obj => board.removeObject(obj));
@@ -119,7 +132,9 @@
 
         function addToFreq(color) {
             frequencies[color] = (frequencies[color] || 0) + 1;
-
+        }
+        function addToFinalFreq(color) {
+            finalrequencies[color] = (finalrequencies[color] || 0) + 1;
         }
 
         function drawHistogram(board, frequencies, baseX = 20, baseY = 2, maxHeight = 15) {
