@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>JSXGraph Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+    <style>
+        #box {
+            width: 1200px;
+            height: 600px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="box" class="jxgbox"></div>
+
+    <script>
+        const board = JXG.JSXGraph.initBoard('box', {
+            boundingbox: [0, 20, 40, 0],
+            axis: true
+        });
+
+        const gridSize = 15;
+        const pointRadius = 10;
+        const gridYStart = 2.5;
+        const gridXStart = 0.5;
+
+        const cells = [];
+        const bars = [];
+
+        const frequencies = {
+            white: 0,
+            lightblue: 0, 
+            pink: 0
+        }
+
+        function getColor() {
+            const rand = Math.random();
+            if (rand < 0.2) return 'white';
+            else if (rand < 0.7) return 'lightblue';
+            else return 'pink';
+
+        }
+
+
+        for (let row = 0; row < gridSize; row++) {
+            cells[row] = [];
+            for (let col = 0; col < gridSize; col++) {
+                const x = col + 0.5 + gridXStart;
+                const y = row + 0.5 + gridYStart;
+
+                const cell = board.create('point', [x, y], {
+                    fixed: true,
+                    size: pointRadius,
+                    name: '',
+                    color: 'grey',
+                    highlight: false,
+                    showInfobox: false
+                });
+                cell.on('down', () => {
+                    if (cell.customState === 'hidden') {
+                        const color = getColor();
+                        cell.customState = color;
+                        cell.setAttribute({ fillColor: color });
+                        addToFreq(color);
+                        updateBars();
+                    }
+                });
+                cell.customState = 'hidden';
+                cells[row][col] = cell;
+            }
+        }
+
+        function getBarColor(n){
+            if (n == 0) {
+                return 'white';}
+            else if (n == 1)
+            {return 'lightblue';}
+            else {return 'pink';}
+        }
+
+        function updateBars(){
+            const freqArray = Object.values(frequencies);
+            bars.forEach(obj => board.removeObject(obj));
+            bars.length = 0;
+            drawHistogram(board, freqArray )
+
+
+        }
+    
+
+        function addToFreq(color){
+            frequencies[color] = (frequencies[color] || 0) + 1;
+            
+        }
+
+        function drawHistogram(board, frequencies, baseX = 20, baseY = 2, maxHeight = 15) {
+            
+            const barWidth = 0.8;
+            const maxCount = Math.max(...frequencies);
+
+            for (let i = 0; i < frequencies.length; i++) {
+                const color = getBarColor(i % 3);
+                const x0 = baseX + i * (barWidth + 0.2);
+                const x1 = x0 + barWidth;
+                const y1 = baseY + (frequencies[i] / maxCount) * maxHeight;
+
+                bars.push(board.create('polygon', [
+                    [x0, baseY],
+                    [x1, baseY],
+                    [x1, y1],
+                    [x0, y1]
+                ], {
+                    fillColor: color,
+                    fillOpacity: 0.6,
+                    strokeColor: '#339',
+                    strokeWidth: 1,
+                    fixed: true, 
+                    vertices: {visible: false}
+                }));
+
+                // board.create('text', [x0 + barWidth / 2, y1 + 0.2, `${frequencies[i]}`], {
+                //     anchorX: 'middle',
+                //     anchorY: 'bottom',
+                //     fixed: true
+                // });
+            }
+        }
+
+
+        
+
+    </script>
+
+</body>
+
+</html>
