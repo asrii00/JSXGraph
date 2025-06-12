@@ -20,11 +20,33 @@
         <button onclick="reveal()"> Reveal</button>
     </div>
 
+    <pre>
+Ohje/tehtävät:
+
+Klikkaa "yksilöä" (palloa) ottaaksesi näytteen, joka paljastaa yksilön värin. 
+1. Ota satunnaisesti 15 näytettä populaatiosta. Millainen värijakauma otoksessasi on? Luuletko, että otoksen jakauma on sama 
+kuin koko populaation jakauma?
+2. Ota satunnaisesti 30 näytettä lisää. Millainen jakauma on nyt? Muuttuiko se paljon? Luuletko, että otoksen jakauma kuvaa 
+nyt hyvin koko populaation jakaumaa?
+3. Ota harkintasi mukaan lisää näytteitä, kunnes uskot saaneesi selville koko populaation värijakauman [5% tarkkuudella], ja
+kirjoita tuloksesi ylös. 
+4. Paina 'Reveal'-nappia paljastaaksesi kaikkien populaation yksilöiden värit ja todellisen värijakauman. Oliko arviosi 
+onnistunut?
+
+
+    </pre>
+
     <script>
         const board = JXG.JSXGraph.initBoard('box', {
             boundingbox: [0, 20, 40, 0],
-            axis: true
+            axis: false, 
+            showNavigation: false, 
+            showCopyright: false
         });
+
+        //TODO: show percentages instead?
+        //add labels below bar graphs
+        //add counter of how many have been revealed
 
         const gridSize = 15;
         const pointRadius = 10;
