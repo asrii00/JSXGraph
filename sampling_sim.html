@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
     <style>
         #box {
-            width: 1200px;
+            width: 1080px;
             height: 600px;
         }
     </style>
@@ -18,6 +18,7 @@
     <div id="box" class="jxgbox"></div>
     <div>
         <button onclick="reveal()"> Reveal</button>
+        <button onclick="reset()"> Reset and generate new population</button>
     </div>
 
     <pre>
@@ -38,24 +39,27 @@ onnistunut?
 
     <script>
         const board = JXG.JSXGraph.initBoard('box', {
-            boundingbox: [0, 20, 40, 0],
-            axis: false, 
-            showNavigation: false, 
+            boundingbox: [0, 20, 36, 0],
+            axis: false,
+            showNavigation: false,
             showCopyright: false
         });
 
-        //TODO: show percentages instead?
-        //add labels below bar graphs
-        //add counter of how many have been revealed
+        //TODO: show percentages in labels instead?
 
         const gridSize = 15;
         const pointRadius = 10;
         const gridYStart = 2.5;
-        const gridXStart = 0.5;
+        const gridXStart = 1.5;
+
+        const sampledBarsXStart = 22;
 
         const cells = [];
         const bars = [];
         const labels = [];
+        const zerosArray = [0, 0, 0, 0, 0]
+
+        let revealedCounter = 0;
 
         const frequencies = {
             white: 0,
@@ -65,7 +69,7 @@ onnistunut?
             pink: 0,
 
         }
-        const finalrequencies = {
+        const finalFrequencies = {
             white: 0,
             lightblue: 0,
             orange: 0,
@@ -73,6 +77,32 @@ onnistunut?
             pink: 0,
 
         }
+
+        const sampledLabel = board.create('text', [sampledBarsXStart, 2, () => `Sampled`], {
+            anchorX: 'middle',
+            anchorY: 'top',
+            fontSize: 16,
+            fixed: true,
+            highlight: false,
+            cssStyle: `background-color: rgba(111, 163, 230, 0.3); padding: 4px; border-radius: 4px;`
+        });
+
+        const wholePopLabel = board.create('text', [sampledBarsXStart + 8, 2, () => `Total population (n=225)`], {
+            anchorX: 'middle',
+            anchorY: 'top',
+            fontSize: 16,
+            fixed: true,
+            highlight: false,
+            cssStyle: `background-color: rgba(111, 163, 230, 0.3); padding: 4px; border-radius: 4px;`
+        });
+        const counterLabel = board.create('text', [1.75, 2, () => `Individuals sampled: ${revealedCounter}`], {
+            anchorX: 'left',
+            anchorY: 'top',
+            fontSize: 16,
+            fixed: true,
+            highlight: false,
+            cssStyle: `background-color: rgba(111, 163, 230, 0.3); padding: 4px; border-radius: 4px;`
+        });
 
         function getColor() {
             const rand = Math.random();
@@ -82,34 +112,6 @@ onnistunut?
             else if (rand < 0.75) return 'plum';
             else return 'pink';
 
-        }
-
-
-        for (let row = 0; row < gridSize; row++) {
-            cells[row] = [];
-            for (let col = 0; col < gridSize; col++) {
-                const x = col + 0.5 + gridXStart;
-                const y = row + 0.5 + gridYStart;
-
-                const cell = board.create('point', [x, y], {
-                    fixed: true,
-                    size: pointRadius,
-                    name: '',
-                    color: 'grey',
-                    highlight: false,
-                    showInfobox: false
-                });
-                const color = getColor();
-                cell.customState = { color: color, hidden: true }
-                cell.on('down', () => {
-                    if (cell.customState.hidden) {
-                        cell.setAttribute({ fillColor: color });
-                        addToFreq(color);
-                        updateBars();
-                    }
-                });
-                cells[row][col] = cell;
-            }
         }
 
         function getBarColor(n) {
@@ -137,17 +139,23 @@ onnistunut?
         }
 
         function showFinalBars() {
-            const freqArray = Object.values(finalrequencies);
-            drawHistogram(board, freqArray, baseX = 30)
+            const freqArray = Object.values(finalFrequencies);
+            drawHistogram(board, freqArray, baseX = sampledBarsXStart + 5.6)
 
         }
+
         function updateBars() {
-            const freqArray = Object.values(frequencies);
+            board.suspendUpdate();
             bars.forEach(obj => board.removeObject(obj));
-            bars.length = 0;
             labels.forEach(obj => board.removeObject(obj));
+            board.suspendUpdate();
+
+            bars.length = 0;
             labels.length = 0;
-            drawHistogram(board, freqArray)
+
+            const freqArray = Object.values(frequencies);
+            drawHistogram(board, freqArray);
+            drawHistogram(board, zerosArray, baseX = sampledBarsXStart + 5.6)
 
         }
 
@@ -155,12 +163,48 @@ onnistunut?
         function addToFreq(color) {
             frequencies[color] = (frequencies[color] || 0) + 1;
         }
+
         function addToFinalFreq(color) {
-            finalrequencies[color] = (finalrequencies[color] || 0) + 1;
+            finalFrequencies[color] = (finalFrequencies[color] || 0) + 1;
         }
 
-        function drawHistogram(board, frequencies, baseX = 20, baseY = 2, maxHeight = 15) {
+        function generateCells() {
+            board.suspendUpdate();
+            for (let row = 0; row < gridSize; row++) {
+                cells[row] = [];
+                for (let col = 0; col < gridSize; col++) {
+                    const x = col + 0.5 + gridXStart;
+                    const y = row + 0.5 + gridYStart;
 
+                    const cell = board.create('point', [x, y], {
+                        fixed: true,
+                        size: pointRadius,
+                        name: '',
+                        color: 'grey',
+                        highlight: false,
+                        showInfobox: false
+                    });
+                    const color = getColor();
+                    cell.customState = { color: color, hidden: true }
+                    cell.on('down', () => {
+                        if (cell.customState.hidden) {
+                            revealedCounter++;
+                            cell.customState.hidden=false;
+                            cell.setAttribute({ fillColor: color });
+                            addToFreq(color);
+                            
+                            updateBars();
+                        }
+                    });
+                    cells[row][col] = cell;
+                }
+            }
+            board.unsuspendUpdate();
+        }
+
+
+        function drawHistogram(board, frequencies, baseX = sampledBarsXStart - 2.4, baseY = 2.5, maxHeight = 15) {
+            board.suspendUpdate();
             const barWidth = 0.8;
             const maxCount = Math.max(...frequencies);
 
@@ -190,7 +234,43 @@ onnistunut?
                     fixed: true
                 }));
             }
+            board.unsuspendUpdate();
         }
+
+        function reset() {
+            function resetFrequencies(obj) {
+                for (let key in obj) {
+                    obj[key] = 0;
+                }
+            }
+            board.suspendUpdate();
+            [...cells, ...bars, ...labels].forEach(obj => {
+                if (obj && typeof obj === 'object') {
+                    board.removeObject(obj);
+                }
+            });
+
+            cells.length = 0;
+            bars.length = 0;
+            labels.length = 0;
+            revealedCounter = 0;
+            resetFrequencies(frequencies);
+            resetFrequencies(finalFrequencies);
+            startDraw();
+            board.unsuspendUpdate();
+
+        }
+
+        function startDraw() {
+            generateCells();
+            let freqArray = Object.values(frequencies);
+            drawHistogram(board, freqArray);
+            drawHistogram(board, zerosArray, baseX = sampledBarsXStart + 5.6);
+        }
+
+
+        startDraw();
+
 
 
     </script>
