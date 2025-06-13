@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>JSXGraph Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+    <style>
+        #box {
+            width: 1080px;
+            height: 600px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="box" class="jxgbox"></div>
+    <div>
+        <button onclick="reveal()"> Reveal</button>
+        <button onclick="reset()"> Reset and generate new population</button>
+    </div>
+
+    <pre>
+Ohje/tehtävät:
+
+Klikkaa "yksilöä" (palloa) mitataksesi yksilön pituuden. 
+
+
+    </pre>
+
+    <script>
+        const board = JXG.JSXGraph.initBoard('box', {
+            boundingbox: [0, 20, 36, 0],
+            axis: false,
+            showNavigation: false,
+            showCopyright: false
+        });
+
+        const barColors = [
+            "hsl(210, 100%, 90%)",
+            "hsl(210, 100%, 85%)",
+            "hsl(210, 100%, 80%)",
+            "hsl(210, 100%, 75%)",
+            "hsl(210, 100%, 70%)",
+            "hsl(210, 100%, 65%)",
+            "hsl(210, 100%, 60%)",
+            "hsl(210, 100%, 55%)",
+            "hsl(210, 100%, 50%)",
+            "hsl(210, 100%, 45%)",
+            "hsl(210, 100%, 40%)",
+            "hsl(210, 100%, 35%)"
+        ];
+
+        const fillOpacity = 0.7;
+
+        const gridSize = 15;
+        const pointRadius = 10;
+        const gridYStart = 2.5;
+        const gridXStart = 1.5;
+
+        const sampledBarsXStart = 22;
+
+        const cells = [];
+        const bars = [];
+        const labels = [];
+        const zerosArray = [0, 0, 0, 0, 0]
+
+        const binCount = 12;
+        const min = 140, max = 200;
+        const binWidth = (max - min) / binCount;
+        const bins = new Array(binCount).fill(0);
+
+        let revealedCounter = 0;
+
+        const counterLabel = board.create('text', [1.75, 2, () => `Individuals sampled: ${revealedCounter}`], {
+            anchorX: 'left',
+            anchorY: 'top',
+            fontSize: 16,
+            fixed: true,
+            highlight: false,
+            cssStyle: `background-color: rgba(111, 163, 230, 0.3); padding: 4px; border-radius: 4px;`
+        });
+
+        function randomNormal(mean = 170, stddev = 10) {
+            let u = 0, v = 0;
+            while (u === 0) u = Math.random();
+            while (v === 0) v = Math.random();
+            return mean + stddev * Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+        }
+
+        function getBarColor(n) {
+            return barColors[n];
+        }
+
+        function reveal() {
+            board.suspendUpdate();
+            for (let row = 0; row < cells.length; row++) {
+                for (let col = 0; col < cells[row].length; col++) {
+                    const cell = cells[row][col];
+                    cell.setAttribute({ fillColor: cell.customState.color });
+                    if (cell.customState.hidden) {
+                        revealCell(cell);
+                    }
+                }
+            }
+            
+            board.unsuspendUpdate();
+            updateBars();
+
+
+        }
+
+        function updateBars() {
+            board.suspendUpdate();
+            bars.forEach(obj => board.removeObject(obj));
+            labels.forEach(obj => board.removeObject(obj));
+            board.suspendUpdate();
+
+            bars.length = 0;
+            labels.length = 0;
+
+            const freqArray = Object.values(bins);
+            drawHistogram(board, freqArray);
+
+        }
+
+
+        function addToFreq(h) {
+            const belongsIn = Math.max(0, Math.min(binCount - 1, Math.floor((h - min) / binWidth)));
+            console.log(belongsIn);
+            bins[belongsIn]++;
+
+        }
+
+        function valueToColorHSL(value, min = 140, max = 200) {
+            const clamped = Math.max(min, Math.min(max, value));
+            const ratio = (clamped - min) / (max - min); // 0–1
+            const lightness = 90 - ratio * 60;
+            return `hsl(210, 100%, ${lightness}%)`;
+        }
+
+        function revealCell(cell) {
+            revealedCounter++;
+            cell.customState.hidden = false;
+            cell.setAttribute({ fillColor: cell.customState.color });
+            addToFreq(cell.customState.height);
+         
+        }
+
+
+        function generateCells() {
+            board.suspendUpdate();
+            for (let row = 0; row < gridSize; row++) {
+                cells[row] = [];
+                for (let col = 0; col < gridSize; col++) {
+                    const x = col + 0.5 + gridXStart;
+                    const y = row + 0.5 + gridYStart;
+                    const height = randomNormal().toFixed(2);
+                    const heightColor = valueToColorHSL(height);
+
+                    const cell = board.create('point', [x, y], {
+                        fixed: true,
+                        size: pointRadius,
+                        name: '',
+                        color: 'grey',
+                        fillOpacity: fillOpacity,
+                        highlight: false,
+                        showInfobox: false
+                    });
+
+                    cell.customState = { height: height, hidden: true, color: heightColor }
+                    cell.on('down', () => {
+                        if (cell.customState.hidden) {
+                            revealCell(cell);
+                               updateBars();
+                        }
+                    });
+                    cells[row][col] = cell;
+                }
+            }
+            board.unsuspendUpdate();
+        }
+
+
+        function drawHistogram(board, frequencies, baseX = sampledBarsXStart - 2.4, baseY = 2.5, maxHeight = 15) {
+            board.suspendUpdate();
+            //console.log(frequencies);
+            const barWidth = 0.8;
+            const maxCount = Math.max(...frequencies);
+
+            for (let i = 0; i < frequencies.length; i++) {
+                const color = getBarColor(i % 12);
+                const x0 = baseX + i * (barWidth + 0.2);
+                const x1 = x0 + barWidth;
+                const y1 = baseY + (frequencies[i] / maxCount) * maxHeight;
+
+                bars.push(board.create('polygon', [
+                    [x0, baseY],
+                    [x1, baseY],
+                    [x1, y1],
+                    [x0, y1]
+                ], {
+                    fillColor: color,
+                    fillOpacity: fillOpacity,
+                    strokeColor: '#339',
+                    strokeWidth: 1,
+                    fixed: true,
+                    vertices: { visible: false }
+                }));
+
+                labels.push(board.create('text', [x0 + barWidth / 2, y1 + 0.2, `${frequencies[i]}`], {
+                    anchorX: 'middle',
+                    anchorY: 'bottom',
+                    fixed: true
+                }));
+            }
+            board.unsuspendUpdate();
+        }
+
+        function reset() {
+           
+            board.suspendUpdate();
+            [...cells, ...bars, ...labels].forEach(obj => {
+                if (obj && typeof obj === 'object') {
+                    board.removeObject(obj);
+                }
+            });
+
+            cells.length = 0;
+            bars.length = 0;
+            labels.length = 0;
+            console.log(bins, 'resetting')
+            bins.fill(0);
+            console.log(bins)
+            revealedCounter = 0;
+            startDraw();
+            board.unsuspendUpdate();
+
+        }
+
+        function startDraw() {
+            generateCells();
+            let freqArray = Object.values(bins);
+            drawHistogram(board, freqArray);
+
+        }
+
+
+        startDraw();
+
+
+
+    </script>
+
+</body>
+
+</html>
