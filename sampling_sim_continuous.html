@@ -59,7 +59,7 @@ Klikkaa "yksilöä" (palloa) mitataksesi yksilön pituuden.
         const gridYStart = 2.5;
         const gridXStart = 1.5;
 
-        const sampledBarsXStart = 22;
+        const sampledBarsXStart = 21;
 
         const cells = [];
         const bars = [];
@@ -104,10 +104,8 @@ Klikkaa "yksilöä" (palloa) mitataksesi yksilön pituuden.
                     }
                 }
             }
-            
             board.unsuspendUpdate();
             updateBars();
-
 
         }
 
@@ -116,13 +114,11 @@ Klikkaa "yksilöä" (palloa) mitataksesi yksilön pituuden.
             bars.forEach(obj => board.removeObject(obj));
             labels.forEach(obj => board.removeObject(obj));
             board.suspendUpdate();
-
             bars.length = 0;
             labels.length = 0;
 
             const freqArray = Object.values(bins);
             drawHistogram(board, freqArray);
-
         }
 
 
@@ -130,7 +126,6 @@ Klikkaa "yksilöä" (palloa) mitataksesi yksilön pituuden.
             const belongsIn = Math.max(0, Math.min(binCount - 1, Math.floor((h - min) / binWidth)));
             console.log(belongsIn);
             bins[belongsIn]++;
-
         }
 
         function valueToColorHSL(value, min = 140, max = 200) {
@@ -145,7 +140,6 @@ Klikkaa "yksilöä" (palloa) mitataksesi yksilön pituuden.
             cell.customState.hidden = false;
             cell.setAttribute({ fillColor: cell.customState.color });
             addToFreq(cell.customState.height);
-         
         }
 
 
@@ -162,7 +156,8 @@ Klikkaa "yksilöä" (palloa) mitataksesi yksilön pituuden.
                     const cell = board.create('point', [x, y], {
                         fixed: true,
                         size: pointRadius,
-                        name: '',
+                        name: height,
+                        label: { visible: false },
                         color: 'grey',
                         fillOpacity: fillOpacity,
                         highlight: false,
@@ -173,7 +168,21 @@ Klikkaa "yksilöä" (palloa) mitataksesi yksilön pituuden.
                     cell.on('down', () => {
                         if (cell.customState.hidden) {
                             revealCell(cell);
-                               updateBars();
+                            cell.label.setAttribute({ visible: true });
+                            updateBars();
+                        }
+                    });
+                    cell.on('over', () => {
+                        if (!cell.customState.hidden) {
+                            cell.label.setAttribute({ visible: true });
+                            board.update();
+                        }
+                    });
+
+                    cell.on('out', () => {
+                        if (!cell.customState.hidden) {
+                            cell.label.setAttribute({ visible: false });
+                            board.update();
                         }
                     });
                     cells[row][col] = cell;
@@ -185,9 +194,11 @@ Klikkaa "yksilöä" (palloa) mitataksesi yksilön pituuden.
 
         function drawHistogram(board, frequencies, baseX = sampledBarsXStart - 2.4, baseY = 2.5, maxHeight = 15) {
             board.suspendUpdate();
-            //console.log(frequencies);
-            const barWidth = 0.8;
+            const barWidth = 1.2;
             const maxCount = Math.max(...frequencies);
+
+            const minValue = 140;
+            const binWidth = (200 - 140) / binCount; // 5
 
             for (let i = 0; i < frequencies.length; i++) {
                 const color = getBarColor(i % 12);
@@ -214,12 +225,29 @@ Klikkaa "yksilöä" (palloa) mitataksesi yksilön pituuden.
                     anchorY: 'bottom',
                     fixed: true
                 }));
+
+                let labelText;
+                if (i === 0) {
+                    labelText = `<${minValue + binWidth}`; // <145
+                } else if (i === binCount - 1) {
+                    labelText = `>${min + binWidth * (binCount - 1)}`; // >195
+                } else {
+                    const lower = minValue + binWidth * i;
+                    const upper = lower + binWidth;
+                    labelText = `${lower}–${upper}`;
+                }
+
+                labels.push(board.create('text', [x0 + barWidth / 2, baseY - 0.5, labelText], {
+                    anchorX: 'middle',
+                    anchorY: 'top',
+                    fixed: true,
+                    fontSize: 10
+                }));
             }
             board.unsuspendUpdate();
         }
 
         function reset() {
-           
             board.suspendUpdate();
             [...cells, ...bars, ...labels].forEach(obj => {
                 if (obj && typeof obj === 'object') {
@@ -236,16 +264,13 @@ Klikkaa "yksilöä" (palloa) mitataksesi yksilön pituuden.
             revealedCounter = 0;
             startDraw();
             board.unsuspendUpdate();
-
         }
 
         function startDraw() {
             generateCells();
             let freqArray = Object.values(bins);
             drawHistogram(board, freqArray);
-
         }
-
 
         startDraw();
 
