@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>JSXGraph Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+    <style>
+        #box {
+            width: 1000px;
+            height: 600px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="box" class="jxgbox"></div>
+
+    <script>
+        const startDate = new Date('2000-04-01');
+        const endDate = new Date('2000-06-30');
+
+        const parseDate = (str) => {
+            const d = new Date(str);
+            return new Date(2000, d.getMonth(), d.getDate());
+        };
+        
+        const board = JXG.JSXGraph.initBoard('box', {
+            boundingbox: [startDate, 25, endDate, -10],
+            axis: true
+        });
+        const loadData = async () => {
+            const temps = await fetch('daily_averages_by_year.json').then(res => res.json());
+
+
+        }
+
+
+
+    </script>
+
+</body>
+
+</html>
