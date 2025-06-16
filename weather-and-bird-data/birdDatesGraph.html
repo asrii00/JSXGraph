@@ -4,73 +4,188 @@
     <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
     <script src="birdDates.js"></script>
     <script src="thermal_summer_starts2.js"></script>
+    <script src="daily_averages_by_year_2020_start.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+    <style>
+
+    </style>
 </head>
 
 <body>
-    <div id="jxgbox" style="width:1200px; height:800px;"></div>
+    <div id="jxgbox" style="width:1200px; height:1000px;"></div>
+    <p> Kiuru: punainen, peippo: sininen, västäräkki: vihreä, pääskyt: keltainen</p>
     <script>
+
         const board = JXG.JSXGraph.initBoard('jxgbox', {
-            boundingbox: [-2, 2021, 95, 2026],
-            axis: true
+            boundingbox: [15, 2021.5, 95, 2026],
+            axis: false, 
+            showCopyright: false
+        });
+        const baseDate = new Date(2025, 2, 1);
+
+        //Year labels
+        [2022, 2023, 2024, 2025].forEach(year => {
+            const str = year.toString()
+            const label = board.create('text', [20, year - 0.1, str], {
+                anchorX: 'middle',
+                anchorY: 'top',
+                fontSize: 22,
+                fixed: true,
+                highlight: false,
+                cssStyle: `background-color: rgba(111, 163, 230, 0.3); padding: 4px; border-radius: 4px;`
+            });
+        })
+
+        //Temperature graph
+        Object.keys(temps).forEach((year, i) => {
+            const y = Number(year);
+            const tempData = temps[y];
+
+            // Sort data by date just in case
+            const sorted = [...tempData].sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            const points = sorted.map(d => {
+                const date = new Date(d.date);
+                const x = calculateDayDiff(date, i, false); 
+                const temp = Number(d.daily_avg_temp);
+                const yCoord = -temp * 0.02 + y + 0.4;
+                return [x, yCoord];
+            });
+
+            board.create('curve', [points], {
+                strokeColor: 'lightblue',
+                strokeWidth: 2,
+                opacity: 0.7
+            });
+
+            const refY = -10 * 0.02 + y + 0.4;
+            board.create('line', [[0, refY], [100, refY]], {
+                strokeColor: 'black',
+                dash: 2,
+                fixed: true,
+                opacity: 0.5
+            });
+            board.create('text', [15, refY, '10°C'], {
+                anchorX: 'left',
+                anchorY: 'bottom'
+            });
+
         });
 
+        //Bird sighting dates
         const allDateSets = [
             { dates: kiuruDates, color: 'red' },
             { dates: peippoDates, color: 'blue' },
             { dates: vastarakkiDates, color: 'green' },
             { dates: paaskytDates, color: 'orange' }
         ];
-        function calculateDayDiff(date, index) {
-            const offset = index * 0.1;
+
+        function calculateDayDiff(date, index, nonTemp = true) {
+            const offset = index * 0.05 + 0.45;
             const year = date.getFullYear();
             const marchFirst = new Date(year, 2, 1);
             const diffMs = date - marchFirst;
-            const diffDays = (diffMs / (1000 * 60 * 60 * 24)).toFixed(0);
-            return {
-                year: year + offset,
-                daysSinceMarch1: diffDays
-            };
+            const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24)) + 1;
+
+            if (nonTemp) {
+                return {
+                    year: year + offset,
+                    daysSinceMarch1: diffDays
+                };
+            }
+            else {
+                return diffDays;
+            }
         }
 
         allDateSets.forEach((set, index) => {
             const xDays = set.dates.map(date => {
                 return calculateDayDiff(date, index)
-
             });
-
             xDays.forEach(x => {
-                board.create('point', [x.daysSinceMarch1, x.year], {
+                board.create('point', [x.daysSinceMarch1, x.year - 0.6], {
                     name: '',
-                    size: 4,
+                    size: 3,
                     color: set.color,
                     opacity: 0.3,
                     fixed: true
                 });
             });
+
+            //Axis
+            const xAxisLine = board.create('line', [[0, 2022.4 + index], [100, 2022.4 + index]], {
+                straightFirst: false,
+                straightLast: false,
+                strokeColor: 'black'
+            });
+
+            const xTicks = board.create('ticks', [xAxisLine], {
+                drawLabels: true,
+                ticksDistance: 7,
+                label: {
+                    offset: [-6, -15]
+                },
+                minorTicks: 6
+            });
+
+            xTicks.generateLabelText = function (tick, zero) {
+                const dayOffset = Math.round(tick.usrCoords[1] - zero.usrCoords[1] - 1); // x-axis: usrCoords[1]
+                const labelDate = new Date(baseDate);
+                labelDate.setDate(baseDate.getDate() + dayOffset);
+
+                // (stop labeling after June 30)
+                const endDate = new Date(2025, 5, 29);
+                if (labelDate > endDate) return '';
+
+                const day = labelDate.getDate();
+                const month = labelDate.toLocaleString('fi-FI', { month: 'short' });
+
+                return `${day}. ${month} `;
+            };
         });
+
+        //Start of thermal summer
 
         const thermalSummerDays = thermalSummerStartsShort.map(entry => {
             const summerStartDate = new Date(entry.thermal_summer_start);
             return calculateDayDiff(summerStartDate, 4)
         })
+
         thermalSummerDays.forEach(x => {
-            const a = board.create('point', [x.daysSinceMarch1, x.year-0.5], {
-                name: '',
-                size: 1,
-                color: 'purple',
+            const a = board.create('point', [x.daysSinceMarch1, x.year - 0.85], {
+                name: 'Terminen kesä',
+                size: 0.5,
+                color: 'orange',
+                label: { strokeColor: 'brown' },
                 opacity: 0.9,
-                fixed: true
+                fixed: true,
             });
             const b = board.create('point', [x.daysSinceMarch1, x.year], {
                 name: '',
-                size: 1,
-                color: 'purple',
+                size: 0.5,
+                color: 'orange',
                 opacity: 0.9,
                 fixed: true
             });
-            const line = board.create('line',  [a, b], {straightFirst:false, straightLast:false, color: 'purple'})
+            const line = board.create('line', [a, b], { straightFirst: false, straightLast: false, color: 'orange', opacity: 0.7 })
         });
+
+        //Month divider lines
+        [31, 61, 92, 122].forEach(x => {
+            const a = board.create('point', [x + 1, 2021], {
+                name: '',
+                visible: false,
+                fixed: true
+            });
+            const b = board.create('point', [x + 1, 2026], {
+                name: '',
+                visible: false,
+                fixed: true
+            });
+            const line = board.create('line', [a, b], { straightFirst: false, straightLast: false, color: 'black', opacity: 0.1 })
+        });
+
+
 
     </script>
 </body>
