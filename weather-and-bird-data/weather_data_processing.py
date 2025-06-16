@@ -3,7 +3,7 @@ import pandas as pd
 ## provided by ChatGPT, I didn't write this, but it does what is needed :)
 
 # Load CSV
-df = pd.read_csv("2014-2024.csv")
+df = pd.read_csv("weather-and-bird-data/2025avgtemps.csv")
 
 # Combine date columns into a single datetime column
 df['date'] = pd.to_datetime(df[['Year', 'Month', 'Day']])
@@ -29,7 +29,7 @@ yearly_data = {
 }
 
 import json
-with open("daily_averages_by_year2.json", "w") as f:
+with open("daily_averages_by_year3.json", "w") as f:
     json.dump(yearly_data, f, indent=2, default=str)
 
 # Optional: also export per-year CSVs if preferred
@@ -39,7 +39,7 @@ for year, group in daily_avg.groupby('year'):
 # --- Optional: Thermal summer detection for full year ---
 
 # Load full daily averages again (April–September or full year recommended for this)
-df_full = pd.read_csv("2014-2024.csv")
+df_full = pd.read_csv("weather-and-bird-data/2025avgtemps.csv")
 df_full['date'] = pd.to_datetime(df_full[['Year', 'Month', 'Day']])
 df_full['Average temperature [°C]'] = pd.to_numeric(df_full['Average temperature [°C]'], errors='coerce')
 daily_full = df_full.groupby('date')['Average temperature [°C]'].mean().reset_index()
@@ -58,6 +58,6 @@ for year, group in daily_full.groupby('year'):
             break
 
 thermal_df = pd.DataFrame(thermal_summer_starts)
-thermal_df.to_json("thermal_summer_starts2.json", orient="records", indent=2)
+thermal_df.to_json("thermal_summer_starts3.json", orient="records", indent=2)
 
-print("✅ Daily averages (April–June) and thermal summer starts exported.")
+print("exported.")

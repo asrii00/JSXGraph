@@ -47,10 +47,6 @@ const thermal_summer_starts_long = [
 const thermalSummerStartsShort = [
 
   {
-    "year":2021,
-    "thermal_summer_start":"2021-05-12T00:00:00.000000000"
-  },
-  {
     "year":2022,
     "thermal_summer_start":"2022-05-29T00:00:00.000000000"
   },
@@ -61,5 +57,9 @@ const thermalSummerStartsShort = [
   {
     "year":2024,
     "thermal_summer_start":"2024-05-23T00:00:00.000000000"
+  },
+  {
+    "year":2025,
+    "thermal_summer_start":"2025-05-26T00:00:00.000000000"
   }
 ]
