@@ -1,0 +1,65 @@
+const thermal_summer_starts_long = [
+  {
+    "year":2014,
+    "thermal_summer_start":"2014-05-19T00:00:00.000000000"
+  },
+  {
+    "year":2015,
+    "thermal_summer_start":"2015-05-29T00:00:00.000000000"
+  },
+  {
+    "year":2016,
+    "thermal_summer_start":"2016-05-21T00:00:00.000000000"
+  },
+  {
+    "year":2017,
+    "thermal_summer_start":"2017-06-07T00:00:00.000000000"
+  },
+  {
+    "year":2018,
+    "thermal_summer_start":"2018-05-10T00:00:00.000000000"
+  },
+  {
+    "year":2019,
+    "thermal_summer_start":"2019-05-18T00:00:00.000000000"
+  },
+  {
+    "year":2020,
+    "thermal_summer_start":"2020-05-29T00:00:00.000000000"
+  },
+  {
+    "year":2021,
+    "thermal_summer_start":"2021-05-12T00:00:00.000000000"
+  },
+  {
+    "year":2022,
+    "thermal_summer_start":"2022-05-29T00:00:00.000000000"
+  },
+  {
+    "year":2023,
+    "thermal_summer_start":"2023-05-20T00:00:00.000000000"
+  },
+  {
+    "year":2024,
+    "thermal_summer_start":"2024-05-23T00:00:00.000000000"
+  }
+]
+const thermalSummerStartsShort = [
+
+  {
+    "year":2021,
+    "thermal_summer_start":"2021-05-12T00:00:00.000000000"
+  },
+  {
+    "year":2022,
+    "thermal_summer_start":"2022-05-29T00:00:00.000000000"
+  },
+  {
+    "year":2023,
+    "thermal_summer_start":"2023-05-20T00:00:00.000000000"
+  },
+  {
+    "year":2024,
+    "thermal_summer_start":"2024-05-23T00:00:00.000000000"
+  }
+]
