@@ -7,26 +7,58 @@
     <script src="daily_averages_by_year_2020_start.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
     <style>
-
+        #jxgbox {
+            margin: 2%
+        }
     </style>
 </head>
 
 <body>
-    <div id="jxgbox" style="width:1200px; height:1000px;"></div>
-    <p> Kiuru: punainen, peippo: sininen, västäräkki: vihreä, pääskyt: keltainen</p>
+    <div> Kuu kiurusta kesään? Havainnot eri lintulajeista kevään aikana ja termisen kesän alkupäivämäärät vuosina 2022-2025</div>
+    <div id="jxgbox" style="width:1200px; height:900px;"></div>
     <script>
 
         const board = JXG.JSXGraph.initBoard('jxgbox', {
-            boundingbox: [15, 2021.5, 95, 2026],
-            axis: false, 
-            showCopyright: false
+            boundingbox: [13.5, 2021.5, 94.5, 2025.55],
+            axis: false,
+            showCopyright: false,
+            showNavigation: false
         });
+
+        const allDateSets = [
+            { dates: kiuruDates, color: 'red', label: 'Kiuru' },
+            { dates: peippoDates, color: 'blue', label: 'Peippo' },
+            { dates: vastarakkiDates, color: 'green', label: 'Västäräkki' },
+            { dates: paaskytDates, color: 'orange', label: 'Pääskyt' }
+        ];
         const baseDate = new Date(2025, 2, 1);
+
+        //Species color indicators
+        board.create('polygon', [[16, 2021.5], [55, 2021.5], [55, 2021.7], [16, 2021.7]], {
+            fillColor: 'lightgrey',
+            vertices: { visible: false }
+        })
+        allDateSets.forEach((set, i) => {
+            board.create('text', [18.5 + i * 9, 2021.6, set.label], {
+                anchorX: 'left',
+                anchorY: 'middle',
+                fontSize: 18,
+                fixed: true,
+                highlight: false,
+                color: set.color
+            });
+            board.create('point', [18 + i * 9, 2021.6], {
+                fixed: true,
+                name: '',
+                highlight: false,
+                color: set.color
+            });
+        });
 
         //Year labels
         [2022, 2023, 2024, 2025].forEach(year => {
             const str = year.toString()
-            const label = board.create('text', [20, year - 0.1, str], {
+            const label = board.create('text', [17, year - 0.2, str], {
                 anchorX: 'middle',
                 anchorY: 'top',
                 fontSize: 22,
@@ -46,7 +78,10 @@
 
             const points = sorted.map(d => {
                 const date = new Date(d.date);
-                const x = calculateDayDiff(date, i, false); 
+                const x = calculateDayDiff(date, i, false);
+                if (x > 93){
+                    return [];
+                }
                 const temp = Number(d.daily_avg_temp);
                 const yCoord = -temp * 0.02 + y + 0.4;
                 return [x, yCoord];
@@ -58,27 +93,54 @@
                 opacity: 0.7
             });
 
-            const refY = -10 * 0.02 + y + 0.4;
-            board.create('line', [[0, refY], [100, refY]], {
-                strokeColor: 'black',
+            const refY10 = -10 * 0.02 + y + 0.4;
+            const refY0 = 0 * 0.02 + y + 0.4;
+            board.create('line', [[0, refY10], [93, refY10]], {
+                strokeColor: 'grey',
                 dash: 2,
                 fixed: true,
-                opacity: 0.5
+                opacity: 0.5, 
+                straightLast: false
             });
-            board.create('text', [15, refY, '10°C'], {
+            board.create('text', [15, refY10, '10°C'], {
+                anchorX: 'left',
+                anchorY: 'bottom'
+            });
+            board.create('text', [15, refY0, '0°C'], {
                 anchorX: 'left',
                 anchorY: 'bottom'
             });
 
         });
 
+
+        //Start of thermal summer each year (line)
+
+        const thermalSummerDays = thermalSummerStartsShort.map(entry => {
+            const summerStartDate = new Date(entry.thermal_summer_start);
+            return calculateDayDiff(summerStartDate, 4)
+        })
+
+        thermalSummerDays.forEach(x => {
+            const a = board.create('point', [x.daysSinceMarch1, x.year - 0.85], {
+                name: 'Terminen kesä',
+                size: 0.5,
+                color: 'orange',
+                label: { strokeColor: 'brown' },
+                opacity: 0.9,
+                fixed: true,
+            });
+            const b = board.create('point', [x.daysSinceMarch1, x.year], {
+                name: '',
+                size: 0.5,
+                color: 'orange',
+                opacity: 0.9,
+                fixed: true
+            });
+            const line = board.create('line', [a, b], { straightFirst: false, straightLast: false, color: 'orange', opacity: 0.7 })
+        });
+
         //Bird sighting dates
-        const allDateSets = [
-            { dates: kiuruDates, color: 'red' },
-            { dates: peippoDates, color: 'blue' },
-            { dates: vastarakkiDates, color: 'green' },
-            { dates: paaskytDates, color: 'orange' }
-        ];
 
         function calculateDayDiff(date, index, nonTemp = true) {
             const offset = index * 0.05 + 0.45;
@@ -103,17 +165,37 @@
                 return calculateDayDiff(date, index)
             });
             xDays.forEach(x => {
-                board.create('point', [x.daysSinceMarch1, x.year - 0.6], {
-                    name: '',
+                let daysToThermalSummer = 0;
+                thermalSummerDays.forEach(day => {
+                    if (Math.floor(day.year) == Math.floor(x.year)) {
+                        daysToThermalSummer = day.daysSinceMarch1 - x.daysSinceMarch1;
+                        return;
+                    }
+                })
+                const str = "Päiviä kesän alkuun: " + daysToThermalSummer.toString();
+                const point = board.create('point', [x.daysSinceMarch1, x.year - 0.6], {
+                    name: str,
                     size: 3,
                     color: set.color,
                     opacity: 0.3,
-                    fixed: true
+                    fixed: true,
+                    highlight: false,
+                    showInfobox: false,
+                    label: { visible: false },
                 });
+
+                point.on('over', () => {
+                    point.label.setAttribute({ visible: true });
+                });
+
+                point.on('out', () => {
+                    point.label.setAttribute({ visible: false });
+                });
+
             });
 
             //Axis
-            const xAxisLine = board.create('line', [[0, 2022.4 + index], [100, 2022.4 + index]], {
+            const xAxisLine = board.create('line', [[0, 2022.4 + index], [93, 2022.4 + index]], {
                 straightFirst: false,
                 straightLast: false,
                 strokeColor: 'black'
@@ -144,45 +226,19 @@
             };
         });
 
-        //Start of thermal summer
-
-        const thermalSummerDays = thermalSummerStartsShort.map(entry => {
-            const summerStartDate = new Date(entry.thermal_summer_start);
-            return calculateDayDiff(summerStartDate, 4)
-        })
-
-        thermalSummerDays.forEach(x => {
-            const a = board.create('point', [x.daysSinceMarch1, x.year - 0.85], {
-                name: 'Terminen kesä',
-                size: 0.5,
-                color: 'orange',
-                label: { strokeColor: 'brown' },
-                opacity: 0.9,
-                fixed: true,
-            });
-            const b = board.create('point', [x.daysSinceMarch1, x.year], {
-                name: '',
-                size: 0.5,
-                color: 'orange',
-                opacity: 0.9,
-                fixed: true
-            });
-            const line = board.create('line', [a, b], { straightFirst: false, straightLast: false, color: 'orange', opacity: 0.7 })
-        });
-
         //Month divider lines
         [31, 61, 92, 122].forEach(x => {
-            const a = board.create('point', [x + 1, 2021], {
+            const a = board.create('point', [x + 1, 2021.75], {
                 name: '',
                 visible: false,
                 fixed: true
             });
-            const b = board.create('point', [x + 1, 2026], {
+            const b = board.create('point', [x + 1, 2025.5], {
                 name: '',
                 visible: false,
                 fixed: true
             });
-            const line = board.create('line', [a, b], { straightFirst: false, straightLast: false, color: 'black', opacity: 0.1 })
+            const line = board.create('line', [a, b], { straightFirst: false, straightLast: false, color: 'black', opacity: 0.15 })
         });
 
 
