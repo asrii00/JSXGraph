@@ -10,16 +10,31 @@
         #jxgbox {
             margin: 2%
         }
+        div{
+            margin: 8px;
+        }
     </style>
 </head>
 
 <body>
-    <div> Kuu kiurusta kesään? Havainnot eri lintulajeista kevään aikana ja termisen kesän alkupäivämäärät vuosina 2022-2025</div>
+    <div> Kuu kiurusta kesään? Havainnot eri lintulajeista kevään aikana ja termisen kesän alkupäivämäärät Oulun alueella vuosina 2022-2025</div>
     <div id="jxgbox" style="width:1200px; height:900px;"></div>
+    <div style="width: 1200px;">
+        Kun siirrät hiiren yksittäisen havaintopisteen päälle, näet montako päivää havainnosta kului termisen kesän alkuun. Pisteen tummempi väri tarkoittaa, että samana päivänä tehtiin useampia havaintoja.<br> Vaaleansininen käyrä kuvaa vuorokauden keskilämpötilaa.
+        Terminen kesä määritellään alkavaksi silloin, kun vuorokauden keskilämpötila kohoaa 10 asteen yläpuolelle vähintään 5 peräkkäisen päivän ajaksi. <br> <br>
+
+        1. Onko sanonnassa "Kuu kiurusta kesään, puoli kuuta peipposesta, västäräkistä vähäsen, pääskysestä ei päivääkään" perää, jos tarkastelet 
+        kuvaajaa silmämääräisesti ja jos lintulaji voidaan katsoa saapuneeksi, kun siitä on tehty havainto kolmena eri päivänä? <br>
+        2. Montako päivää ennen termisen kesän alkua kiuru saapuu keskimäärin? Saapuminen = kolmas havaintopäivä. Entä peippo, västäräkki ja pääskyt? (Kiuru: 40,5 pv, peippo: 49,25pv, västäräkki: 29,5pv, pääskyt: 8.75pv ) <br>
+        3. Mikä on vuoden ensimmäisten pääskyhavaintojen ajankohtien vaihteluväli ja vaihteluvälin pituus, suhteessa termisen kesän alkuun? (13-49 pv eli 36 päivää) <br>
+        4. Huomaatko silmämääräisesti tarkastellen mitään yhteyttä/korrelaatiota pääskyhavaintojen ja vuorokauden keskilämpötilan välillä? (Näyttää siltä, että pääskyhavaintoja alkaa tulla useampia, kun keskilämpötila kohoaa 10 asteen tuntumaan tai ainakin yli 5 asteen.)
+        <br> <br>
+        Datan lähteet: Laji.fi, Ilmatieteen laitos
+    </div>
     <script>
 
         const board = JXG.JSXGraph.initBoard('jxgbox', {
-            boundingbox: [13.5, 2021.5, 94.5, 2025.55],
+            boundingbox: [13.5, 2021.5, 94.5, 2025.6],
             axis: false,
             showCopyright: false,
             showNavigation: false
@@ -130,7 +145,7 @@
                 opacity: 0.9,
                 fixed: true,
             });
-            const b = board.create('point', [x.daysSinceMarch1, x.year], {
+            const b = board.create('point', [x.daysSinceMarch1, x.year - 0.1], {
                 name: '',
                 size: 0.5,
                 color: 'orange',
