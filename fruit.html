@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>JSXGraph Example</title>
+  <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+  <style>
+    #box {
+      width: 1000px;
+      height: 600px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="box" class="jxgbox"></div>
+
+  <script>
+    const board = JXG.JSXGraph.initBoard('box', {
+      boundingbox: [-1, 10, 10, -1],
+      axis: false
+    });
+
+    function drawApple(x, y) {
+      const leafSize = 0.2;
+      const red = board.create('point', [x, y], { color: 'red', size: 20, name: '' , layer: 5});
+
+      const highlight = board.create('point', [x-0.1, y + 0.15], { color: 'white', name: '', opacity: 0.7});
+      const topbit = board.create('point', [x, y + 0.75 ], { color: 'white', name: '', size: 20, layer: 8 });
+      const a = board.create('point', [x, y+0.6], { name: '', visible: false });
+      const b = board.create('point', [x, y+0.3], { name: '', visible: false });
+      const l = board.create('line', [a, b], { layer: 10, color: 'black', straightFirst: false, straightLast: false, strokeWidth: 3 })
+
+
+      const lx = x + 0.01;
+      const ly = y + 0.35;
+      points = [[lx, ly], [lx + leafSize, ly + leafSize], [lx, ly + leafSize / 3]];
+      board.create('ellipse', points, {
+        strokeColor: 'green',
+        fillColor: 'green',
+        strokeWidth: 2, 
+        layer: 9
+      });
+    }
+    drawApple(2, 1)
+    drawApple(5, 1)
+    drawApple(5, 5)
+    drawApple(9, 3)
+
+  </script>
+
+</body>
+
+</html>
