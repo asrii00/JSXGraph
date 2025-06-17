@@ -20,22 +20,25 @@
   <script>
     const board = JXG.JSXGraph.initBoard('box', {
       boundingbox: [-1, 10, 10, -1],
-      axis: false
+      axis: false, 
+      showCopyright: false, 
+      showNavigation: false
     });
 
-    function drawApple(x, y) {
-      const leafSize = 0.2;
-      const red = board.create('point', [x, y], { color: 'red', size: 20, name: '' , layer: 5});
+    function drawApple(x, y, radius) {
+      
+      const red = board.create('point', [x, y], { color: 'red', size: radius, name: '' , layer: 5});
+      const unit = radius/200;
+      const leafSize = 2 * unit;
 
-      const highlight = board.create('point', [x-0.1, y + 0.15], { color: 'white', name: '', opacity: 0.7});
-      const topbit = board.create('point', [x, y + 0.75 ], { color: 'white', name: '', size: 20, layer: 8 });
-      const a = board.create('point', [x, y+0.6], { name: '', visible: false });
-      const b = board.create('point', [x, y+0.3], { name: '', visible: false });
+      const highlight = board.create('point', [x-unit, y + 1.7*unit], { color: 'white', name: '', opacity: 0.7, size: radius * 0.15});
+      const topbit = board.create('point', [x, y + 7.5*unit ], { color: 'white', name: '', size: radius, layer: 8, highlight: false });
+      const a = board.create('point', [x, y+6*unit], { name: '', visible: false });
+      const b = board.create('point', [x, y+3.25*unit], { name: '', visible: false });
       const l = board.create('line', [a, b], { layer: 10, color: 'black', straightFirst: false, straightLast: false, strokeWidth: 3 })
 
-
-      const lx = x + 0.01;
-      const ly = y + 0.35;
+      const lx = x + 0.1*unit;
+      const ly = y + 3.55*unit;
       points = [[lx, ly], [lx + leafSize, ly + leafSize], [lx, ly + leafSize / 3]];
       board.create('ellipse', points, {
         strokeColor: 'green',
@@ -44,10 +47,13 @@
         layer: 9
       });
     }
-    drawApple(2, 1)
-    drawApple(5, 1)
-    drawApple(5, 5)
-    drawApple(9, 3)
+ 
+    drawApple(9, 1, 20)
+    drawApple(9, 5, 20)
+    drawApple(9, 3, 10)
+    drawApple(8.7, 3.8, 10)
+    drawApple(9, 7, 30)
+
 
   </script>
 
