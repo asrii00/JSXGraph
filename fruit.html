@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
   <style>
     #box {
-      width: 1000px;
+      width: 1800px;
       height: 810px;
     }
   </style>
@@ -19,27 +19,54 @@
 
   <script>
     const board = JXG.JSXGraph.initBoard('box', {
-      boundingbox: [0, 14.95, 16, 0],
+      boundingbox: [-2, 13, 27, 0],
       axis: false,
       showCopyright: false,
       showNavigation: false
     });
 
     const array = [];
-    const xStart = 2;
-    const axisXStart = 0.5;
+    const xStart = 0;
+    const axisXStart = 0;
+    const axisY = 0.5;
+    const axisLength = 26;
     const yStart = 11;
+    const scalingFactor = 5;
 
+    // NORMAL DISTRIBUTION
+    const mu = 90 / scalingFactor;
+    const sigma = 10 / scalingFactor;
+    const normalPDF = function (x) {
+      return (15 * (1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-((x - mu) ** 2) / (2 * sigma ** 2)) + 0.5);
+    };
+
+    board.create('functiongraph', [normalPDF, mu - 4 * sigma, mu + 4 * sigma], {
+      strokeColor: 'green',
+      opacity: 0.3,
+      strokeWidth: 2,
+      fillColor: 'lightgreen',      // fill color
+      fillOpacity: 0.1,
+    });
+
+    function randomNormal(mean = 90, stddev = 10) {
+      let u = 0, v = 0;
+      while (u === 0) u = Math.random();
+      while (v === 0) v = Math.random();
+      return mean + stddev * Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+    }
+
+
+    // APPLE GRAPHIC
     //kinda finicky/breaks if you change canvas size or board boundingbox in the wrong way :'D
     function drawApple(x, y, radius) {
-      const red = board.create('point', [x, y], { color: 'red', size: radius, name: '', layer: 5 });
+      const red = board.create('point', [x, y], { color: 'red', size: radius, name: '', layer: 5, fixed: true });
       const unit = radius / 200;
       const leafSize = 2 * unit;
 
-      const highlight = board.create('point', [x - unit * 2, y + 1.7 * unit], { color: 'white', name: '', opacity: 0.8, size: radius * 0.05 })
-      const topbit = board.create('point', [x, y + 7.5 * unit], { color: 'white', name: '', size: radius, layer: 8, highlight: false });
-      const a = board.create('point', [x, y + 6 * unit], { name: '', visible: false });
-      const b = board.create('point', [x, y + 3.25 * unit], { name: '', visible: false });
+      const highlight = board.create('point', [x - unit * 2, y + 1.7 * unit], { color: 'white', name: '', opacity: 0.8, size: radius * 0.05, fixed: true })
+      //const topbit = board.create('point', [x, y + 7.5 * unit], { color: 'white', name: '', size: radius, layer: 8, highlight: false });
+      const a = board.create('point', [x, y + 6 * unit], { name: '', visible: false, fixed: true });
+      const b = board.create('point', [x, y + 3.25 * unit], { name: '', visible: false, fixed: true });
       const l = board.create('line', [a, b], { layer: 10, color: 'black', straightFirst: false, straightLast: false, strokeWidth: 3 })
 
       const lx = x + 0.1 * unit;
@@ -54,8 +81,9 @@
       });
     }
 
-    const axisStart = board.create('point', [axisXStart, 0.5], { visible: false })
-    const axisEnd = board.create('point', [15.5, 0.5], { visible: false })
+    //AXIS
+    const axisStart = board.create('point', [axisXStart, axisY], { visible: false })
+    const axisEnd = board.create('point', [axisLength, axisY], { visible: false })
     const axis = board.create('line', [axisStart, axisEnd], { straightFirst: false, straightLast: false, strokeColor: 'black', strokeWidth: 1 })
 
     const xTicks = board.create('ticks', [axis], {
@@ -64,35 +92,37 @@
       label: {
         offset: [-6, -15]
       },
-      minorTicks: 3
+      minorTicks: 4
     });
 
     xTicks.generateLabelText = function (tick, zero) {
-      return (tick.usrCoords[1] * 10).toFixed(0); 
+      return (tick.usrCoords[1] * 5).toFixed(0);
     };
-    board.create('text', [15, 0.4, 'päivää'], {
-                anchorX: 'center',
-                anchorY: 'center'
-            })
+    board.create('text', [axisLength, 0.4, 'päivää'], {
+      anchorX: 'center',
+      anchorY: 'center'
+    })
 
-    function getRandomBetween(min, max) {
-      return Math.random() * (max - min) + min;
-    }
-
+    //GENERATE NORMALLY DISTRIBUTED TIMES TIL HARVEST
     for (let i = 0; i < 10; i++) {
-      const randomLength = getRandomBetween(70, 110);
+      const randomLength = randomNormal();
       array.push({ i: i, length: randomLength })
     }
 
+    // DRAW MAIN VISUALIZATION
     array.forEach((tree, i) => {
       const treeNumberStr = "Puu nro. " + (i + 1)
       const y = yStart - i * 1;
-      const endOfLine = xStart + tree.length / 10;
-      const label = board.create('text', [xStart - 1.5, y, treeNumberStr])
+      const endOfLine = xStart + tree.length / scalingFactor;
+      const label = board.create('text', [xStart - 1.5, y, treeNumberStr]);
 
-      const a = board.create('point', [xStart, y], { visible: false })
-      const b = board.create('point', [endOfLine, y], { visible: false })
+      const a = board.create('point', [xStart, y], { visible: false });
+      const b = board.create('point', [endOfLine, y], { visible: false });
+
       const l = board.create('line', [a, b], { straightFirst: false, straightLast: false, color: 'green', strokeWidth: 5 })
+      const c = board.create('point', [endOfLine, y - 0.1], { visible: false })
+      const d = board.create('point', [endOfLine, axisY], { color: 'red', opacity: 0.5, name: '', fixed: true })
+      const dashed = board.create('line', [c, d], { straightFirst: false, straightLast: false, color: 'grey', dash: 2, strokeWidth: 2, layer: 1 })
 
       drawApple(endOfLine, y + 0.35, 10)
     })
