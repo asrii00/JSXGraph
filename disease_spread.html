@@ -10,6 +10,9 @@
       width: 600px;
       height: 600px;
     }
+    div {
+      margin: 8px;
+    }
   </style>
 </head>
 
@@ -21,11 +24,17 @@
     <button onclick="pause()"> Pause </button>
     <button onclick="continueSim()"> Continue </button>
   </div>
+  <div> Blue = healthy individual <br>
+  Red = infected individual, can infect others <br>
+  Orange = recovered individual (recovery happens 100 timesteps after infection) <br>
+Gray = individual died from infection </div>
 
   <script>
     const board = JXG.JSXGraph.initBoard('box', {
       boundingbox: [-1, 30, 30, -1],
-      axis: false
+      axis: false, 
+      showCopyright: false, 
+      showNavigation: false
     });
     const g = board.create('grid', [], {});
 
