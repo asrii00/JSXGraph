@@ -17,55 +17,7 @@
 
   <div id="box" class="jxgbox"></div>
 
-  <script>
-    const board = JXG.JSXGraph.initBoard('box', {
-      boundingbox: [-1, 30, 30, -1],
-      axis: false
-    });
-    const g = board.create('grid', [], {});
-
-    let flag = true;
-    const points = [];
-    const startingPoints = [[1, 5], [15, 10], [8, 1], [25, 17]]
-    startingPoints.forEach(i=>{
-      const point = board.create('point', [i[0], i[1]], { size: 5, fixed: true });
-      points.push(point);
-      move(point);
-
-    });
-    
-
-
-    function movePointRandomly(point) {
-      const pos = point.coords.usrCoords; 
-      let x = pos[1];
-      let y = pos[2];
-
-      const direction = Math.floor(Math.random() * 4); 
-
-      if (direction === 0 && y < 30) y += 1;        // up
-      else if (direction === 1 && y > 0) y -= 1;    // down
-      else if (direction === 2 && x > 0) x -= 1;    // left
-      else if (direction === 3 && x < 30) x += 1;   // right
-
-      point.moveTo([x, y], 200);
-      board.update();
-    }
-
-    function sleep(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-    async function move(p) {
-      while (flag) {
-        await sleep(250);
-        movePointRandomly(p);
-      }
-    }
-
-    move(p1);
-
-
-  </script>
+  <script src="disease_spread.js"></script>
 
 </body>
 
