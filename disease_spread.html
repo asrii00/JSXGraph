@@ -43,7 +43,7 @@
       showNavigation: false
     });
     const g = board.create('grid', [], {});
-    
+
     const sliderXStart = 1;
     const sliderXEnd = 5;
     const firstSliderY = 3;
@@ -52,8 +52,8 @@
     const counterTextY = 28.5;
     const graphStartX = 32;
 
-    const divider = board.create('polygon', [[-1, -1],[graphStartX -2, -1], [graphStartX-2, 30], [-1, 30]], { fillColor: 'grey', opacity: 0.1, highlight: false, vertices: {visible: false},borders: { strokeColor: 'grey' }, })
-  
+    const divider = board.create('polygon', [[-1, -1], [graphStartX - 2, -1], [graphStartX - 2, 30], [-1, 30]], { fillColor: 'grey', opacity: 0.1, highlight: false, vertices: { visible: false }, borders: { strokeColor: 'grey' }, })
+
     const yAxisForGraph = board.create('line', [[graphStartX, 0], [graphStartX, 25.5]], { color: 'black', strokeWidth: 1, straightFirst: false, straightLast: false })
     const xAxisForGraph = board.create('line', [[graphStartX, 0], [60.8, 0]], { color: 'black', strokeWidth: 1, straightFirst: false, straightLast: false })
 
@@ -111,23 +111,26 @@
     let infectedIndividuals = 0;
     let recoveredIndividuals = 0;
 
-    const counterText = board.create('text', [graphStartX + 0.5, counterTextY - 1, 'Step: 0'], {fontSize: 14})
-    const infectedText = board.create('text', [graphStartX + 0.5, counterTextY, 'Infected individuals: 1'], {fontSize: 14})
-    const recoveredText = board.create('text', [graphStartX + 9.5, counterTextY, 'Recovered individuals: 0'], {fontSize: 14})
-    const deadText = board.create('text', [graphStartX + 19.5, counterTextY, 'Dead individuals: 0'], {fontSize: 14})
+    const counterText = board.create('text', [graphStartX + 0.5, counterTextY - 1, 'Step: 0'], { fontSize: 14 })
+    const infectedText = board.create('text', [graphStartX + 0.5, counterTextY, 'Infected individuals: 1'], { fontSize: 14 })
+    const recoveredText = board.create('text', [graphStartX + 9.5, counterTextY, 'Recovered individuals: 0'], { fontSize: 14 })
+    const deadText = board.create('text', [graphStartX + 19.5, counterTextY, 'Dead individuals: 0'], { fontSize: 14 })
 
     const infectedCounts = [];
     const recoveredCounts = [];
     const deadCounts = [];
     const xAtStep = [];
     const graphPoints = [];
-    let curveForInfected = null;
-    let curveForRecovered = null;
-    let curveForDead = null;
+    // let curveForInfected = null;
+    // let curveForRecovered = null;
+    // let curveForDead = null;
+    const curveForInfected = { ref: null };
+    const curveForRecovered = { ref: null };
+    const curveForDead = { ref: null };
 
     const xTicks = board.create('ticks', [xAxisForGraph], {
       drawLabels: true,
-      ticksDistance: 50/xDivider,
+      ticksDistance: 50 / xDivider,
       label: {
         offset: [-6, -15]
       },
@@ -135,7 +138,7 @@
     });
 
     xTicks.generateLabelText = function (tick, zero) {
-      return ((tick.usrCoords[1] -graphStartX) * xDivider ).toFixed(0);
+      return ((tick.usrCoords[1] - graphStartX) * xDivider).toFixed(0);
     };
 
     const yTicks = board.create('ticks', [yAxisForGraph], {
@@ -148,7 +151,7 @@
     });
 
     yTicks.generateLabelText = function (tick, zero) {
-      return (tick.usrCoords[2] *2 ).toFixed(0);
+      return (tick.usrCoords[2] * 2).toFixed(0);
     };
 
 
@@ -324,24 +327,26 @@
       xAtStep.push(num);
     }
 
-    function updateSingleGraph(curve, yArray, color){
-      //I just couldn't get the curve to update/display, so for now I'm just removing and recreating it.
-      if (curve) {
-        board.removeObject(curve);
-      }
-      if (xAtStep.length >= 2) {
-        curve = board.create('curve', [
-          xAtStep,
-          yArray
-        ], {
-          strokeColor: color,
-          strokeWidth: 2,
-          opacity: 1,
-          layer: 11
-        });
-      }
-      board.update();
-    }
+    function updateSingleGraph(curveObj, yArray, color) {
+  if (curveObj.ref) {
+    console.log('removing ', curveObj, curveObj.ref)
+    board.removeObject(curveObj.ref);
+  }
+
+  if (xAtStep.length >= 2) {
+    curveObj.ref = board.create('curve', [
+      xAtStep,
+      yArray
+    ], {
+      strokeColor: color,
+      strokeWidth: 2,
+      opacity: 0.9,
+      layer: 11
+    });
+  }
+
+  board.update();
+}
 
     function sleep(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
