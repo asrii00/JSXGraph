@@ -7,9 +7,10 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
   <style>
     #box {
-      width: 600px;
+      width: 1200px;
       height: 600px;
     }
+
     div {
       margin: 8px;
     }
@@ -25,24 +26,33 @@
     <button onclick="continueSim()"> Continue </button>
   </div>
   <div> Blue = healthy individual <br>
-  Red = infected individual, can infect others <br>
-  Orange = recovered individual (recovery happens 100 timesteps after infection) <br>
-Gray = individual died from infection </div>
+    Red = infected individual, can infect others <br>
+    Orange = recovered individual (recovery happens 100 timesteps after infection) <br>
+    Gray = individual died from infection </div>
 
   <script>
+    //TODO: 
+    // reset button 
+    if (JXG.JSXGraph.boards && JXG.JSXGraph.boards.box) {
+      JXG.JSXGraph.freeBoard(JXG.JSXGraph.boards.box);
+    }
     const board = JXG.JSXGraph.initBoard('box', {
-      boundingbox: [-1, 30, 30, -1],
-      axis: false, 
-      showCopyright: false, 
+      boundingbox: [-1, 30, 60, -1],
+      axis: false,
+      showCopyright: false,
       showNavigation: false
     });
     const g = board.create('grid', [], {});
+    const divider = board.create('line', [[30, 1], [30, 30]], { color: 'grey' })
+    const yAxisForGraph = board.create('line', [[31, 0], [31, 31]], { color: 'black', strokeWidth: 1, straightFirst: false, straightLast: false })
+    const xAxisForGraph = board.create('line', [[31, 0], [60, 0]], { color: 'black', strokeWidth: 1, straightFirst: false, straightLast: false })
 
     const sliderXStart = 1;
     const sliderXEnd = 5;
     const firstSliderY = 3;
     const secondSliderY = 2;
     const thirdSliderY = 1;
+    const counterTextY = 29;
 
     // slider: number of individuals
     const sliderIndividuals = board.create('slider', [
@@ -84,6 +94,9 @@ Gray = individual died from infection </div>
     const startingPoints = [];
     const deadPoints = [];
 
+    const maxSteps = 500;
+    const xDivider = 17.5;
+
     let numberOfIndividuals = 20;
     let infectionChance = 0.5;
     let deathChance = 0.05;
@@ -91,7 +104,20 @@ Gray = individual died from infection </div>
     let flagKeepGoing = true;
 
     let stepCounter = 0;
-    const counterText = board.create('text', [0, 0, 'Step: 0'])
+    let infectedIndividuals = 0;
+    let recoveredIndividuals = 0;
+
+    const counterText = board.create('text', [31.5, counterTextY - 1, 'Step: 0'])
+    const infectedText = board.create('text', [31.5, counterTextY, 'Infected individuals: 1'])
+    const recoveredText = board.create('text', [38.5, counterTextY, 'Recovered individuals: 0'])
+    const deadText = board.create('text', [46.5, counterTextY, 'Dead individuals: 0'])
+
+    const infectedCounts = [];
+    const xAtStep = [];
+    const graphPoints = [];
+    let curve = null;
+
+
 
     function randomInt(min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -117,27 +143,27 @@ Gray = individual died from infection </div>
 
     function createPoint(x, y) {
       const potentialKey = `${x},${y}`;
-      if (!occupied.has(potentialKey)) {
-        const id = pointMap.size + 1;
-        const point = board.create('point', [x, y], {
-          name: id,
-          fixed: true,
-          size: 5,
-          color: 'blue',
-          highlight: false,
-          layer: 5
-        });
 
-        point.customState = 'clean';
-        point.gridX = x;
-        point.gridY = y;
-        point.infectedOnStep = null;
+      const id = pointMap.size + 1;
+      const point = board.create('point', [x, y], {
+        name: id,
+        fixed: true,
+        size: 5,
+        color: 'blue',
+        highlight: false,
+        layer: 5
+      });
 
-        point.id = id;
-        const key = `${point.gridX},${point.gridY}`;
-        pointMap.set(id, point);
-        occupied.add(key);
-      }
+      point.customState = 'clean';
+      point.gridX = x;
+      point.gridY = y;
+      point.infectedOnStep = null;
+
+      point.id = id;
+      const key = `${point.gridX},${point.gridY}`;
+      pointMap.set(id, point);
+      occupied.add(key);
+
     }
 
 
@@ -200,10 +226,12 @@ Gray = individual died from infection </div>
             if ((dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0)) {
               if (otherPoint.customState == 'infected') {
                 const rand = Math.random();
-                if (rand < infectionChance) {
+                if (rand < infectionChance && point.customState === 'clean') { //second check, though the break should make this redundant
                   point.customState = 'infected';
                   point.infectedOnStep = stepCounter;
                   point.setAttribute({ color: 'red', layer: 5 });
+                  infectedIndividuals++;
+                  break;
                 }
               }
             }
@@ -216,18 +244,21 @@ Gray = individual died from infection </div>
       if (point.customState == 'infected' && (stepCounter - point.infectedOnStep) > 100) {
         point.customState = 'recovered';
         point.setAttribute({ color: 'orange', layer: 5 });
+        infectedIndividuals--;
+        recoveredIndividuals++;
       }
     }
 
     function killPoint(id) {
       const point = pointMap.get(id);
       if (!point) return;
-      
+
       const key = `${point.gridX},${point.gridY}`;
       pointMap.delete(id);
       occupied.delete(key);
       point.remove(); //board.removeObject didn't work for some reason
       board.update();
+      infectedIndividuals--;
 
       const deadPoint = board.create('point', [point.gridX, point.gridY], {
         name: '',
@@ -238,7 +269,7 @@ Gray = individual died from infection </div>
         showInfobox: false,
         layer: 2
       });
-      deadPoints.push(deadPoint); 
+      deadPoints.push(deadPoint);
     }
 
     function updateDeaths(point) {
@@ -247,24 +278,73 @@ Gray = individual died from infection </div>
       }
     }
 
+    function updateCountersDisplayed() {
+      counterText.setText('Step: ' + stepCounter);
+      infectedText.setText('Infected individuals: ' + infectedIndividuals);
+      recoveredText.setText('Recovered individuals: ' + recoveredIndividuals);
+      deadText.setText('Dead individuals: ' + deadPoints.length);
+    }
+
+    function updateGraphPoints() {
+      infectedCounts.push(Number(infectedIndividuals / 2));
+      const num = Number((31 + stepCounter / xDivider).toPrecision(4));
+      xAtStep.push(num);
+      //I just couldn't get the curve to update/display, so for now I'm just removing and recreating it.
+      if (curve){
+        board.removeObject(curve);
+      }
+      if (xAtStep.length >= 2) {
+        curve = board.create('curve', [
+          xAtStep,
+          infectedCounts
+        ], {
+          strokeColor: 'red',
+          strokeWidth: 3,
+          layer: 11
+        });
+      }
+
+      board.update();
+
+    }
+
+
     function sleep(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     async function move() {
-      while (flagKeepGoing) {
+      while (flagKeepGoing && stepCounter < maxSteps) {
         stepCounter++;
-        counterText.setText('Step: ' + stepCounter);
-        await sleep(200);
-
+        await sleep(100);
         board.suspendUpdate();
-        pointMap.forEach((value, key) => {
-          updateContactState(value);
-          movePointRandomly(value);
-          updateRecovered(value);
-          updateDeaths(value);
-        })
+        pointMap.forEach((point) => {
+          updateContactState(point);
+          movePointRandomly(point);
+        });
+
+        const toRecover = [];
+        const toKill = [];
+
+        pointMap.forEach((point) => {
+          if (point.customState === 'infected') {
+            if ((stepCounter - point.infectedOnStep) > 100) {
+              toRecover.push(point);
+            } else if (Math.random() < deathChance) { //separation to avoid timing issue
+              toKill.push(point);
+            }
+          }
+        });
+
+        toRecover.forEach((point) => updateRecovered(point));
+        toKill.forEach((point) => killPoint(point.id));
+
+        if (stepCounter % 5 === 0) {
+          updateGraphPoints();
+        }
+        updateCountersDisplayed();
         board.update();
+        
       }
     }
 
@@ -275,6 +355,7 @@ Gray = individual died from infection </div>
         infectionChance = sliderInfectionChance.Value() / 100;
         deathChance = sliderDeathChance.Value() / 100;
         generateIndividuals();
+        infectedIndividuals++;
         move();
       }
     }
@@ -286,6 +367,10 @@ Gray = individual died from infection </div>
       flagKeepGoing = true;
       move();
     }
+
+
+
+    updateGraphPoints();
 
   </script>
 
