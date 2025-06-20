@@ -37,22 +37,26 @@
       JXG.JSXGraph.freeBoard(JXG.JSXGraph.boards.box);
     }
     const board = JXG.JSXGraph.initBoard('box', {
-      boundingbox: [-1, 30, 60, -1],
+      boundingbox: [-2, 31, 62, -2],
       axis: false,
       showCopyright: false,
       showNavigation: false
     });
     const g = board.create('grid', [], {});
-    const divider = board.create('line', [[30, 1], [30, 30]], { color: 'grey' })
-    const yAxisForGraph = board.create('line', [[31, 0], [31, 31]], { color: 'black', strokeWidth: 1, straightFirst: false, straightLast: false })
-    const xAxisForGraph = board.create('line', [[31, 0], [60, 0]], { color: 'black', strokeWidth: 1, straightFirst: false, straightLast: false })
-
+    
     const sliderXStart = 1;
     const sliderXEnd = 5;
     const firstSliderY = 3;
     const secondSliderY = 2;
     const thirdSliderY = 1;
-    const counterTextY = 29;
+    const counterTextY = 28.5;
+    const graphStartX = 32;
+
+    const divider = board.create('polygon', [[-1, -1],[graphStartX -2, -1], [graphStartX-2, 30], [-1, 30]], { fillColor: 'grey', opacity: 0.1, highlight: false, vertices: {visible: false},borders: { strokeColor: 'grey' }, })
+  
+    const yAxisForGraph = board.create('line', [[graphStartX, 0], [graphStartX, 25.5]], { color: 'black', strokeWidth: 1, straightFirst: false, straightLast: false })
+    const xAxisForGraph = board.create('line', [[graphStartX, 0], [60.8, 0]], { color: 'black', strokeWidth: 1, straightFirst: false, straightLast: false })
+
 
     // slider: number of individuals
     const sliderIndividuals = board.create('slider', [
@@ -107,16 +111,45 @@
     let infectedIndividuals = 0;
     let recoveredIndividuals = 0;
 
-    const counterText = board.create('text', [31.5, counterTextY - 1, 'Step: 0'])
-    const infectedText = board.create('text', [31.5, counterTextY, 'Infected individuals: 1'])
-    const recoveredText = board.create('text', [38.5, counterTextY, 'Recovered individuals: 0'])
-    const deadText = board.create('text', [46.5, counterTextY, 'Dead individuals: 0'])
+    const counterText = board.create('text', [graphStartX + 0.5, counterTextY - 1, 'Step: 0'], {fontSize: 14})
+    const infectedText = board.create('text', [graphStartX + 0.5, counterTextY, 'Infected individuals: 1'], {fontSize: 14})
+    const recoveredText = board.create('text', [graphStartX + 9.5, counterTextY, 'Recovered individuals: 0'], {fontSize: 14})
+    const deadText = board.create('text', [graphStartX + 19.5, counterTextY, 'Dead individuals: 0'], {fontSize: 14})
 
     const infectedCounts = [];
+    const recoveredCounts = [];
+    const deadCounts = [];
     const xAtStep = [];
     const graphPoints = [];
-    let curve = null;
+    let curveForInfected = null;
+    let curveForRecovered = null;
+    let curveForDead = null;
 
+    const xTicks = board.create('ticks', [xAxisForGraph], {
+      drawLabels: true,
+      ticksDistance: 50/xDivider,
+      label: {
+        offset: [-6, -15]
+      },
+      minorTicks: 1
+    });
+
+    xTicks.generateLabelText = function (tick, zero) {
+      return ((tick.usrCoords[1] -graphStartX) * xDivider ).toFixed(0);
+    };
+
+    const yTicks = board.create('ticks', [yAxisForGraph], {
+      drawLabels: true,
+      ticksDistance: 1,
+      label: {
+        offset: [-20, 0]
+      },
+      minorTicks: 1
+    });
+
+    yTicks.generateLabelText = function (tick, zero) {
+      return (tick.usrCoords[2] *2 ).toFixed(0);
+    };
 
 
     function randomInt(min, max) {
@@ -163,9 +196,7 @@
       const key = `${point.gridX},${point.gridY}`;
       pointMap.set(id, point);
       occupied.add(key);
-
     }
-
 
     function movePointRandomly(point) {
       const x = point.gridX;
@@ -287,27 +318,30 @@
 
     function updateGraphPoints() {
       infectedCounts.push(Number(infectedIndividuals / 2));
-      const num = Number((31 + stepCounter / xDivider).toPrecision(4));
+      recoveredCounts.push(Number(recoveredIndividuals / 2));
+      deadCounts.push(Number(deadPoints.length / 2));
+      const num = Number((graphStartX + stepCounter / xDivider).toPrecision(4));
       xAtStep.push(num);
+    }
+
+    function updateSingleGraph(curve, yArray, color){
       //I just couldn't get the curve to update/display, so for now I'm just removing and recreating it.
-      if (curve){
+      if (curve) {
         board.removeObject(curve);
       }
       if (xAtStep.length >= 2) {
         curve = board.create('curve', [
           xAtStep,
-          infectedCounts
+          yArray
         ], {
-          strokeColor: 'red',
-          strokeWidth: 3,
+          strokeColor: color,
+          strokeWidth: 2,
+          opcaity: 0.7,
           layer: 11
         });
       }
-
       board.update();
-
     }
-
 
     function sleep(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
@@ -341,10 +375,13 @@
 
         if (stepCounter % 5 === 0) {
           updateGraphPoints();
+          updateSingleGraph(curveForInfected, infectedCounts, 'red');
+          updateSingleGraph(curveForRecovered, recoveredCounts, 'orange');
+          updateSingleGraph(curveForDead, deadCounts, 'grey');
         }
         updateCountersDisplayed();
         board.update();
-        
+
       }
     }
 
@@ -367,8 +404,6 @@
       flagKeepGoing = true;
       move();
     }
-
-
 
     updateGraphPoints();
 
