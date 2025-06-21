@@ -28,11 +28,45 @@
   <div> Blue = healthy individual <br>
     Red = infected individual, can infect others <br>
     Orange = recovered individual (recovery happens 100 timesteps after infection) <br>
-    Gray = individual died from infection </div>
+    Gray = individual died from infection. <br> <br>
+  
+  Refresh the page to start a new simulation.</div>
+  <div style="width: 800px">
+    [FIN] Tehtäviä: <br>
+    1. Tutki simulaation avulla, miten kuoleman riski vaikuttaa lopulliseen kuolleiden yksilöiden kokonaismäärään. 
+    Pidä populaation koko 50 yksilössä ja tartuntariski 50% prosentissa. <br>
+    a) Tee 5 simulaatiota niin, että kuoleman todennäköisyys aika-askeleen aikana on 0.1%, 5 simulaatiota 0.5 %:n kuoleman riskillä, 
+    5 simulaatiota 1 %:n kuoleman riskillä, 5 simulaatiota 2 %:n kuoleman riskillä ja 5 simulaatiota 5 %:n kuoleman riskillä. 
+    Merkitse muistiin, kuinka suuri lopullinen kuolleiden määrä oli ja kuinka monta yksilöä selvisi simulaation loppuun saamanta tartuntaa kussakin simulaatiossa ja laske molempien lukujen keskiarvot
+    kunkin eri riskiprosentin kohdalla. <br>
+    b) Millainen riippuvuus taudin kuolettavuudella ja sen aiheuttaman kokonaiskuolleisuuden välillä? 
+    Miten taudin kuolettavuus vaikuttaa siihen, kuinka suuri osa populaatiosta saa tartunnan? 
+    <br><br>
+
+    Esim. <br>
+    0.1% : 6 kuollutta, 1 terveenä pysynyt; 6 kuollutta, 2 tervettä; 6 kuollutta, 2 tervettä; 7 kuollutta, 1 terve; 2 kuollutta, 1 terve<br>
+    0.5% : 22 kuollutta, 2 tervettä; 23 kuollutta, 7 tervettä; 19 kuollutta, 0 tervettä; 20 kuollutta, 5 tervettä; 19 kuollutta, 0 tervettä <br>
+    1%: 31 kuollutta, 1 terve; 32 kuollutta, 3 tervettä; 26 kuollutta, 11 tervettä; 28 kuollutta, 5 tervettä; 25 kuollutta, 9 tervettä 
+    2%: 17 kuollutta, 32 tervettä; 39 kuollutta, 5 tervettä; 27 kuollutta, 10 tervettä; 1 kuollut, 49 tervettä; 23 kuollutta, 23 tervettä <br>
+    5%: 4 kuollutta, 46 tervettä; 2 kuollutta, 48 tervettä; 10 kuollutta, 40 tervettä; 22 kuollutta, 27 tervettä; 12 kuollutta, 38 tervettä <br>
+
+Riskiprosentti, kuolleiden määrän keskiarvo, terveenä pysyneiden keskiarvo prosentteina populaatiosta <pre>
+0.1%:	5.4,	1.4%
+0.5%:	20.6,	2.8%
+1%:	28.4,	5.8%
+2%:	21.4,	23.8%
+5%:	10.0,	39.8%</pre>
+<br>
+=> 1% kuoleman riski näyttää aiheuttaman suurimman määrän kokonaiskuolemia. Kuolettavampi tauti tappaa isäntänsä, ennen kuin ne ehtivät levittää tautia tarpeeksi. 
+Vähiten kuolettava tauti leviää populaatiossa laajimmalle ja pienin määrä yksilöitä säästyy tartunnalta.
+
+
+  </div>
+
 
   <script>
     //TODO: 
-    // reset button 
+    // graph of healthy individuals
     if (JXG.JSXGraph.boards && JXG.JSXGraph.boards.box) {
       JXG.JSXGraph.freeBoard(JXG.JSXGraph.boards.box);
     }
@@ -45,7 +79,7 @@
     const g = board.create('grid', [], {});
 
     const sliderXStart = 1;
-    const sliderXEnd = 5;
+    const sliderXEnd = 7;
     const firstSliderY = 3;
     const secondSliderY = 2;
     const thirdSliderY = 1;
