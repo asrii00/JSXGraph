@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
+</html>>
 
 <head>
     <title>JSXGraph Example</title>
@@ -18,6 +20,7 @@
     <div id="box" class="jxgbox"></div>
     <div>
         <button onclick="pair()">Pair randomly</button>
+        <button onclick="pairAssortative()">Pair with assortative mating</button>
         <button onclick="generateOffspring()">Generate offspring from pairs</button>
         <button onclick="moveToNextGen()">Advance to the next generation</button>
     </div>
@@ -29,13 +32,13 @@
         const columns = 10;
         const xSpacing = 3.6;
         const ySpacing = 20;
-        const xStart = 5;
+        const xStart = 3.5;
         const yStart = 50;
 
         const genotypes = [
-            { num: 10, color: 'black', label: 'AA' },
-            { num: 17, color: 'grey', label: 'Aa' },
-            { num: 13, color: 'white', label: 'aa' },
+            { num: 19, color: 'black', label: 'AA' },
+            { num: 13, color: 'grey', label: 'Aa' },
+            { num: 28, color: 'white', label: 'aa' },
         ]
 
         const board = JXG.JSXGraph.initBoard('box', {
@@ -55,7 +58,7 @@
 
 
         function randomInt(min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
+            return Number(Math.floor(Math.random() * (max - min + 1)) + min);
         }
 
 
@@ -75,6 +78,51 @@
             if (array.length === 0) return null;
             const randomIndex = randomInt(0, array.length - 1);
             return array.splice(randomIndex, 1)[0]; //index of where to remove items, how many items to remove, [0] because it returns an array and we want the object in it
+        }
+
+        function genotypeSimilarity(g1, g2) {
+            if (g1 === g2) return 1;             // same color is a good match (still a slight chance of rejection)
+            if ([g1, g2].includes("grey")) return 0.5; // partial similarity, decent match
+            return 0;            //else                
+        }
+
+        function assortativeChoice() {
+
+            while (adultIndividuals.length >= 2) {
+                let match = null;
+                const seeker = popRandom(adultIndividuals);
+                for (let attempt = 0; attempt < 3; attempt++) {
+                    console.log("attempt ", attempt)
+                    const candidateIndex = randomInt(0, adultIndividuals.length-1);
+                    const candidate = adultIndividuals[candidateIndex]; //doesn't remove yet
+                    const similarity = genotypeSimilarity(seeker.customState, candidate.customState);
+                    const pickiness = Math.random();
+
+                    if (pickiness <= similarity) {
+                        console.log("found pair")
+                        adultIndividuals.splice(candidateIndex, 1);
+                        match = candidate;
+                        pairedIndividuals.push([seeker, match]);
+                        break;
+                    }
+                    else {
+                        console.log("didn't find pair this attempt")
+                    }
+                }
+                if (!match && adultIndividuals.length > 0) {
+                    console.log("desperation pairing") //if no match was found on 3 tries, take any 
+                    match = popRandom(adultIndividuals);
+                    pairedIndividuals.push([seeker, match]);
+                }
+            }
+        }
+
+        function pairAssortative() {
+            if (isPaired) return;
+            isPaired = true;
+
+            assortativeChoice();
+            moveToPairs(pairedIndividuals);
         }
 
         function pair() {
@@ -112,7 +160,6 @@
         }
 
         function getAllele(genotype) {
-            console.log(genotype)
             switch (genotype) {
                 case 'black':
                     return 'black';
@@ -175,7 +222,6 @@
             hasReproduced = true;
 
             pairedIndividuals.forEach((pair, i) => {
-                console.log(pair)
                 const parent1Allele1 = getAllele(pair[0].customState)
                 const parent2Allele1 = getAllele(pair[1].customState)
                 const childColor1 = combineAlleles(parent1Allele1, parent2Allele1);
@@ -217,12 +263,7 @@
             }
 
         }
-
         generatePopulation();
-
-
-
-
 
 
     </script>
