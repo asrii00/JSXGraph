@@ -17,8 +17,9 @@
 
     <div id="box" class="jxgbox"></div>
     <div>
-        <button onclick="pair()">Pair</button>
+        <button onclick="pair()">Pair randomly</button>
         <button onclick="generateOffspring()">Generate offspring from pairs</button>
+        <button onclick="moveToNextGen()">Advance to the next generation</button>
     </div>
 
     <script>
@@ -39,15 +40,19 @@
 
         const board = JXG.JSXGraph.initBoard('box', {
             boundingbox: [-3, maxY + 3, maxX + 3, -3],
-            axis: true
+            axis: false,
+            showNavigation: false,
+            showCopyright: false
         });
 
         const adultIndividuals = [];
-        const unPairedIndividuals = [];
         const pairedIndividuals = [];
-        const nextGenIndividualsByParents = [];
+        const nextGenIndividualsColors = [];
+        const nextGen = [];
 
         let isPaired = false;
+        let hasReproduced = false;
+
 
         function randomInt(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -73,7 +78,9 @@
         }
 
         function pair() {
+            if (isPaired) return;
             isPaired = true;
+
             while (adultIndividuals.length >= 2) {
                 const popped1 = popRandom(adultIndividuals);
                 const popped2 = popRandom(adultIndividuals);
@@ -105,6 +112,7 @@
         }
 
         function getAllele(genotype) {
+            console.log(genotype)
             switch (genotype) {
                 case 'black':
                     return 'black';
@@ -118,17 +126,17 @@
             }
         }
 
-        function combineAlleles(allele1, allele2){
-            if (allele1 == allele2){
+        function combineAlleles(allele1, allele2) {
+            if (allele1 == allele2) {
                 return allele1;
             }
             else {
                 return 'grey';
             }
         }
-        
-        function getGenotypeLabel(color){
-             switch (color) {
+
+        function getGenotypeLabel(color) {
+            switch (color) {
                 case 'black':
                     return 'AA';
                 case 'grey':
@@ -136,12 +144,12 @@
                 case 'white':
                     return 'aa';
                 default:
+                    console.log("error in getgenolabel")
                     return '?';
             }
         }
 
-        function drawInPairs(array){
-            console.log(array.length)
+        function drawInPairs(array) {
             array.forEach((pair, i) => {
                 const row = Math.floor(i / columns);
                 const col = i % columns;
@@ -150,29 +158,64 @@
                 const x1 = xStart + col * xSpacing * 2.75;   // left individual in pair
                 const x2 = x1 + xSpacing;                // right individual in pair
 
-                child1Geno=getGenotypeLabel(pair[0]);
-                child2Geno=getGenotypeLabel(pair[1]);
+                child1Geno = getGenotypeLabel(pair[0]);
+                child2Geno = getGenotypeLabel(pair[1]);
 
-                const child1 = board.create('point', [x1, y], { size: 6, fillColor: pair[0], strokeColor: 'black', strokeWidth: 1, name: child1Geno  })
+                const child1 = board.create('point', [x1, y], { size: 6, fillColor: pair[0], strokeColor: 'black', strokeWidth: 1, name: child1Geno })
+                child1.customState = pair[0];
                 const child2 = board.create('point', [x2, y], { size: 6, fillColor: pair[1], strokeColor: 'black', strokeWidth: 1, name: child2Geno })
+                child2.customState = pair[1];
+                nextGen.push(child1, child2);
             });
         }
 
         function generateOffspring() {
             if (!isPaired) return;
+            if (hasReproduced) return;
+            hasReproduced = true;
 
             pairedIndividuals.forEach((pair, i) => {
+                console.log(pair)
                 const parent1Allele1 = getAllele(pair[0].customState)
                 const parent2Allele1 = getAllele(pair[1].customState)
-                const childGenotype1 = combineAlleles(parent1Allele1, parent2Allele1);
+                const childColor1 = combineAlleles(parent1Allele1, parent2Allele1);
 
                 const parent1Allele2 = getAllele(pair[0].customState)
                 const parent2Allele2 = getAllele(pair[1].customState)
-                const childGenotype2 = combineAlleles(parent1Allele2, parent2Allele2);
+                const childColor2 = combineAlleles(parent1Allele2, parent2Allele2);
 
-                nextGenIndividualsByParents.push([childGenotype1, childGenotype2]);      
+                nextGenIndividualsColors.push([childColor1, childColor2]);
             })
-            drawInPairs(nextGenIndividualsByParents);
+            drawInPairs(nextGenIndividualsColors);
+        }
+
+        function scatterDraw() {
+            adultIndividuals.forEach((point, i) => {
+                point.setAttribute({ size: 9 })
+                const posX = randomInt(0, maxX);
+                const posY = randomInt(0, maxY);
+                point.moveTo([posX, posY], 1000)
+            })
+
+        }
+
+        function moveToNextGen() {
+            if (isPaired && hasReproduced) {
+                isPaired = false;
+                pairedIndividuals.forEach((pair) => {
+                    board.removeObject(pair[0]);
+                    board.removeObject(pair[1]);
+                });
+                pairedIndividuals.length = 0;
+                adultIndividuals.length = 0;
+                nextGenIndividualsColors.length = 0;
+
+                adultIndividuals.push(...nextGen);
+                nextGen.length = 0;
+                scatterDraw(adultIndividuals);
+                hasReproduced = false;
+            }
+
         }
 
         generatePopulation();
