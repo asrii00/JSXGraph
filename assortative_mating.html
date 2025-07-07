@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>JSXGraph Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+    <style>
+        #box {
+            width: 1000px;
+            height: 600px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="box" class="jxgbox"></div>
+    <div>
+        <button onclick="pair()">
+            Pair
+        </button>
+    </div>
+
+    <script>
+        const maxX = 100;
+        const maxY = 60;
+
+        const numOfRed = 10;
+        const numOfPink = 15;
+        const numOfWhite = 5;
+
+        const genotypes = [
+            { num: 10, color: 'black', label: 'AA' },
+            { num: 16, color: 'grey', label: 'Aa' },
+            { num: 8, color: 'white', label: 'aa' },
+        ]
+
+        const board = JXG.JSXGraph.initBoard('box', {
+            boundingbox: [-3, maxY + 3, maxX + 3, -3],
+            axis: true
+        });
+
+        const adultIndividuals = [];
+        const unPairedIndividuals = [];
+        const pairedIndividuals = [];
+        const nextGenIndividuals = [];
+
+        function randomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+
+        function generatePopulation() {
+            genotypes.forEach((genotype) => {
+                for (i = 0; i < genotype.num; i++) {
+                    const posX = randomInt(0, maxX);
+                    const posY = randomInt(0, maxY);
+                    const circle = board.create('point', [posX, posY], { size: 9, fillColor: genotype.color, strokeColor: 'black', strokeWidth: 1, name: genotype.label});
+                    circle.customState = genotype.color;
+                    adultIndividuals.push(circle);
+                }
+            })
+        }
+
+        function popRandom(array) {
+            if (array.length === 0) return null;
+            const randomIndex = randomInt(0, array.length-1);
+            return array.splice(randomIndex, 1)[0]; //index of where to remove items, how many items to remove, [0] because it returns an array and we want the object in it
+        }
+
+        function pair() {
+            while (adultIndividuals.length >= 2) {
+                const popped1 = popRandom(adultIndividuals);
+                const popped2 = popRandom(adultIndividuals);
+                pairedIndividuals.push([popped1, popped2]);
+            }
+            console.log(pairedIndividuals);
+        }
+
+        function moveToPairs(){
+
+        }
+
+        generatePopulation();
+
+
+
+
+
+    </script>
+
+</body>
+
+</html>
