@@ -23,9 +23,10 @@
 <body>
     <div id="box" class="jxgbox"></div>
     <div>
-        <button onclick="pair()">Pair randomly</button>
-        <button onclick="generateOffspring()">Generate offspring from pairs</button>
-        <button onclick="moveToNextGen()">Advance to the next generation</button>
+        <button onclick="pair()">Muodosta parit</button>
+        <button onclick="generateOffspring()">Generoi jälkeläiset</button>
+        <button onclick="moveToNextGen()">Siirry seuraavaan sukupolveen</button>
+        <button onclick="TwentyGens()">20 sukupolvea</button>
         <button id="toggleBtn">Laita valintapaine päälle</button>
 
     </div>
@@ -38,14 +39,14 @@
         millä todennäköisyydellä muodostuu vähintään yksi merle x merle-pari? (Vinkki: käytä komplementtisääntöä,
         Poisson-aproksimaatiota) //vähän hankala laskea. <br>
         TAI: Arvioi kokeellisesti, millä todennäköisyydellä muodostuu vähintään yksi merle x merle -pari. Voit päivittää
-        sivun ja painaa Pair-nappia uudelleen
+        sivun ja painaa Muodosta parit -nappia uudelleen
         toistaaksesi "kokeen". Toista tämä vähintään kymmenen kertaa.<br>
         3. Jos merle x merle-parin muodostumisen todennäköisyys on X ja jokainen pari saa 2 pentua, millä
         todennäköisyydellä populaatiossa syntyy
         yhden sukupolven aikana vähintään yksi kaksoismerle-pentu? <br>
         4. Tutki kokeellisesti, kuinka usein esiintyy vähintään yksi kaksoismerle-pentu. Edistä simulaatiota vähintään
         10 sukupolven verran ja merkitse jokaisen
-        sukupolven osalta muistiin, esiintyikö siinä kaksoismerle-pentua vai ei.
+        sukupolven osalta muistiin, esiintyikö siinä yhtään kaksoismerle-pentua vai ei.
 
         <br> <br>
         <b>Satunnaisajautuminen (neutraalit tekijät) vs. luonnonvalinta</b><br>
@@ -66,10 +67,11 @@
         edellisestä tuloksesta? Toista sama vielä kolmannen kerran ja tutki tuloksia. Kehittyykö populaation jakauma
         satunnaisesti eri suuntiin joka kerralla, eli voitko havaita satunnaisajautumista?<br>
 
-        2. Laita simulaatio valintapaine-moodiin. Tällöin kaksoismerle-väristä aiheutuu yksilölle merkittävää haittaa
-        eivätkä tällaiset yksilöt selviä seuraavaan sukupolveen tai eivät pysty lisääntymään. Edistä simulaatiota 20 sukupolven ajan ja laske lopuksi
-        värijakauma populaatiossa. Mitä havaitset? Tapahtuiko värien osuuksissa muutos alkuperäiseen verrattuna? Voit
-        myös toistaa saman “kokeen” aloittamalla simulaation alusta ja tutkia, tapahtuuko sama ilmiö joka kerralla.
+        2. Laita valintapaine päälle napista. Tällöin kaksoismerle-väristä aiheutuu yksilölle merkittävää haittaa
+        eivätkä tällaiset yksilöt selviä seuraavaan sukupolveen tai eivät pysty lisääntymään. Edistä simulaatiota 20
+        sukupolven ajan ja laske lopuksi värijakauma populaatiossa. Mitä havaitset? Tapahtuiko värien osuuksissa muutos
+        alkuperäiseen verrattuna? Voit myös toistaa saman “kokeen” useamman kerran aloittamalla simulaation alusta ja 
+        tutkia, tapahtuuko sama ilmiö joka kerralla.
         <br>3. Mitä luulet, että todellisuudessa tapahtuisi, jos populaatio merle- ja ei-merlekoiria jätettäisiin oman
         onnensa nojaan selviytymään luonnossa, missä kuurous ja sokeus haittaisi merkittävästi koiran selviytymistä?
         Mitä se kertoo siitä, miten ihmisten huostassa olevat lemmikkipopulaatiot ja villit populaatiot saattavat erota
@@ -148,6 +150,7 @@
         let hasReproduced = false;
 
         let selectionPressureOn = false;
+        let round = 0;
 
 
         function randomInt(min, max) {
@@ -160,7 +163,7 @@
                 for (i = 0; i < genotype.num; i++) {
                     const posX = randomInt(0, maxX);
                     const posY = randomInt(0, maxY);
-                    const circle = board.create('point', [posX, posY], { size: 9, fillColor: genotype.color, strokeColor: 'black', strokeWidth: 1, name: genotype.label });
+                    const circle = board.create('point', [posX, posY], { size: 9, fillColor: genotype.color, strokeColor: 'black', strokeWidth: 1, name: genotype.label, fixed: true });
                     circle.customState = genotype.color;
                     adultIndividuals.push(circle);
                 }
@@ -183,7 +186,7 @@
                 const popped2 = popRandom(adultIndividuals);
                 pairedIndividuals.push([popped1, popped2]);
             }
-            console.log(adultIndividuals.length);
+            //remove any unpaired individuals
             adultIndividuals.forEach((point) => {
                 board.removeObject(point);
             });
@@ -262,9 +265,9 @@
                 child1Geno = getGenotypeLabel(pair[0]);
                 child2Geno = getGenotypeLabel(pair[1]);
 
-                const child1 = board.create('point', [x1, y], { size: 6, fillColor: pair[0], strokeColor: 'black', strokeWidth: 1, name: child1Geno })
+                const child1 = board.create('point', [x1, y], { size: 6, fillColor: pair[0], strokeColor: 'black', strokeWidth: 1, name: child1Geno, fixed: true })
                 child1.customState = pair[0];
-                const child2 = board.create('point', [x2, y], { size: 6, fillColor: pair[1], strokeColor: 'black', strokeWidth: 1, name: child2Geno })
+                const child2 = board.create('point', [x2, y], { size: 6, fillColor: pair[1], strokeColor: 'black', strokeWidth: 1, name: child2Geno, fixed: true })
                 child2.customState = pair[1];
                 nextGen.push(child1, child2);
             });
@@ -273,6 +276,8 @@
         function generateOffspring() {
             if (!isPaired) return;
             if (hasReproduced) return;
+            round++;
+            roundLabel.setText('Sukupolvi ' + round.toFixed(0));
             hasReproduced = true;
 
             pairedIndividuals.forEach((pair, i) => {
@@ -325,13 +330,29 @@
                 scatterDraw(adultIndividuals);
                 if (selectionPressureOn) {
                     const newAdultIndividuals = removeDoubleMerles();
-                    adultIndividuals.length = 0; 
+                    adultIndividuals.length = 0;
                     adultIndividuals.push(...newAdultIndividuals);
                 }
                 hasReproduced = false;
             }
 
         }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function TwentyGens() {
+            for (i = 0; i < 20; i++){
+            pair();
+            await sleep(1200);
+            generateOffspring();
+            await sleep(1500);
+            moveToNextGen();
+            await sleep(1500);
+        }
+        }
+
         const pressureLabel = board.create('text', [0, 0, 'Valintapaine päällä'], {
             anchorX: 'left',
             anchorY: 'top',
@@ -339,6 +360,13 @@
             fixed: true,
             highlight: false,
             visible: false
+        });
+        const roundLabel = board.create('text', [92, 0, 'Sukupolvi 0'], {
+            anchorX: 'left',
+            anchorY: 'top',
+            fontSize: 16,
+            fixed: true,
+            highlight: false,
         });
 
         document.getElementById('toggleBtn').addEventListener('click', () => {
