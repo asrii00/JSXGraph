@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-</html>>
+</html>
 
 <head>
     <title>JSXGraph Example</title>
@@ -12,17 +12,67 @@
             width: 1000px;
             height: 600px;
         }
+        div {
+            margin: 10px;
+            width: 1000px;
+        }
     </style>
 </head>
 
 <body>
-
     <div id="box" class="jxgbox"></div>
     <div>
         <button onclick="pair()">Pair randomly</button>
         <button onclick="pairAssortative()">Pair with assortative mating</button>
         <button onclick="generateOffspring()">Generate offspring from pairs</button>
         <button onclick="moveToNextGen()">Advance to the next generation</button>
+    </div>
+    <div>
+        <b>Helppo</b><br>
+        1. Paina Pair- nappia, jolloin populaation yksilöt asettuvat pareiksi lisääntymiskumppaninsa kanssa. Laske
+        seuraavat lukumäärät ja suhteelliset osuudet: <br>
+        <li>valkoinen x valkoinen, harmaa x harmaa ja musta x musta -parit </li>
+        <li>valkoinen x harmaa ja musta x harmaa -parit (järjestys ei merkityksellinen) </li>
+        <li>valkoinen x musta -parit.</li>
+        //(Voisi myös päivittää sivun monta kertaa, parittaa populaation monta kertaa uudelleen ja laskea suhteelliset osuudet suuremmalla
+        näytekoolla.)<br>
+        2. Jos pariutuminen on täysin satunnaista, odotettu lukumääräjakauma on seuraavanlainen:<br>
+        Musta x musta, harmaa x harmaa tai valkoinen x valkoinen: 2,7 + 6,5 + 1,6 = 10,8 paria <br>
+        Musta x harmaa tai valkoinen x harmaa: 4,2 + 6,5 = 10,7 paria <br>
+        Musta x valkoinen: 8,4 paria 
+        <br>
+        Vaikuttaako siltä, että simulaatiossa pariutuminen on satunnaista? Vertaa havaitsemiasi tuloksia satunnaispariutumisen
+        odotettuun jakaumaan ja tee khiin neliö-testi (vapausaste: 1).<br> <br>
+        //Pair with assortative mating esim: 
+        valk-valk 11, musta-musta 7, harmaa-harmaa 3, yht. =  21; 
+        valk-harmaa 5, musta-harmaa 3 = 8;
+        musta-valk 1.<br>
+        //Pair randomly esim: 
+        valk-valk 6, harmaa-harmaa 2, musta-musta 1 = 9;
+        valk-harmaa 6, musta-harmaa 4 = 10; 
+        musta-valk 10.<br><br>
+
+
+
+        <b>Haastavampi</b> <br>
+        1. Jokaisella yksilöllä on kaksi alleelia (kirjainta), jotka yhdessä määräävät yksilön värin. 
+        Alleeli voi olla joko iso A tai pieni a. Merkitse alleelin A suhteellista osuutta muuttujalla p, jolloin 
+        alleelin a suhteellinen osuus on 1 - p = q. Jos kaksi alleelia poimitaan satunnaisesti populaatiosta (yksi 
+        toiselta vanhemmalta ja toinen toiselta), millä todennäköisyyksillä saadaan kukin mahdollista yhdistelmistä:
+        AA, Aa ja aa? Oleta, että kunkin alleelin poimimisen todennäköisyys riippuu pelkästään sen suhteellisesta osuudesta populaatiossa.<br>
+        2. Jos populaatiossa on 60 yksilöä ja alleelin A osuus on 0.42, mitkä ovat odotetut suhteelliset osuudet ja absoluuttiset lukumäärät kullekin kirjainyhdistelmälle? Käytä edellisessä tehtävässä päättelemääsi kaavaa.<br>
+        3. Jos populaation kirjainyhdistelmien jakauma noudattaa kohdissa 1-2 laskemaasi jakaumaa, voidaan pariutumisen odottaa olevan satunnaista.
+        Kun simulaatio alkaa, AA-yksilöitä on 18, Aa-yksilöitä on 14, ja aa-yksilöitä on 28. Onko tämä populaatio satunnaisen pariutumisen tulos? <br>
+        //Odotusarvo yksilöiden lukumäärille, jos satunnainen: AA: 10,6; Aa: 29,2; aa: 20,2 yksilöä, suhteelliset: 0.176, 0.487, 0.336 (tarkista)
+
+        //NOTE: kun simulaatio alkaa, populaatio ei ole Hardy-Weinberg tasapainossa eli se ei ole satunnaisen pariutumisen tulos. Yhden satunnaisen pariutumisen ja lisääntymisen kierroksen jälkeen
+        sen kuitenkin pitäisi olla. 
+
+
+
+
+
+
     </div>
 
     <script>
@@ -35,9 +85,10 @@
         const xStart = 3.5;
         const yStart = 50;
 
+        //black allele frequency: 50/120
         const genotypes = [
-            { num: 19, color: 'black', label: 'AA' },
-            { num: 13, color: 'grey', label: 'Aa' },
+            { num: 18, color: 'black', label: 'AA' },
+            { num: 14, color: 'grey', label: 'Aa' },
             { num: 28, color: 'white', label: 'aa' },
         ]
 
@@ -93,7 +144,7 @@
                 const seeker = popRandom(adultIndividuals);
                 for (let attempt = 0; attempt < 3; attempt++) {
                     console.log("attempt ", attempt)
-                    const candidateIndex = randomInt(0, adultIndividuals.length-1);
+                    const candidateIndex = randomInt(0, adultIndividuals.length - 1);
                     const candidate = adultIndividuals[candidateIndex]; //doesn't remove yet
                     const similarity = genotypeSimilarity(seeker.customState, candidate.customState);
                     const pickiness = Math.random();
