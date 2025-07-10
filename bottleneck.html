@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+
+</html>
+
+<head>
+    <title>Bottleneck Effect Sim</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+    <style>
+        #box {
+            width: 1000px;
+            height: 600px;
+        }
+
+        div {
+            margin: 10px;
+            width: 1000px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="box" class="jxgbox"></div>
+    <div>
+        <button onclick="pair()">Muodosta parit</button>
+        <button onclick="generateOffspring()">Generoi jälkeläiset</button>
+        <button onclick="moveToNextGen()">Siirry seuraavaan sukupolveen</button>
+        <button onclick="TwentyGens()">20 sukupolvea</button>
+        <button onclick="bottleneck()">Pullonkaula</button>
+        <button id="toggleBtn">Laita valintapaine päälle</button>
+
+    </div>
+    <div>
+        Pullonkaulailmiö viittaa tapauksiin, joissa populaation koko supistuu väliaikaisesti vain pieneen osaan
+        alkuperäisestä. Tällöin jäljelle jääneet yksilöt toimivat kantavanhempina kaikille sen jälkeen tuleville
+        yksilöille populaation koon palautuessa tai kasvaessa entistäkin suuremmaksi. Pullonkaulailmiö voi nopeuttaa
+        geneettistä ajautumista, sillä pullonkaulasta selvinneet yksilöt ovat yleensä satunnainen otos koko
+        alkuperäisestä populaatiosta. Jos tietyt geenit eivät sattuneet mukaan tähän otokseen, ne eivät siirry enää
+        eteenpäin uusille sukupolville vaan katoavat populaatiosta kokonaan. Vastaavasti jotkin toiset geenit saattavat tulla
+        paljon entistä yleisemmiksi uudessa populaatiossa. <br> <br>
+        <b>Tehtävät:</b>
+
+
+
+    </div>
+
+    <script>
+
+        // TODO: could add reset button
+        //TODO: make it so you can add the bottleneck effect only before the 1st round, 
+        //or make sure nothing breaks if you do it later.
+        //also: maybe add a button to stop the auto- 20 gens thing.
+
+        // make repopulation dynamically adjusted, not "block"wise.
+        const maxX = 100;
+        const maxY = 60;
+
+        const bottleneckNumber = 14;
+
+        const columns = 10;
+        const xSpacing = 3.6;
+        const ySpacing = 20;
+        const xStart = 3.5;
+        const yStart = 50;
+
+        const genotypes = [
+            { num: 48, color: 'black', label: 'mm' },
+            { num: 12, color: 'grey', label: 'Mm' },
+            { num: 0, color: 'white', label: 'MM' },
+        ]
+
+        const totalIndividuals = genotypes[0].num + genotypes[1].num + genotypes[2].num;
+
+        const board = JXG.JSXGraph.initBoard('box', {
+            boundingbox: [-3, maxY + 3, maxX + 3, -3],
+            axis: false,
+            showNavigation: false,
+            showCopyright: false
+        });
+
+        const adultIndividuals = [];
+        const pairedIndividuals = [];
+        const nextGenIndividualsColors = [];
+        const secondNextGenColors = [];
+        const nextGen = [];
+
+        let isPaired = false;
+        let hasReproduced = false;
+        let repopulating = false;
+
+        let selectionPressureOn = false;
+        let round = 0;
+
+        function randomInt(min, max) {
+            return Number(Math.floor(Math.random() * (max - min + 1)) + min);
+        }
+
+        function generatePopulation() {
+            genotypes.forEach((genotype) => {
+                for (i = 0; i < genotype.num; i++) {
+                    const posX = randomInt(0, maxX);
+                    const posY = randomInt(0, maxY);
+                    const circle = board.create('point', [posX, posY], { size: 9, fillColor: genotype.color, strokeColor: 'black', strokeWidth: 1, name: genotype.label, fixed: true });
+                    circle.customState = genotype.color;
+                    adultIndividuals.push(circle);
+                }
+            })
+        }
+
+        function popRandom(array) {
+            if (array.length === 0) return null;
+            const randomIndex = randomInt(0, array.length - 1);
+            return array.splice(randomIndex, 1)[0]; //index of where to remove items, how many items to remove, [0] because it returns an array and we want the object in it
+        }
+
+
+        function pair() {
+            if (isPaired) return;
+            isPaired = true;
+
+            while (adultIndividuals.length >= 2) {
+                const popped1 = popRandom(adultIndividuals);
+                const popped2 = popRandom(adultIndividuals);
+                pairedIndividuals.push([popped1, popped2]);
+            }
+            //remove any unpaired individuals
+            adultIndividuals.forEach((point) => {
+                board.removeObject(point);
+            });
+            adultIndividuals.length = 0;
+            moveToPairs(pairedIndividuals);
+        }
+
+        function moveToPairs(array) {
+            array.forEach((pair, i) => {
+                const row = Math.floor(i / columns);
+                const col = i % columns;
+
+                const y = yStart - row * ySpacing;
+                const x1 = xStart + col * xSpacing * 2.75;   // left individual in pair
+                const x2 = x1 + xSpacing;                // right individual in pair
+
+                pair[0].moveTo([x1, y], 1000);
+                pair[1].moveTo([x2, y], 1000);
+
+                board.create('line', [pair[0], pair[1]], {
+                    straightFirst: false,
+                    straightLast: false,
+                    strokeColor: 'gray',
+                    opacity: 0.4
+                });
+            });
+
+        }
+
+        function getAllele(genotype) {
+            switch (genotype) {
+                case 'black':
+                    return 'black';
+                case 'grey':
+                    return (Math.random() <= 0.5) ? 'black' : 'white';
+                case 'white':
+                    return 'white';
+                default:
+                    console.log('error in allele switch case')
+                    return 'white';
+            }
+        }
+
+        function combineAlleles(allele1, allele2) {
+            if (allele1 == allele2) {
+                return allele1;
+            }
+            else {
+                return 'grey';
+            }
+        }
+
+        function getGenotypeLabel(color) {
+            switch (color) {
+                case 'black':
+                    return 'mm';
+                case 'grey':
+                    return 'Mm';
+                case 'white':
+                    return 'MM';
+                default:
+                    console.log("error in getgenolabel")
+                    return '?';
+            }
+        }
+
+        function drawInPairs(array, offset = 5) {
+            const tempArray = [];
+            array.forEach((pair, i) => {
+                const row = Math.floor(i / columns);
+                const col = i % columns;
+
+                const y = yStart - row * ySpacing - offset;
+                const x1 = xStart + col * xSpacing * 2.75;   // left individual in pair
+                const x2 = x1 + xSpacing;                // right individual in pair
+
+                child1Geno = getGenotypeLabel(pair[0]);
+                child2Geno = getGenotypeLabel(pair[1]);
+
+                const child1 = board.create('point', [x1, y], { size: 6, fillColor: pair[0], strokeColor: 'black', strokeWidth: 1, name: child1Geno, fixed: true })
+                child1.customState = pair[0];
+                const child2 = board.create('point', [x2, y], { size: 6, fillColor: pair[1], strokeColor: 'black', strokeWidth: 1, name: child2Geno, fixed: true })
+                child2.customState = pair[1];
+                tempArray.push(child1, child2);
+            });
+            return tempArray;
+        }
+
+        function generateTwoChildren(secondRow = false) {
+            pairedIndividuals.forEach((pair, i) => {
+                const parent1Allele1 = getAllele(pair[0].customState)
+                const parent2Allele1 = getAllele(pair[1].customState)
+                const childColor1 = combineAlleles(parent1Allele1, parent2Allele1);
+
+                const parent1Allele2 = getAllele(pair[0].customState)
+                const parent2Allele2 = getAllele(pair[1].customState)
+                const childColor2 = combineAlleles(parent1Allele2, parent2Allele2);
+
+                if (!secondRow) {
+                    nextGenIndividualsColors.push([childColor1, childColor2]);
+                }
+                else {
+                    secondNextGenColors.push([childColor1, childColor2]);
+                }
+
+            })
+
+        }
+
+        function generateOffspring() {
+            if (!isPaired) return;
+            if (hasReproduced) return;
+
+            if (adultIndividuals.length >= totalIndividuals - (bottleneckNumber * 2 ** (round + 1))) {
+                repopulating = false;
+            }
+
+            round++;
+            roundLabel.setText('Sukupolvi ' + round.toFixed(0));
+            hasReproduced = true;
+            generateTwoChildren();
+            if (repopulating) {
+                generateTwoChildren(true);
+            }
+
+
+            nextGen.push(...drawInPairs(nextGenIndividualsColors));
+            nextGen.push(...drawInPairs(secondNextGenColors, 10));
+        }
+
+        function scatterDraw() {
+            adultIndividuals.forEach((point, i) => {
+                point.setAttribute({ size: 9 })
+                const posX = randomInt(0, maxX);
+                const posY = randomInt(0, maxY);
+                point.moveTo([posX, posY], 1000)
+            })
+
+        }
+        function removeDoubleMerles() {
+            const newArray = adultIndividuals.filter(pt => {
+                if (pt.customState === "white") {
+                    board.removeObject(pt);  // remove from board
+                    return false;            // exclude from the new array
+                }
+                return true;               // keep if not white
+            });
+            return newArray;
+
+        }
+
+        function moveToNextGen() {
+            if (isPaired && hasReproduced) {
+
+                isPaired = false;
+                pairedIndividuals.forEach((pair) => {
+                    board.removeObject(pair[0]);
+                    board.removeObject(pair[1]);
+                });
+                pairedIndividuals.length = 0;
+                adultIndividuals.length = 0;
+                nextGenIndividualsColors.length = 0;
+                secondNextGenColors.length = 0;
+                adultIndividuals.push(...nextGen);
+                nextGen.length = 0;
+                scatterDraw(adultIndividuals);
+                if (selectionPressureOn) {
+                    const newAdultIndividuals = removeDoubleMerles();
+                    adultIndividuals.length = 0;
+                    adultIndividuals.push(...newAdultIndividuals);
+                }
+                hasReproduced = false;
+            }
+
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function TwentyGens() {
+            for (i = 0; i < 20; i++) {
+                pair();
+                await sleep(1200);
+                generateOffspring();
+                await sleep(1500);
+                moveToNextGen();
+                await sleep(1500);
+            }
+        }
+
+        function reduceRandomly(array) {
+            adultIndividuals
+        }
+
+        function bottleneck() {
+            if (isPaired) return;
+            repopulating = true;
+
+
+            const randomlyPickedIndexes = new (Set);
+
+            while (randomlyPickedIndexes.size < (adultIndividuals.length - bottleneckNumber)) {
+                randomlyPickedIndexes.add(randomInt(0, adultIndividuals.length - 1));
+            }
+
+            //to avoid index shifting 
+            const sortedIndexes = Array.from(randomlyPickedIndexes).sort((a, b) => b - a);
+
+            for (const index of sortedIndexes) {
+                board.removeObject(adultIndividuals[index]);
+                adultIndividuals.splice(index, 1);
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+        const pressureLabel = board.create('text', [0, 0, 'Valintapaine päällä'], {
+            anchorX: 'left',
+            anchorY: 'top',
+            fontSize: 16,
+            fixed: true,
+            highlight: false,
+            visible: false
+        });
+        const roundLabel = board.create('text', [92, 0, 'Sukupolvi 0'], {
+            anchorX: 'left',
+            anchorY: 'top',
+            fontSize: 16,
+            fixed: true,
+            highlight: false,
+        });
+
+        document.getElementById('toggleBtn').addEventListener('click', () => {
+            selectionPressureOn = !selectionPressureOn;
+            pressureLabel.setAttribute({ visible: selectionPressureOn });
+            board.update();
+            document.getElementById('toggleBtn').textContent = selectionPressureOn ? "Poista valintapaine" : "Laita valintapaine päälle";
+        });
+
+        generatePopulation();
+
+
+    </script>
+
+</body>
+
+</html>
