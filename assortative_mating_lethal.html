@@ -147,11 +147,9 @@
         let selectionPressureOn = false;
         let round = 0;
 
-
         function randomInt(min, max) {
             return Number(Math.floor(Math.random() * (max - min + 1)) + min);
         }
-
 
         function generatePopulation() {
             genotypes.forEach((genotype) => {
@@ -370,6 +368,7 @@
             board.update();
             document.getElementById('toggleBtn').textContent = selectionPressureOn ? "Poista valintapaine" : "Laita valintapaine päälle";
         });
+        
         generatePopulation();
 
 
