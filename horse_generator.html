@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>JSXGraph Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+    <style>
+        #box {
+            width: 600px;
+            height: 600px;
+        }
+
+        #flex {
+            display: flex
+        }
+    </style>
+</head>
+
+<body>
+    <div id="flex">
+        <div id="box" class="jxgbox"></div>
+        <div>
+            <form id="genotype-form" onchange="updateHorseGenotype()">
+                <fieldset>
+                    <legend>Rautiastekijä</legend>
+                    <label><input type="radio" id="EE" name="E" value="EE" checked> EE - ei-rautias</label><br>
+                    <label><input type="radio" id="Ee" name="E" value="Ee"> Ee - ei-rautias kantaja</label><br>
+                    <label><input type="radio" id="ee" name="E" value="ee"> ee - rautias</label>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Ruunikkotekijä</legend>
+                    <label><input type="radio" id="AA" name="A" value="AA" checked> AA - ruunikko</label><br>
+                    <label><input type="radio" id="Aa" name="A" value="Aa"> Aa - ruunikko mustan kantaja</label><br>
+                    <label><input type="radio" id="aa" name="A" value="aa"> aa - musta</label>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Voikkotekijä</legend>
+                    <label><input type="radio" id="CC" name="C" value="CC" checked> CC - ei-voikko</label><br>
+                    <label><input type="radio" id="CrC" name="C" value="CrC"> CrC - voikko</label><br>
+                    <label><input type="radio" id="CrCr" name="C" value="CrCr"> CrCr - valkovoikko</label>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Kimotekijä</legend>
+                    <label><input type="radio" id="GG" name="G" value="GG" checked> GG - kimo</label><br>
+                    <label><input type="radio" id="Gg" name="G" value="Gg"> Gg - kimo</label><br>
+                    <label><input type="radio" id="gg" name="G" value="gg"> gg - ei-kimo</label>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // EE - ei-rautias, Ee - ei-rautias kantaja, ee - rautias
+        // AA - ruunikko, Aa- ruunikko mustan kantaja, aa - musta
+        // CC - ei-voikko, CrC - voikko, CrCr - valkovoikko 
+        // GG - kimo, Gg - kimo, gg - ei-kimo
+        const board = JXG.JSXGraph.initBoard('box', {
+            boundingbox: [-15, 15, 15, -15],
+            axis: true
+        });
+
+        const horseColors = {
+            brown: '#8B5E3C',         
+            darkerBrown: '#714A30',   
+            darkBrown: '#3E2B20',     
+            black: '#2F2F2F',         
+            beige: '#D7B89C',        
+            darkGrey: '#5E5E5E',     
+            grey: '#A8A8A8',           
+            offWhite: '#F1EDE5',       
+            white: '#FAFAFA'         
+        };
+
+        const horseBaseCoords = [
+            [1.55, -6.40],
+            [-0.64, -0.73],
+            [-3.30, -1.20],
+            [-4.80, -1.83],
+            [-5.57, -0.10],
+            [-1.07, 4.20],
+            [1.27, 3.57],
+            [3.17, 2.33],
+            [5.43, -0.23]
+        ];
+
+        const horse1Points = [];
+        const horse2Points = [];
+        horseBaseCoords.forEach(coord => {
+            const point = board.create('point', [coord[0] - 7.5, coord[1] + 7.5], { visible: false });
+            horse1Points.push(point);
+            const point2 = board.create('point', [coord[0] + 7.5, coord[1] + 7.5], { visible: false });
+            horse2Points.push(point2);
+
+        })
+
+        const horse1Shape = board.create('polygon', [...horse1Points], {
+            fillColor: 'grey',
+            strokeColor: 'black',
+            strokeWidth: 2
+        });
+        const horse2Shape = board.create('polygon', [...horse2Points], {
+            fillColor: 'grey',
+            strokeColor: 'black',
+            strokeWidth: 2
+        });
+
+        let horseGenotype = {
+            eLocus: 'EE',
+            aLocus: 'AA',
+            cLocus: 'CC',
+            gLocus: 'GG',
+        }
+
+        function updateHorseGenotype() {
+            horseGenotype.eLocus = document.querySelector('input[name="E"]:checked')?.value || '';
+            horseGenotype.aLocus = document.querySelector('input[name="A"]:checked')?.value || '';
+            horseGenotype.cLocus = document.querySelector('input[name="C"]:checked')?.value || '';
+            horseGenotype.gLocus = document.querySelector('input[name="G"]:checked')?.value || '';
+
+            console.log(horseGenotype);
+            console.log('base: ', getBaseColor(horseGenotype))
+            console.log('mane ', getManeColor(horseGenotype))
+        }
+
+        function getBaseColor(genotype) {
+            let color = "brown";
+            //E -> default brown either way
+            if (genotype.aLocus == 'aa' && genotype.eLocus != 'ee') {
+                color = "black";
+            }
+            if (genotype.cLocus == 'CrC') {
+                color = "beige";
+            }
+            console.log(genotype.cLocus, genotype.aLocus)
+            if (genotype.cLocus == 'CrC' && genotype.aLocus == 'aa') {
+                color = "darkbrown"; 
+            }
+
+            if (genotype.cLocus == 'CrCr') {
+                color = "offwhite";
+            }
+            if (genotype.gLocus != 'gg') {
+                color = "grey"; // ADD GRADIENT.
+            }
+            return color;
+        }
+
+        function getManeColor(genotype) {
+            let color = 'black';
+            if (genotype.eLocus === 'ee') {
+                color = "darkerbrown";
+            }
+            console.log(genotype.eLocus)
+            if (genotype.cLocus != 'CC') {
+                if (genotype.aLocus == 'aa' && genotype.cLocus == 'CrCr') {
+                    color = 'white'
+                }
+                else if (genotype.aLocus == 'aa' && genotype.cLocus != 'CrCr') {
+                    color = 'black'
+                }
+                else {
+                    color = "white";
+                }
+            }
+            if (genotype.gLocus != 'gg') {
+                color = "grey";
+            }
+            return color;
+        }
+
+
+
+    </script>
+
+</body>
+
+</html>
