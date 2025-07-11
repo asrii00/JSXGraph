@@ -16,3 +16,5 @@ weatherdata/daily_averages_2020.csv
 weatherdata/daily_averages_2024.csv
 weatherdata/2014-2024.csv
 dates_to_array.py
+/signalTests
+/oldTests

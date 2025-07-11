@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 
+
 <head>
     <title>Fourier</title>
     <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
@@ -10,10 +11,18 @@
             width: 1000px;
             height: 600px;
         }
+
+
+        div {
+            width: 1000px;
+            margin: 10px;
+        }
     </style>
 </head>
 
+
 <body>
+
 
     <div id="box" class="jxgbox"></div>
     <div>
@@ -25,34 +34,72 @@
         <input type="checkbox" name="check" id="sine6" checked> 6
         <input type="checkbox" name="check" id="sine7" checked> 7
     </div>
+    <div>
+         <!-- //Onkohan tämä kaikki oikein sanoitettu? <br><br> -->
+        Lisäämällä ja poistamalla rukseja valintaruuduista voit lisätä ja poistaa siniaaltoja (himmeät värit). Numero
+        kuvaa kunkin siniaallon kerrointa, joka määrää sen taajuuden.
+        Punainen aalto kuvaa summa-aaltoa, joka on kaikkien "päällä" olevien eli näkyvien siniaaltojen summa.
+        Sininen kuvaaja kuvaa kanttiaaltoa.<br><br>
+
+
+        1. Säännöllisesti toistuvia funktioita voidaan approksimoida usean erilaisen sini- ja kosiniaallon summalla.
+        Mitkä seitsemästä siniaallosta pitää olla päällä, jotta punainen summa-aalto seuraa sinistä kanttiaaltoa
+        mahdollisimman tarkasti?
+        Kokeile erilaisia yhdistelmiä. <br>
+        Vinkki: aloita niin, että ainakin aalto 1 on päällä.<br>
+        Vinkki 2: Oikeaan vastaukseen tarvitaan yhdistelmä, jossa 4 siniaaltoa on päällä ja 3 pois päältä. 
+    </div>
+
 
     <script>
         const board = JXG.JSXGraph.initBoard('box', {
-            boundingbox: [-2, 2, 10, -2],
-            axis: true
+            boundingbox: [-2, 3, 15, -3],
+            axis: true, 
+            showNavigation: false, 
+            showCopyright: false
         });
 
+
         const harmonics = [1, 2, 3, 4, 5, 6, 7]
-        const colors = ['red', 'orange', 'gold', 'green', 'blue', 'purple', 'magenta']
+        const colors = ['red', 'orange', 'gold', 'green', 'purple', 'magenta', 'pink']
         const toggle = [true, true, true, true, true, true, true]
         const waves = [];
+
 
         const squareWave = board.create('functiongraph', [
             function (t) {
                 return Math.sign(Math.sin(t));
             },
-            -2, 10
+            -2, 15
         ], { strokeColor: 'blue', strokeWidth: 2 });
 
+        [0, 1, 2, 3, 4, 5, 6, 7].forEach(x => {
+            board.create('segment', [
+                [x * Math.PI, -1],
+                [x * Math.PI, 1]
+            ], { dash: 2, strokeColor: 'blue' });
+        });
+
+
+        // const triangleWave = board.create('functiongraph', [
+        //     function (t) {
+        //         return (2 / Math.PI) * Math.asin(Math.sin(t));
+        //     },
+        //     -2, 10
+        // ], { strokeColor: 'purple', strokeWidth: 2 });
+
+
         harmonics.forEach((n, i) => {
+            const A = 4 / (n * Math.PI);
             const wave = board.create('functiongraph', [
                 function (t) {
-                    return toggle[i] ? Math.sin(n * t) : 0;
+                    return toggle[i] ? A * Math.sin(n * t) : 0;
                 },
-                -2, 10
+                -2, 15
             ], { strokeColor: colors[i], strokeWidth: 2, opacity: 0.2 });
             waves.push(wave);
         })
+
 
         const composite = board.create('functiongraph', [
             function (t) {
@@ -66,11 +113,14 @@
                 }
                 return sum;
             },
-            -2, 10
+            -2, 15
         ], { strokeColor: '#f00', strokeWidth: 2 });
 
 
+
+
         const checkboxes = document.querySelectorAll('input[name="check"]');
+
 
         checkboxes.forEach((checkbox, index) => {
             checkbox.addEventListener('change', () => {
@@ -82,8 +132,13 @@
 
 
 
+
+
+
     </script>
 
+
 </body>
+
 
 </html>

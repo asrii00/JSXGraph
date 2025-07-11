@@ -4,7 +4,7 @@
 </html>
 
 <head>
-    <title>JSXGraph Example</title>
+    <title>Bottleneck Effect Sim</title>
     <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
     <style>
@@ -27,85 +27,19 @@
         <button onclick="generateOffspring()">Generoi jälkeläiset</button>
         <button onclick="moveToNextGen()">Siirry seuraavaan sukupolveen</button>
         <button onclick="TwentyGens()">20 sukupolvea</button>
+        <button onclick="bottleneck()">Pullonkaula</button>
         <button id="toggleBtn">Laita valintapaine päälle</button>
 
     </div>
     <div>
+        Pullonkaulailmiö viittaa tapauksiin, joissa populaation koko supistuu väliaikaisesti vain pieneen osaan
+        alkuperäisestä. Tällöin jäljelle jääneet yksilöt toimivat kantavanhempina kaikille sen jälkeen tuleville
+        yksilöille populaation koon palautuessa tai kasvaessa entistäkin suuremmaksi. Pullonkaulailmiö voi nopeuttaa
+        geneettistä ajautumista, sillä pullonkaulasta selvinneet yksilöt ovat yleensä satunnainen otos koko
+        alkuperäisestä populaatiosta. Jos tietyt geenit eivät sattuneet mukaan tähän otokseen, ne eivät siirry enää
+        eteenpäin uusille sukupolville vaan katoavat populaatiosta kokonaan. Vastaavasti jotkin toiset geenit saattavat tulla
+        paljon entistä yleisemmiksi uudessa populaatiossa. <br> <br>
         <b>Tehtävät:</b>
-        Lue teksti <i>Merletekijä: Värigeenin haitallinen puoli</i> ja vastaa sitten kysymyksiin.<br>
-        1. Jos kaksi tavallista merle-koiraa (Mm x Mm) risteytyy, millä todennäköisyydellä yksittäinen pentu on
-        kaksoismerle (MM)? <br>
-        2. Populaatiossa on aluksi 48 ei-merleä ja 12 tavallista merleä. Jos yksilöt liittyvät pareiksi satunnaisesti,
-        millä todennäköisyydellä muodostuu vähintään yksi merle x merle-pari? (Vinkki: käytä komplementtisääntöä,
-        Poisson-aproksimaatiota) //vähän hankala laskea. <br>
-        TAI: Arvioi kokeellisesti, millä todennäköisyydellä muodostuu vähintään yksi merle x merle -pari. Voit päivittää
-        sivun ja painaa Muodosta parit -nappia uudelleen
-        toistaaksesi "kokeen". Toista tämä vähintään kymmenen kertaa.<br>
-        3. Jos merle x merle-parin muodostumisen todennäköisyys on X ja jokainen pari saa 2 pentua, millä
-        todennäköisyydellä populaatiossa syntyy
-        yhden sukupolven aikana vähintään yksi kaksoismerle-pentu? <br>
-        4. Tutki kokeellisesti, kuinka usein esiintyy vähintään yksi kaksoismerle-pentu. Edistä simulaatiota vähintään
-        10 sukupolven verran ja merkitse jokaisen
-        sukupolven osalta muistiin, esiintyikö siinä yhtään kaksoismerle-pentua vai ei.
-
-        <br> <br>
-        <b>Satunnaisajautuminen (neutraalit tekijät) vs. luonnonvalinta</b><br>
-
-        Satunnaisajautuminen on ilmiö, jossa sattuma vaikuttaa perinnöllisen ominaisuuden suhteelliseen esiintymiseen
-        ajan kuluessa, vaikka mitään suuntaavaa luonnonvalintaa ei tapahtuisi.
-        Kun simulaatio on ei valintapainetta-tilassa, kaksoismerle-yksilöille ei koidu mitään haittaa väristään - toisin
-        kuin todellisuudessa, jossa kuurous ja sokeus vaikeuttaisi selvästi villin eläimen selviytymistä. Sen sijaan
-        seuraavaan sukupolveen siirtyvät alleelit (kirjaimet) määräytyvät osin satunnaisesti - esimerkiksi kaksi
-        Mm-yksilöä voivat satunnaisesti saada kaksi mm-jälkeläistä, jolloin niiden osalta merletekijä katoaa
-        siirryttäessä seuraavaan sukupolveen.<br><br>
-
-        1. Paina 20 sukupolvea -nappia, jolloin simulaatio edistyy 20 sukupolven ajan ja pysähtyy sitten. Laske
-        värijakauma
-        populaatiossa. Miten se eroaa alkuperäisestä (48 ei-merleä, 12 tavallista merleä)? Onko suhteellisissa
-        jakaumissa merkittävää eroa?<br>
-        Päivitä sivu ja aloita simulaatio alusta. Edistä sitä taas 20 sukupolven verran ja laske jakauma. Eroaako se
-        edellisestä tuloksesta? Toista sama vielä kolmannen kerran ja tutki tuloksia. Kehittyykö populaation jakauma
-        satunnaisesti eri suuntiin joka kerralla, eli voitko havaita satunnaisajautumista?<br>
-
-        2. Laita valintapaine päälle napista. Tällöin kaksoismerle-väristä aiheutuu yksilölle merkittävää haittaa
-        eivätkä tällaiset yksilöt selviä seuraavaan sukupolveen tai eivät pysty lisääntymään. Edistä simulaatiota 20
-        sukupolven ajan ja laske lopuksi värijakauma populaatiossa. Mitä havaitset? Tapahtuiko värien osuuksissa muutos
-        alkuperäiseen verrattuna? Voit myös toistaa saman “kokeen” useamman kerran aloittamalla simulaation alusta ja 
-        tutkia, tapahtuuko sama ilmiö joka kerralla.
-        <br>3. Mitä luulet, että todellisuudessa tapahtuisi, jos populaatio merle- ja ei-merlekoiria jätettäisiin oman
-        onnensa nojaan selviytymään luonnossa, missä kuurous ja sokeus haittaisi merkittävästi koiran selviytymistä?
-        Mitä se kertoo siitä, miten ihmisten huostassa olevat lemmikkipopulaatiot ja villit populaatiot saattavat erota
-        toisistaan?
-
-        <br><br>
-        <b>Merletekijä: Värigeenin haitallinen puoli</b><br>
-
-        Joissakin koiraroduissa esiintyvä merle- eli valkoisensekainen marmoroitu väritys on siitä erityinen, että jos
-        koira perii merletekijän molemmilta vanhemmiltaan, se aiheuttaa tavallista valkovoittoisemman värityksen lisäksi
-        huomattavia terveys- tai kehitysongelmia, kuten kuurosokeutta.<br> <br>
-
-        Koira voi olla merlegeenin osalta yksi kolmesta alleeli- eli kirjainyhdistelmästä: MM (kaksoismerle), Mm
-        (tavallinen merle) tai mm (ei merlekuviointia). Yksilö perii kummaltakin vanhemmaltaan yhden kirjaimen, joka
-        valikoituu satunnaisesti, esimerkiksi Mm-vanhempi periyttää pennulleen 50% todennäköisyydellä M-kirjaimen ja 50%
-        todennäköisyydellä m-kirjaimen. Kaksoismerlen terveyshaittojen vuoksi kahden tavallisen merlen risteyttäminen on
-        kiellettyä, sillä on mahdollista, että osasta pennuista tulee kaksoismerlejä. Yksittäinen merletekijä (Mm) on
-        harmiton. <br> <br>
-
-        Koirien kasvattajat säätelevät koiriensa pariutumista, mutta tämä simulaatio kuvaa, mitä tapahtuisi, jos lauma
-        koiria
-        esimerkiksi villiintyisi ja pääsisi pariutumaan vapaasti ja värin suhteen täysin satunnaisesti. Mustat pallot
-        (mm) kuvaavat koiria, joilla ei ole merletekijää.
-        Harmaat pallot (Mm) kuvaavat tavallisia merle-koiria ja mahdolliset valkoiset pallot (MM) kaksoismerlejä.
-        <br>
-        <img style="margin-top: 10px"
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/BorderColliePupTheEye_wb.jpg/250px-BorderColliePupTheEye_wb.jpg">
-        Tavallinen merle. <br>
-        <img style="margin-top: 10px"
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Aussie_double_merle.jpg/250px-Aussie_double_merle.jpg">
-        Kaksoismerle. Kuvan koira on kuuro ja sillä on epänormaalisti kehittyneet silmät. <br><br>
-
-        (Kuvat: Wikimedia, https://commons.wikimedia.org/wiki/File:BorderColliePupTheEye_wb.jpg,
-        https://commons.wikimedia.org/wiki/File:Aussie_double_merle.jpg )
 
 
 
@@ -114,8 +48,15 @@
     <script>
 
         // TODO: could add reset button
+        //TODO: make it so you can add the bottleneck effect only before the 1st round, 
+        //or make sure nothing breaks if you do it later.
+        //also: maybe add a button to stop the auto- 20 gens thing.
+
+        // make repopulation dynamically adjusted, not "block"wise.
         const maxX = 100;
         const maxY = 60;
+
+        const bottleneckNumber = 14;
 
         const columns = 10;
         const xSpacing = 3.6;
@@ -129,6 +70,8 @@
             { num: 0, color: 'white', label: 'MM' },
         ]
 
+        const totalIndividuals = genotypes[0].num + genotypes[1].num + genotypes[2].num;
+
         const board = JXG.JSXGraph.initBoard('box', {
             boundingbox: [-3, maxY + 3, maxX + 3, -3],
             axis: false,
@@ -139,10 +82,12 @@
         const adultIndividuals = [];
         const pairedIndividuals = [];
         const nextGenIndividualsColors = [];
+        const secondNextGenColors = [];
         const nextGen = [];
 
         let isPaired = false;
         let hasReproduced = false;
+        let repopulating = false;
 
         let selectionPressureOn = false;
         let round = 0;
@@ -246,12 +191,13 @@
             }
         }
 
-        function drawInPairs(array) {
+        function drawInPairs(array, offset = 5) {
+            const tempArray = [];
             array.forEach((pair, i) => {
                 const row = Math.floor(i / columns);
                 const col = i % columns;
 
-                const y = yStart - row * ySpacing - 5;
+                const y = yStart - row * ySpacing - offset;
                 const x1 = xStart + col * xSpacing * 2.75;   // left individual in pair
                 const x2 = x1 + xSpacing;                // right individual in pair
 
@@ -262,17 +208,12 @@
                 child1.customState = pair[0];
                 const child2 = board.create('point', [x2, y], { size: 6, fillColor: pair[1], strokeColor: 'black', strokeWidth: 1, name: child2Geno, fixed: true })
                 child2.customState = pair[1];
-                nextGen.push(child1, child2);
+                tempArray.push(child1, child2);
             });
+            return tempArray;
         }
 
-        function generateOffspring() {
-            if (!isPaired) return;
-            if (hasReproduced) return;
-            round++;
-            roundLabel.setText('Sukupolvi ' + round.toFixed(0));
-            hasReproduced = true;
-
+        function generateTwoChildren(secondRow = false) {
             pairedIndividuals.forEach((pair, i) => {
                 const parent1Allele1 = getAllele(pair[0].customState)
                 const parent2Allele1 = getAllele(pair[1].customState)
@@ -282,9 +223,36 @@
                 const parent2Allele2 = getAllele(pair[1].customState)
                 const childColor2 = combineAlleles(parent1Allele2, parent2Allele2);
 
-                nextGenIndividualsColors.push([childColor1, childColor2]);
+                if (!secondRow) {
+                    nextGenIndividualsColors.push([childColor1, childColor2]);
+                }
+                else {
+                    secondNextGenColors.push([childColor1, childColor2]);
+                }
+
             })
-            drawInPairs(nextGenIndividualsColors);
+
+        }
+
+        function generateOffspring() {
+            if (!isPaired) return;
+            if (hasReproduced) return;
+
+            if (adultIndividuals.length >= totalIndividuals - (bottleneckNumber * 2 ** (round + 1))) {
+                repopulating = false;
+            }
+
+            round++;
+            roundLabel.setText('Sukupolvi ' + round.toFixed(0));
+            hasReproduced = true;
+            generateTwoChildren();
+            if (repopulating) {
+                generateTwoChildren(true);
+            }
+
+
+            nextGen.push(...drawInPairs(nextGenIndividualsColors));
+            nextGen.push(...drawInPairs(secondNextGenColors, 10));
         }
 
         function scatterDraw() {
@@ -310,6 +278,7 @@
 
         function moveToNextGen() {
             if (isPaired && hasReproduced) {
+
                 isPaired = false;
                 pairedIndividuals.forEach((pair) => {
                     board.removeObject(pair[0]);
@@ -318,6 +287,7 @@
                 pairedIndividuals.length = 0;
                 adultIndividuals.length = 0;
                 nextGenIndividualsColors.length = 0;
+                secondNextGenColors.length = 0;
                 adultIndividuals.push(...nextGen);
                 nextGen.length = 0;
                 scatterDraw(adultIndividuals);
@@ -336,15 +306,48 @@
         }
 
         async function TwentyGens() {
-            for (i = 0; i < 20; i++){
-            pair();
-            await sleep(1200);
-            generateOffspring();
-            await sleep(1500);
-            moveToNextGen();
-            await sleep(1500);
+            for (i = 0; i < 20; i++) {
+                pair();
+                await sleep(1200);
+                generateOffspring();
+                await sleep(1500);
+                moveToNextGen();
+                await sleep(1500);
+            }
         }
+
+        function reduceRandomly(array) {
+            adultIndividuals
         }
+
+        function bottleneck() {
+            if (isPaired) return;
+            repopulating = true;
+
+
+            const randomlyPickedIndexes = new (Set);
+
+            while (randomlyPickedIndexes.size < (adultIndividuals.length - bottleneckNumber)) {
+                randomlyPickedIndexes.add(randomInt(0, adultIndividuals.length - 1));
+            }
+
+            //to avoid index shifting 
+            const sortedIndexes = Array.from(randomlyPickedIndexes).sort((a, b) => b - a);
+
+            for (const index of sortedIndexes) {
+                board.removeObject(adultIndividuals[index]);
+                adultIndividuals.splice(index, 1);
+            }
+        }
+
+
+
+
+
+
+
+
+
 
         const pressureLabel = board.create('text', [0, 0, 'Valintapaine päällä'], {
             anchorX: 'left',
@@ -368,7 +371,7 @@
             board.update();
             document.getElementById('toggleBtn').textContent = selectionPressureOn ? "Poista valintapaine" : "Laita valintapaine päälle";
         });
-        
+
         generatePopulation();
 
 
