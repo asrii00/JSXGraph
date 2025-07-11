@@ -26,32 +26,55 @@
         <button onclick="pair()">Muodosta parit</button>
         <button onclick="generateOffspring()">Generoi jälkeläiset</button>
         <button onclick="moveToNextGen()">Siirry seuraavaan sukupolveen</button>
-        <button onclick="TwentyGens()">20 sukupolvea</button>
-        <button onclick="bottleneck()">Pullonkaula</button>
+        <button onclick="TwentyGens()">Etene 20 sukupolvea</button>
+        <button onClick="stopTwenty()">Pysäytä automaattinen eteneminen</button>
+        <button onclick="bottleneck()">Aiheuta pullonkaula</button>
         <button id="toggleBtn">Laita valintapaine päälle</button>
+
+
 
     </div>
     <div>
+        <h4> Pullonkaulailmiö </h4>
         Pullonkaulailmiö viittaa tapauksiin, joissa populaation koko supistuu väliaikaisesti vain pieneen osaan
         alkuperäisestä. Tällöin jäljelle jääneet yksilöt toimivat kantavanhempina kaikille sen jälkeen tuleville
         yksilöille populaation koon palautuessa tai kasvaessa entistäkin suuremmaksi. Pullonkaulailmiö voi nopeuttaa
         geneettistä ajautumista, sillä pullonkaulasta selvinneet yksilöt ovat yleensä satunnainen otos koko
         alkuperäisestä populaatiosta. Jos tietyt geenit eivät sattuneet mukaan tähän otokseen, ne eivät siirry enää
         eteenpäin uusille sukupolville vaan katoavat populaatiosta kokonaan. Vastaavasti jotkin toiset geenit saattavat
-        tulla
-        paljon entistä yleisemmiksi uudessa populaatiossa. <br> <br>
-        <b>Tehtävät:</b>
+        tulla paljon entistä yleisemmiksi uudessa populaatiossa, koska otokseen sattui useampi tällainen yksilö. <br> 
+        <h4>Simulaatio</h4>
+        Jokainen pallo simulaatiossa kuvaa yksilöä, esimerkiksi kasviyksilöä, joka voi olla väriltään tummanvihreä, vaaleanvihreä tai valkoinen. 
+        Väri periytyy realistisesti siten, että vanhemmalla on yhtä suuri todennäköisyys periyttää
+        jälkeläiselle kumpi tahansa kahdesta omasta alleelistaan. Molemmilta vanhemmilta saadut kaksi alleelia yhdistyvät
+        jälkeläisen genotyypiksi, joka määrää jälkeläisen värin (gg = tummanvihreä, Gg = vaaleanvihreä, GG = valkoinen.)<br>
+        Jos valintapaine on päällä, syntyneet valkoiset jälkeläiset eivät selviä seuraavaan sukupolveen vaan katoavat -
+        todellinen vastine tälle voisi olla esimerkiksi, etteivät kasviyksilöt voi selvitä, jos niiltä puuttuu kokonaan 
+        lehtivihreä eivätkä ne siten kykene fotosynteesiin. 
+
+        <br><br>
+        <h4>Tehtävät:</h4>
+        1. Populaatiossa on 48 mustaa yksilöä ja 12 harmaata yksilöä ja niistä valitaan satunnaisesti 14 yksilöä. <br>
+        a) Millä todennäköisyydellä valituksi tulee pelkästään tummanvihreitä yksilöitä? <br>
+        b) Millä todennäköisyydellä valituksi tulee vähintään 6 vaaleanvihreää yksilöitä? <br> <br>
+        2. Tutki, miten pullonkaulailmiö vaikuttaa eri värien suhteellisiin osuuksiin populaatiossa. <br>
+        a) Etene yksi sukupolvi painamalla Muodosta parit-, Generoi jälkeläiset- ja Siirry seuraavaan sukupolveen -nappeja kutakin kerran.
+        Laske eri värien suhteelliset osuudet populaatiossa. <br>
+        b) Paina Aiheuta pullonkaula -nappia. Laske värien suhteelliset osuudet tässä pienentyneessä populaatiossa. <br>
+        c) Paina Etene 20 sukupolvea -nappia. Seuraa värien suhteellisten osuuksien muuttumista silmämääräisesti, kun 
+        simulaatio etenee. Kun simulaatio on edennyt 20 sukupolvea, laske värien suhteelliset osuudet populaatiossa. <br>
+        d) Tapahtuiko eri värien suhteellisissa osuuksissa selvä muutos? Millainen? Voit myös päivittää sivun, toistaa samat askeleet uudelleen ja tutkia, 
+        muuttuvatko suhteelliset osuudet samalla vai eri tavalla.
+
 
 
 
     </div>
 
     <script>
-
         // TODO: could add reset button
         //TODO: make it so you can add the bottleneck effect only before the 1st round, 
         //or make sure nothing breaks if you do it later.
-        //also: maybe add a button to stop the auto- 20 gens thing.
 
         const maxX = 100;
         const maxY = 60;
@@ -65,9 +88,9 @@
         const yStart = 50;
 
         const genotypes = [
-            { num: 48, color: 'black', label: 'mm' },
-            { num: 12, color: 'grey', label: 'Mm' },
-            { num: 0, color: 'white', label: 'MM' },
+            { num: 48, color: 'darkgreen', label: 'gg' },
+            { num: 12, color: 'lightgreen', label: 'Gg' },
+            { num: 0, color: 'white', label: 'GG' },
         ]
 
         const totalIndividuals = genotypes[0].num + genotypes[1].num + genotypes[2].num;
@@ -92,6 +115,8 @@
         let selectionPressureOn = false;
         let round = 0;
         let roundsSinceBottleneck = 0;
+
+        let stopFlag = false;
 
         function randomInt(min, max) {
             return Number(Math.floor(Math.random() * (max - min + 1)) + min);
@@ -157,10 +182,10 @@
 
         function getAllele(genotype) {
             switch (genotype) {
-                case 'black':
-                    return 'black';
-                case 'grey':
-                    return (Math.random() <= 0.5) ? 'black' : 'white';
+                case 'darkgreen':
+                    return 'darkgreen';
+                case 'lightgreen':
+                    return (Math.random() <= 0.5) ? 'darkgreen' : 'white';
                 case 'white':
                     return 'white';
                 default:
@@ -174,18 +199,18 @@
                 return allele1;
             }
             else {
-                return 'grey';
+                return 'lightgreen';
             }
         }
 
         function getGenotypeLabel(color) {
             switch (color) {
-                case 'black':
-                    return 'mm';
-                case 'grey':
-                    return 'Mm';
+                case 'darkgreen':
+                    return 'gg';
+                case 'lightgreen':
+                    return 'Gg';
                 case 'white':
-                    return 'MM';
+                    return 'GG';
                 default:
                     console.log("error in getgenolabel")
                     return '?';
@@ -216,9 +241,7 @@
 
         function generateTwoChildren(secondRow = false) {
             pairedIndividuals.forEach((pair, i) => {
-                console.log('secondrow: ', secondRow, 2 * nextGenIndividualsColors.length, 2* secondNextGenColors.length, totalIndividuals)
-                if (!secondRow || 2 * nextGenIndividualsColors.length + 2* secondNextGenColors.length +2 <= totalIndividuals) {
-                    console.log(i, "pushing children")
+                if (!secondRow || 2 * nextGenIndividualsColors.length + 2 * secondNextGenColors.length + 2 <= totalIndividuals) {
                     const parent1Allele1 = getAllele(pair[0].customState)
                     const parent2Allele1 = getAllele(pair[1].customState)
                     const childColor1 = combineAlleles(parent1Allele1, parent2Allele1);
@@ -232,13 +255,8 @@
                     }
                     else {
                         secondNextGenColors.push([childColor1, childColor2]);
-                        
                     }
                 }
-                else {
-                    console.log(adultIndividuals.length +4 <= totalIndividuals)
-                }
-
             })
 
         }
@@ -247,7 +265,7 @@
             if (!isPaired) return;
             if (hasReproduced) return;
 
-            if (adultIndividuals.length >= totalIndividuals){ //* 2 ** (roundsSinceBottleneck + 1))) {
+            if (adultIndividuals.length >= totalIndividuals) { //* 2 ** (roundsSinceBottleneck + 1))) {
                 repopulating = false;
             }
 
@@ -316,18 +334,21 @@
         }
 
         async function TwentyGens() {
+            stopFlag = false;
             for (i = 0; i < 20; i++) {
-                pair();
-                await sleep(1200);
-                generateOffspring();
-                await sleep(1500);
-                moveToNextGen();
-                await sleep(1500);
+                if (!stopFlag) {
+                    pair();
+                    await sleep(1200);
+                }
+                if (!stopFlag) {
+                    generateOffspring();
+                    await sleep(1500);
+                }
+                if (!stopFlag) {
+                    moveToNextGen();
+                    await sleep(1500);
+                }
             }
-        }
-
-        function reduceRandomly(array) {
-            adultIndividuals
         }
 
         function bottleneck() {
@@ -336,13 +357,11 @@
             roundsSinceBottleneck = 0;
             roundLabel.setText('Sukupolvi ' + round.toFixed(0)); //repopulating won't work 
 
-
             const randomlyPickedIndexes = new (Set);
 
             while (randomlyPickedIndexes.size < (adultIndividuals.length - bottleneckNumber)) {
                 randomlyPickedIndexes.add(randomInt(0, adultIndividuals.length - 1));
             }
-
             //to avoid index shifting 
             const sortedIndexes = Array.from(randomlyPickedIndexes).sort((a, b) => b - a);
 
@@ -352,14 +371,9 @@
             }
         }
 
-
-
-
-
-
-
-
-
+        function stopTwenty() {
+            stopFlag = true;
+        }
 
         const pressureLabel = board.create('text', [0, 0, 'Valintapaine päällä'], {
             anchorX: 'left',
