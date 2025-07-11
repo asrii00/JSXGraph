@@ -20,6 +20,8 @@
 <body>
     <div id="flex">
         <div id="box" class="jxgbox"></div>
+        <div><button onclick="updateHorse1Color()">Set</button></div>
+
         <div>
             <form id="genotype-form" onchange="updateHorseGenotype()">
                 <fieldset>
@@ -64,15 +66,15 @@
         });
 
         const horseColors = {
-            brown: '#8B5E3C',         
-            darkerBrown: '#714A30',   
-            darkBrown: '#3E2B20',     
-            black: '#2F2F2F',         
-            beige: '#D7B89C',        
-            darkGrey: '#5E5E5E',     
-            grey: '#A8A8A8',           
-            offWhite: '#F1EDE5',       
-            white: '#FAFAFA'         
+            brown: '#8B5E3C',
+            darkerbrown: '#714A30',
+            darkbrown: '#3E2B20',
+            black: '#2F2F2F',
+            beige: '#D7B89C',
+            darkgrey: '#5E5E5E',
+            grey: '#A8A8A8',
+            offwhite: '#F1EDE5',
+            white: '#FAFAFA'
         };
 
         const horseBaseCoords = [
@@ -87,10 +89,29 @@
             [5.43, -0.23]
         ];
 
+        const maneCoords = [
+            [-3.43, 3.43],
+            [-3.54, 2.93],
+            [-3.62, 2.30],
+            [-2.45, 2.35]
+        ];
+        const A = board.create('point', [-1.23, 4.20], { visible: false });
+        const mane1Points = [];
+        const mane1Lines = [];
+
+        maneCoords.forEach(coord => {
+            const point = board.create('point', [coord[0], coord[1]], { visible: false });
+            mane1Points.push(point);
+            const line = board.create('line', [point, A], { straightFirst: false, straightLast: false, strokeWidth: 4, strokeColor: horseColors.offwhite });
+            mane1Lines.push(line);
+        })
+
+
+
         const horse1Points = [];
         const horse2Points = [];
         horseBaseCoords.forEach(coord => {
-            const point = board.create('point', [coord[0] - 7.5, coord[1] + 7.5], { visible: false });
+            const point = board.create('point', [coord[0], coord[1]], { visible: false });
             horse1Points.push(point);
             const point2 = board.create('point', [coord[0] + 7.5, coord[1] + 7.5], { visible: false });
             horse2Points.push(point2);
@@ -100,13 +121,14 @@
         const horse1Shape = board.create('polygon', [...horse1Points], {
             fillColor: 'grey',
             strokeColor: 'black',
-            strokeWidth: 2
+            strokeWidth: 2,
+            fillOpacity: 1
         });
-        const horse2Shape = board.create('polygon', [...horse2Points], {
-            fillColor: 'grey',
-            strokeColor: 'black',
-            strokeWidth: 2
-        });
+        // const horse2Shape = board.create('polygon', [...horse2Points], {
+        //     fillColor: 'grey',
+        //     strokeColor: 'black',
+        //     strokeWidth: 2
+        // });
 
         let horseGenotype = {
             eLocus: 'EE',
@@ -127,49 +149,62 @@
         }
 
         function getBaseColor(genotype) {
-            let color = "brown";
+            let color = horseColors.brown;
             //E -> default brown either way
             if (genotype.aLocus == 'aa' && genotype.eLocus != 'ee') {
-                color = "black";
+                color = horseColors.black;
             }
             if (genotype.cLocus == 'CrC') {
-                color = "beige";
+                color = horseColors.beige;
             }
             console.log(genotype.cLocus, genotype.aLocus)
-            if (genotype.cLocus == 'CrC' && genotype.aLocus == 'aa') {
-                color = "darkbrown"; 
+            if (genotype.cLocus == 'CrC' && genotype.aLocus == 'aa' && genotype.eLocus != 'ee') {
+                color = horseColors.darkbrown;
             }
 
             if (genotype.cLocus == 'CrCr') {
-                color = "offwhite";
+                color = horseColors.offwhite;
             }
             if (genotype.gLocus != 'gg') {
-                color = "grey"; // ADD GRADIENT.
+                color = horseColors.grey; // ADD GRADIENT.
             }
             return color;
         }
 
         function getManeColor(genotype) {
-            let color = 'black';
+            let color = horseColors.black;
             if (genotype.eLocus === 'ee') {
-                color = "darkerbrown";
+                color = horseColors.darkerbrown;
             }
-            console.log(genotype.eLocus)
-            if (genotype.cLocus != 'CC') {
-                if (genotype.aLocus == 'aa' && genotype.cLocus == 'CrCr') {
-                    color = 'white'
-                }
-                else if (genotype.aLocus == 'aa' && genotype.cLocus != 'CrCr') {
-                    color = 'black'
-                }
-                else {
-                    color = "white";
-                }
+
+            if (genotype.aLocus == 'aa' && genotype.cLocus == 'CrC') {  //voikko + musta
+                color = horseColors.black;
             }
+            if (genotype.eLocus == 'ee' && genotype.cLocus == 'CrC') { //voikko + rautias 
+                color = horseColors.white;
+            }
+
+            if (genotype.cLocus == 'CrCr') {
+                color = horseColors.white;
+            }
+
             if (genotype.gLocus != 'gg') {
-                color = "grey";
+                color = horseColors.darkgrey;
             }
             return color;
+        }
+
+        function updateHorse1Color() {
+            horse1Shape.setAttribute({ fillColor: (getBaseColor(horseGenotype)) });
+            const maneColor = getManeColor(horseGenotype);
+            console.log(maneColor);
+            mane1Lines.forEach(line => {
+                line.setAttribute({ color: maneColor });
+            }
+            )
+        }
+        function updateHorse2Color() {
+            //horse2Shape.setAttribute({ fillColor: (getBaseColor(horseGenotype)) });
         }
 
 
