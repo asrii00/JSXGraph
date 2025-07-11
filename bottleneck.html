@@ -37,7 +37,8 @@
         yksilöille populaation koon palautuessa tai kasvaessa entistäkin suuremmaksi. Pullonkaulailmiö voi nopeuttaa
         geneettistä ajautumista, sillä pullonkaulasta selvinneet yksilöt ovat yleensä satunnainen otos koko
         alkuperäisestä populaatiosta. Jos tietyt geenit eivät sattuneet mukaan tähän otokseen, ne eivät siirry enää
-        eteenpäin uusille sukupolville vaan katoavat populaatiosta kokonaan. Vastaavasti jotkin toiset geenit saattavat tulla
+        eteenpäin uusille sukupolville vaan katoavat populaatiosta kokonaan. Vastaavasti jotkin toiset geenit saattavat
+        tulla
         paljon entistä yleisemmiksi uudessa populaatiossa. <br> <br>
         <b>Tehtävät:</b>
 
@@ -52,7 +53,6 @@
         //or make sure nothing breaks if you do it later.
         //also: maybe add a button to stop the auto- 20 gens thing.
 
-        // make repopulation dynamically adjusted, not "block"wise.
         const maxX = 100;
         const maxY = 60;
 
@@ -91,6 +91,7 @@
 
         let selectionPressureOn = false;
         let round = 0;
+        let roundsSinceBottleneck = 0;
 
         function randomInt(min, max) {
             return Number(Math.floor(Math.random() * (max - min + 1)) + min);
@@ -215,19 +216,27 @@
 
         function generateTwoChildren(secondRow = false) {
             pairedIndividuals.forEach((pair, i) => {
-                const parent1Allele1 = getAllele(pair[0].customState)
-                const parent2Allele1 = getAllele(pair[1].customState)
-                const childColor1 = combineAlleles(parent1Allele1, parent2Allele1);
+                console.log('secondrow: ', secondRow, 2 * nextGenIndividualsColors.length, 2* secondNextGenColors.length, totalIndividuals)
+                if (!secondRow || 2 * nextGenIndividualsColors.length + 2* secondNextGenColors.length +2 <= totalIndividuals) {
+                    console.log(i, "pushing children")
+                    const parent1Allele1 = getAllele(pair[0].customState)
+                    const parent2Allele1 = getAllele(pair[1].customState)
+                    const childColor1 = combineAlleles(parent1Allele1, parent2Allele1);
 
-                const parent1Allele2 = getAllele(pair[0].customState)
-                const parent2Allele2 = getAllele(pair[1].customState)
-                const childColor2 = combineAlleles(parent1Allele2, parent2Allele2);
+                    const parent1Allele2 = getAllele(pair[0].customState)
+                    const parent2Allele2 = getAllele(pair[1].customState)
+                    const childColor2 = combineAlleles(parent1Allele2, parent2Allele2);
 
-                if (!secondRow) {
-                    nextGenIndividualsColors.push([childColor1, childColor2]);
+                    if (!secondRow) {
+                        nextGenIndividualsColors.push([childColor1, childColor2]);
+                    }
+                    else {
+                        secondNextGenColors.push([childColor1, childColor2]);
+                        
+                    }
                 }
                 else {
-                    secondNextGenColors.push([childColor1, childColor2]);
+                    console.log(adultIndividuals.length +4 <= totalIndividuals)
                 }
 
             })
@@ -238,11 +247,12 @@
             if (!isPaired) return;
             if (hasReproduced) return;
 
-            if (adultIndividuals.length >= totalIndividuals - (bottleneckNumber * 2 ** (round + 1))) {
+            if (adultIndividuals.length >= totalIndividuals){ //* 2 ** (roundsSinceBottleneck + 1))) {
                 repopulating = false;
             }
 
             round++;
+            roundsSinceBottleneck++;
             roundLabel.setText('Sukupolvi ' + round.toFixed(0));
             hasReproduced = true;
             generateTwoChildren();
@@ -323,6 +333,8 @@
         function bottleneck() {
             if (isPaired) return;
             repopulating = true;
+            roundsSinceBottleneck = 0;
+            roundLabel.setText('Sukupolvi ' + round.toFixed(0)); //repopulating won't work 
 
 
             const randomlyPickedIndexes = new (Set);
