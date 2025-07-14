@@ -52,25 +52,22 @@
                     <label><input type="radio" id="gg" name="G" value="gg"> gg - ei-kimo</label>
                 </fieldset>
             </form>
-             <div>
-        <button onclick="updateHorse1Color()">Set selected for dam</button></div>
-        <div><button onclick="updateHorse2Color()">Set selected for sire</button></div>
+            <div>
+                <button onclick="updateHorse1Color()">Set selected for dam</button>
+            </div>
+            <div><button onclick="updateHorse2Color()">Set selected for sire</button></div>
+        </div>
+
+    </div>
     </div>
 
-        </div>
-    </div>
-   
 
     <script>
-        // EE - ei-rautias, Ee - ei-rautias kantaja, ee - rautias
-        // AA - ruunikko, Aa- ruunikko mustan kantaja, aa - musta
-        // CC - ei-voikko, CrC - voikko, CrCr - valkovoikko 
-        // GG - kimo, Gg - kimo, gg - ei-kimo
         const board = JXG.JSXGraph.initBoard('box', {
             boundingbox: [-15, 15, 15, -15],
-            axis: false, 
-            showCopyright: false, 
-            fillColor: 'lightgrey'
+            axis: false,
+            showCopyright: false,
+
         });
 
         const horseColors = {
@@ -146,112 +143,43 @@
             [2.021, 1.033]]
 
 
-        const mane1Points = [];
-        const frontLock1Points = [];
-        const tobiano1Points = [];
-        const horse1Points = [];
-      
-       
+        const mane1Points = [], frontLock1Points = [], tobiano1Points = [], horse1Points = [];
+        const mane2Points = [], frontLock2Points = [], tobiano2Points = [], horse2Points = [];
 
-        const horse2Points = []; 
-        const mane2Points = [];
-        const frontLock2Points = [];
-        const tobiano2Points = [];
+        // Utility to create mirrored points and push into 1 & 2 arrays
+        function addMirroredPoints(coords, offsetX, offsetY, arr1, arr2) {
+            coords.forEach(([x, y]) => {
+                arr1.push(board.create('point', [x - offsetX, y + offsetY], { visible: false }));
+                arr2.push(board.create('point', [x + offsetX, y + offsetY], { visible: false }));
+            });
+        }
 
-        maneCoords.forEach(coord => {
-            const point = board.create('point', [coord[0] -7.5, coord[1]+7.5], { visible: false });
-            mane1Points.push(point);
-            const point2 = board.create('point', [coord[0] + 7.5, coord[1]+7.5], { visible: false });
-            mane2Points.push(point2);
-        })
-        frontLockCoords.forEach(coord => {
-            const point = board.create('point', [coord[0]-7.5, coord[1]+7.5], { visible: false });
-            frontLock1Points.push(point);
-            const point2 = board.create('point', [coord[0]+7.5, coord[1]+7.5], { visible: false });
-            frontLock2Points.push(point2);
-        })
-        tobianoCoords.forEach(coord => {
-            const point = board.create('point', [coord[0]-7.5, coord[1]+7.5], { visible: false });
-            tobiano1Points.push(point);
-            const point2 = board.create('point', [coord[0]+7.5, coord[1]+7.5], { visible: false });
-            tobiano2Points.push(point2);
-        })
+        // Create all mirrored point sets
+        addMirroredPoints(maneCoords, 7.5, 7.5, mane1Points, mane2Points);
+        addMirroredPoints(frontLockCoords, 7.5, 7.5, frontLock1Points, frontLock2Points);
+        addMirroredPoints(tobianoCoords, 7.5, 7.5, tobiano1Points, tobiano2Points);
+        addMirroredPoints(horseBaseCoords, 7.5, 7.5, horse1Points, horse2Points);
 
-        horseBaseCoords.forEach(coord => {
-            const point = board.create('point', [coord[0]-7.5, coord[1] +7.5], { visible: false });
-            horse1Points.push(point);
-            const point2 = board.create('point', [coord[0] + 7.5, coord[1] + 7.5], { visible: false });
-            horse2Points.push(point2);
+        // Helper to create a filled polygon without borders
+        function createFlatPolygon(points, fillColor) {
+            return board.create('polygon', [...points], {
+                fillColor,
+                fillOpacity: 1,
+                highlight: false,
+                borders: { visible: false }
+            });
+        }
 
-        })
+        // Create all shapes
+        const horse1Shape = createFlatPolygon(horse1Points, 'grey');
+        const tobiano1Shape = createFlatPolygon(tobiano1Points, 'white');
+        const mane1Shape = createFlatPolygon(mane1Points, 'black');
+        const frontLock1Shape = createFlatPolygon(frontLock1Points, 'black');
 
-        const horse1Shape = board.create('polygon', [...horse1Points], {
-            fillColor: 'grey',
-            borders: {
-                visible: false
-            },
-            highlight: false,
-            fillOpacity: 1
-        });
-        const tobiano1Shape = board.create('polygon', [...tobiano1Points], {
-            fillColor: 'white',
-            borders: {
-                visible: false
-            },
-            highlight: false,
-            fillOpacity: 1
-        });
-
-        const mane1Shape = board.create('polygon', [...mane1Points], {
-            fillColor: 'black',
-            borders: {
-                visible: false
-            },
-            highlight: false,
-            fillOpacity: 1,
-        });
-        const frontLock1Shape = board.create('polygon', [...frontLock1Points], {
-            fillColor: 'black',
-            borders: {
-                visible: false
-            },
-            highlight: false,
-            fillOpacity: 1
-        });
-
-        const horse2Shape = board.create('polygon', [...horse2Points], {
-            fillColor: 'grey',
-            borders: {
-                visible: false
-            },
-            highlight: false,
-            fillOpacity: 1
-        });
-        const tobiano2Shape = board.create('polygon', [...tobiano2Points], {
-            fillColor: 'white',
-            borders: {
-                visible: false
-            },
-            highlight: false,
-            fillOpacity: 1
-        });
-
-        const mane2Shape = board.create('polygon', [...mane2Points], {
-            fillColor: 'black',
-            borders: {
-                visible: false
-            },
-            highlight: false,
-            fillOpacity: 1,
-        });
-        const frontLock2Shape = board.create('polygon', [...frontLock2Points], {
-            fillColor: 'black',
-            borders: {
-                visible: false
-            },
-            highlight: false,
-            fillOpacity: 1
-        });
+        const horse2Shape = createFlatPolygon(horse2Points, 'grey');
+        const tobiano2Shape = createFlatPolygon(tobiano2Points, 'white');
+        const mane2Shape = createFlatPolygon(mane2Points, 'black');
+        const frontLock2Shape = createFlatPolygon(frontLock2Points, 'black');
 
         // const eye1 = board.create('point', [-2.05, 2.10], { color: 'black', size: 4});
         // const eyeHL1 = board.create('point', [-1.92, 2.2], { color: 'white', size: 0.1});
@@ -273,7 +201,7 @@
         //     strokeWidth: 2
         // });
 
-        let horseGenotype = {
+        let selectedHorseGenotype = {
             eLocus: 'EE',
             aLocus: 'AA',
             cLocus: 'CC',
@@ -281,14 +209,14 @@
         }
 
         function updateHorseGenotype() {
-            horseGenotype.eLocus = document.querySelector('input[name="E"]:checked')?.value || '';
-            horseGenotype.aLocus = document.querySelector('input[name="A"]:checked')?.value || '';
-            horseGenotype.cLocus = document.querySelector('input[name="C"]:checked')?.value || '';
-            horseGenotype.gLocus = document.querySelector('input[name="G"]:checked')?.value || '';
+            selectedHorseGenotype.eLocus = document.querySelector('input[name="E"]:checked')?.value || '';
+            selectedHorseGenotype.aLocus = document.querySelector('input[name="A"]:checked')?.value || '';
+            selectedHorseGenotype.cLocus = document.querySelector('input[name="C"]:checked')?.value || '';
+            selectedHorseGenotype.gLocus = document.querySelector('input[name="G"]:checked')?.value || '';
 
-            console.log(horseGenotype);
-            console.log('base: ', getBaseColor(horseGenotype))
-            console.log('mane ', getManeColor(horseGenotype))
+            console.log(selectedHorseGenotype);
+            console.log('base: ', getBaseColor(selectedHorseGenotype))
+            console.log('mane ', getManeColor(selectedHorseGenotype))
         }
 
         function getBaseColor(genotype) {
@@ -338,14 +266,14 @@
         }
 
         function updateHorse1Color() {
-            horse1Shape.setAttribute({ fillColor: (getBaseColor(horseGenotype)) });
-            const maneColor = getManeColor(horseGenotype);
+            horse1Shape.setAttribute({ fillColor: (getBaseColor(selectedHorseGenotype)) });
+            const maneColor = getManeColor(selectedHorseGenotype);
             mane1Shape.setAttribute({ fillColor: maneColor });
             frontLock1Shape.setAttribute({ fillColor: maneColor });
 
         }
         function updateHorse2Color() {
-            //horse2Shape.setAttribute({ fillColor: (getBaseColor(horseGenotype)) });
+            horse2Shape.setAttribute({ fillColor: (getBaseColor(selectedHorseGenotype)) });
         }
 
         // function logCoordsAsArray() {
