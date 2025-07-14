@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
     <style>
         #box {
-            width: 600px;
+            min-width: 590px;
             height: 600px;
         }
 
@@ -145,8 +145,7 @@
 
         const mane1Points = [], frontLock1Points = [], tobiano1Points = [], horse1Points = [];
         const mane2Points = [], frontLock2Points = [], tobiano2Points = [], horse2Points = [];
-
-        // Utility to create mirrored points and push into 1 & 2 arrays
+        
         function addMirroredPoints(coords, offsetX, offsetY, arr1, arr2) {
             coords.forEach(([x, y]) => {
                 arr1.push(board.create('point', [x - offsetX, y + offsetY], { visible: false }));
@@ -154,13 +153,12 @@
             });
         }
 
-        // Create all mirrored point sets
         addMirroredPoints(maneCoords, 7.5, 7.5, mane1Points, mane2Points);
         addMirroredPoints(frontLockCoords, 7.5, 7.5, frontLock1Points, frontLock2Points);
         addMirroredPoints(tobianoCoords, 7.5, 7.5, tobiano1Points, tobiano2Points);
         addMirroredPoints(horseBaseCoords, 7.5, 7.5, horse1Points, horse2Points);
 
-        // Helper to create a filled polygon without borders
+    
         function createFlatPolygon(points, fillColor) {
             return board.create('polygon', [...points], {
                 fillColor,
@@ -170,7 +168,6 @@
             });
         }
 
-        // Create all shapes
         const horse1Shape = createFlatPolygon(horse1Points, 'grey');
         const tobiano1Shape = createFlatPolygon(tobiano1Points, 'white');
         const mane1Shape = createFlatPolygon(mane1Points, 'black');
@@ -181,27 +178,20 @@
         const mane2Shape = createFlatPolygon(mane2Points, 'black');
         const frontLock2Shape = createFlatPolygon(frontLock2Points, 'black');
 
-        // const eye1 = board.create('point', [-2.05, 2.10], { color: 'black', size: 4});
-        // const eyeHL1 = board.create('point', [-1.92, 2.2], { color: 'white', size: 0.1});
-
-        // const moveable = [];
-        // tobianoCoords.forEach(p => {
-        //     const point = board.create('point', [p[0], p[1]], { visible: true, size: 1 });
-        //     moveable.push(point);
-        // })
-        // const newhorse1Shape = board.create('polygon', [...moveable], {
-        //     fillColor: 'white',
-        //     strokeColor: 'black',
-        //     strokeWidth: 2,
-        //     fillOpacity: 0.8
-        // });
-        // const horse2Shape = board.create('polygon', [...horse2Points], {
-        //     fillColor: 'grey',
-        //     strokeColor: 'black',
-        //     strokeWidth: 2
-        // });
 
         let selectedHorseGenotype = {
+            eLocus: 'EE',
+            aLocus: 'AA',
+            cLocus: 'CC',
+            gLocus: 'GG',
+        }
+        let damGenotype = {
+            eLocus: 'EE',
+            aLocus: 'AA',
+            cLocus: 'CC',
+            gLocus: 'GG',
+        }
+        let sireGenotype = {
             eLocus: 'EE',
             aLocus: 'AA',
             cLocus: 'CC',
@@ -266,15 +256,54 @@
         }
 
         function updateHorse1Color() {
-            horse1Shape.setAttribute({ fillColor: (getBaseColor(selectedHorseGenotype)) });
-            const maneColor = getManeColor(selectedHorseGenotype);
+            damGenotype = selectedHorseGenotype;
+            horse1Shape.setAttribute({ fillColor: (getBaseColor(damGenotype)) });
+            const maneColor = getManeColor(damGenotype);
             mane1Shape.setAttribute({ fillColor: maneColor });
             frontLock1Shape.setAttribute({ fillColor: maneColor });
 
         }
         function updateHorse2Color() {
-            horse2Shape.setAttribute({ fillColor: (getBaseColor(selectedHorseGenotype)) });
+            sireGenotype = selectedHorseGenotype;
+            horse2Shape.setAttribute({ fillColor: (getBaseColor(sireGenotype)) });
+            const maneColor = getManeColor(sireGenotype);
+            mane2Shape.setAttribute({ fillColor: maneColor });
+            frontLock2Shape.setAttribute({ fillColor: maneColor });
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+         // const eye1 = board.create('point', [-2.05, 2.10], { color: 'black', size: 4});
+        // const eyeHL1 = board.create('point', [-1.92, 2.2], { color: 'white', size: 0.1});
+
+        // const moveable = [];
+        // tobianoCoords.forEach(p => {
+        //     const point = board.create('point', [p[0], p[1]], { visible: true, size: 1 });
+        //     moveable.push(point);
+        // })
+        // const newhorse1Shape = board.create('polygon', [...moveable], {
+        //     fillColor: 'white',
+        //     strokeColor: 'black',
+        //     strokeWidth: 2,
+        //     fillOpacity: 0.8
+        // });
+        // const horse2Shape = board.create('polygon', [...horse2Points], {
+        //     fillColor: 'grey',
+        //     strokeColor: 'black',
+        //     strokeWidth: 2
+        // });
 
         // function logCoordsAsArray() {
         //     const coords = moveable.map(p => {
