@@ -21,6 +21,7 @@
     <div id="flex">
         <div id="box" class="jxgbox"></div>
         <div><button onclick="updateHorse1Color()">Set</button></div>
+        <div><button onclick="logCoordsAsArray()">log</button></div>
 
         <div>
             <form id="genotype-form" onchange="updateHorseGenotype()">
@@ -77,36 +78,84 @@
             white: '#FAFAFA'
         };
 
-        const horseBaseCoords = [
-            [1.55, -6.40],
-            [-0.64, -0.73],
-            [-3.30, -1.20],
-            [-4.80, -1.83],
-            [-5.57, -0.10],
-            [-1.07, 4.20],
-            [1.27, 3.57],
-            [3.17, 2.33],
-            [5.43, -0.23]
-        ];
+        const horseBaseCoords =
+            [[-1.233, 3.867],
+            [-5.164, 0.267],
+            [-5.534, -0.433],
+            [-5.16, -1.5],
+            [-4.082, -1.767],
+            [-3.513, -1.3],
+            [-2.356, -1.067],
+            [-1.121, -0.967],
+            [-0.434, -0.5],
+            [0.213, -3.633],
+            [1.057, -5.567],
+            [3.348, -3.4],
+            [5.327, -0.467],
+            [1.904, 3.367],
+            [-0.188, 4.033],
+            [-0.636, 4.467],
+            [-1.671, 5.433]];
 
         const maneCoords = [
-            [-3.43, 3.43],
-            [-3.54, 2.93],
+            [-3.56, 3.43],
+            [-3.11, 3.13],
             [-3.62, 2.30],
             [-2.45, 2.35]
         ];
-        const A = board.create('point', [-1.23, 4.20], { visible: false });
-        const mane1Points = [];
-        const mane1Lines = [];
 
-        maneCoords.forEach(coord => {
+        const maneArray = [
+            [-0.434, 4.067],
+            [0.213, 2.967],
+            [0.313, 2.4],
+            [0.843, 1.1],
+            [1.256, 2.033],
+            [1.669, 0],
+            [2.121, 0.867],
+            [2.417, -1.9],
+            [3.065, -1.3],
+            [3.673, -3.433],
+            [4.047, -1.867],
+            [4.499, -2.767],
+            [5.499, -0.233],
+            [3.485, 2.4],
+            [1.198, 3.9]];
+
+        const frontLockArray = [
+            [-2.939, 3.7],
+            [-3.779, 2.833],
+            [-3.444, 2.767],
+            [-3.775, 2.033],
+            [-3.284, 2.3],
+            [-3.223, 1.7],
+            [-2.301, 2.367],
+            [-1.145, 3.9],
+            [-1.241, 4.233]]
+
+        const tobianoArray =
+            [[1.252, 0.6],
+            [0.704, -1.1],
+            [1.096, -1.767],
+            [1.331, -2.5],
+            [1.096, -3.1],
+            [1.252, -3.8],
+            [0.683, -4.666],
+            [1.057, -5.567],
+            [3.348, -3.4],
+            [5.249, -0.5],
+            [2.021, 1.033]]
+
+
+        const mane1Points = [];
+        const frontLock1Points = [];
+        maneArray.forEach(coord => {
             const point = board.create('point', [coord[0], coord[1]], { visible: false });
             mane1Points.push(point);
-            const line = board.create('line', [point, A], { straightFirst: false, straightLast: false, strokeWidth: 4, strokeColor: horseColors.offwhite });
-            mane1Lines.push(line);
         })
-
-
+        frontLockArray.forEach(coord => {
+            const point = board.create('point', [coord[0], coord[1]], { visible: false });
+            frontLock1Points.push(point);
+        })
 
         const horse1Points = [];
         const horse2Points = [];
@@ -120,10 +169,53 @@
 
         const horse1Shape = board.create('polygon', [...horse1Points], {
             fillColor: 'grey',
-            strokeColor: 'black',
-            strokeWidth: 2,
+            borders: {
+                visible: false
+            },
+            highlight: false,
             fillOpacity: 1
         });
+        const tobianoShape = board.create('polygon', [...tobianoArray], {
+            fillColor: 'white',
+            borders: {
+                visible: false
+            },
+            vertices: {
+                visible: false
+            },
+
+            highlight: false,
+            fillOpacity: 1
+        });
+
+        const mane1Shape = board.create('polygon', [...mane1Points], {
+            fillColor: 'black',
+            borders: {
+                visible: false
+            },
+            highlight: false,
+            fillOpacity: 1,
+        });
+        const frontLock1Shape = board.create('polygon', [...frontLock1Points], {
+            fillColor: 'black',
+            borders: {
+                visible: false
+            },
+            highlight: false,
+            fillOpacity: 1
+        });
+
+        // const moveable = [];
+        // tobianoArray.forEach(p => {
+        //     const point = board.create('point', [p[0], p[1]], { visible: true, size: 1 });
+        //     moveable.push(point);
+        // })
+        // const newhorse1Shape = board.create('polygon', [...moveable], {
+        //     fillColor: 'white',
+        //     strokeColor: 'black',
+        //     strokeWidth: 2,
+        //     fillOpacity: 0.8
+        // });
         // const horse2Shape = board.create('polygon', [...horse2Points], {
         //     fillColor: 'grey',
         //     strokeColor: 'black',
@@ -197,14 +289,20 @@
         function updateHorse1Color() {
             horse1Shape.setAttribute({ fillColor: (getBaseColor(horseGenotype)) });
             const maneColor = getManeColor(horseGenotype);
-            console.log(maneColor);
-            mane1Lines.forEach(line => {
-                line.setAttribute({ color: maneColor });
-            }
-            )
+            mane1Shape.setAttribute({ fillColor: maneColor });
+            frontLock1Shape.setAttribute({ fillColor: maneColor });
+
         }
         function updateHorse2Color() {
             //horse2Shape.setAttribute({ fillColor: (getBaseColor(horseGenotype)) });
+        }
+
+        function logCoordsAsArray() {
+            const coords = moveable.map(p => {
+                const [x, y] = p.coords.usrCoords.slice(1);
+                return [Number(x.toFixed(3)), Number(y.toFixed(3))];
+            });
+            console.log(JSON.stringify(coords));
         }
 
 
