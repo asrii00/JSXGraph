@@ -20,7 +20,6 @@
 <body>
     <div id="flex">
         <div id="box" class="jxgbox"></div>
-        <div><button onclick="updateHorse1Color()">Set</button></div>
         <div><button onclick="logCoordsAsArray()">log</button></div>
 
         <div>
@@ -53,8 +52,14 @@
                     <label><input type="radio" id="gg" name="G" value="gg"> gg - ei-kimo</label>
                 </fieldset>
             </form>
+             <div>
+        <button onclick="updateHorse1Color()">Set selected for dam</button></div>
+        <div><button onclick="updateHorse2Color()">Set selected for sire</button></div>
+    </div>
+
         </div>
     </div>
+   
 
     <script>
         // EE - ei-rautias, Ee - ei-rautias kantaja, ee - rautias
@@ -63,7 +68,9 @@
         // GG - kimo, Gg - kimo, gg - ei-kimo
         const board = JXG.JSXGraph.initBoard('box', {
             boundingbox: [-15, 15, 15, -15],
-            axis: true
+            axis: false, 
+            showCopyright: false, 
+            fillColor: 'lightgrey'
         });
 
         const horseColors = {
@@ -98,13 +105,6 @@
             [-1.671, 5.433]];
 
         const maneCoords = [
-            [-3.56, 3.43],
-            [-3.11, 3.13],
-            [-3.62, 2.30],
-            [-2.45, 2.35]
-        ];
-
-        const maneArray = [
             [-0.434, 4.067],
             [0.213, 2.967],
             [0.313, 2.4],
@@ -121,7 +121,7 @@
             [3.485, 2.4],
             [1.198, 3.9]];
 
-        const frontLockArray = [
+        const frontLockCoords = [
             [-2.939, 3.7],
             [-3.779, 2.833],
             [-3.444, 2.767],
@@ -132,7 +132,7 @@
             [-1.145, 3.9],
             [-1.241, 4.233]]
 
-        const tobianoArray =
+        const tobianoCoords =
             [[1.252, 0.6],
             [0.704, -1.1],
             [1.096, -1.767],
@@ -148,19 +148,37 @@
 
         const mane1Points = [];
         const frontLock1Points = [];
-        maneArray.forEach(coord => {
-            const point = board.create('point', [coord[0], coord[1]], { visible: false });
+        const tobiano1Points = [];
+        const horse1Points = [];
+      
+       
+
+        const horse2Points = []; 
+        const mane2Points = [];
+        const frontLock2Points = [];
+        const tobiano2Points = [];
+
+        maneCoords.forEach(coord => {
+            const point = board.create('point', [coord[0] -7.5, coord[1]+7.5], { visible: false });
             mane1Points.push(point);
+            const point2 = board.create('point', [coord[0] + 7.5, coord[1]+7.5], { visible: false });
+            mane2Points.push(point2);
         })
-        frontLockArray.forEach(coord => {
-            const point = board.create('point', [coord[0], coord[1]], { visible: false });
+        frontLockCoords.forEach(coord => {
+            const point = board.create('point', [coord[0]-7.5, coord[1]+7.5], { visible: false });
             frontLock1Points.push(point);
+            const point2 = board.create('point', [coord[0]+7.5, coord[1]+7.5], { visible: false });
+            frontLock2Points.push(point2);
+        })
+        tobianoCoords.forEach(coord => {
+            const point = board.create('point', [coord[0]-7.5, coord[1]+7.5], { visible: false });
+            tobiano1Points.push(point);
+            const point2 = board.create('point', [coord[0]+7.5, coord[1]+7.5], { visible: false });
+            tobiano2Points.push(point2);
         })
 
-        const horse1Points = [];
-        const horse2Points = [];
         horseBaseCoords.forEach(coord => {
-            const point = board.create('point', [coord[0], coord[1]], { visible: false });
+            const point = board.create('point', [coord[0]-7.5, coord[1] +7.5], { visible: false });
             horse1Points.push(point);
             const point2 = board.create('point', [coord[0] + 7.5, coord[1] + 7.5], { visible: false });
             horse2Points.push(point2);
@@ -175,15 +193,11 @@
             highlight: false,
             fillOpacity: 1
         });
-        const tobianoShape = board.create('polygon', [...tobianoArray], {
+        const tobiano1Shape = board.create('polygon', [...tobiano1Points], {
             fillColor: 'white',
             borders: {
                 visible: false
             },
-            vertices: {
-                visible: false
-            },
-
             highlight: false,
             fillOpacity: 1
         });
@@ -205,8 +219,45 @@
             fillOpacity: 1
         });
 
+        const horse2Shape = board.create('polygon', [...horse2Points], {
+            fillColor: 'grey',
+            borders: {
+                visible: false
+            },
+            highlight: false,
+            fillOpacity: 1
+        });
+        const tobiano2Shape = board.create('polygon', [...tobiano2Points], {
+            fillColor: 'white',
+            borders: {
+                visible: false
+            },
+            highlight: false,
+            fillOpacity: 1
+        });
+
+        const mane2Shape = board.create('polygon', [...mane2Points], {
+            fillColor: 'black',
+            borders: {
+                visible: false
+            },
+            highlight: false,
+            fillOpacity: 1,
+        });
+        const frontLock2Shape = board.create('polygon', [...frontLock2Points], {
+            fillColor: 'black',
+            borders: {
+                visible: false
+            },
+            highlight: false,
+            fillOpacity: 1
+        });
+
+        // const eye1 = board.create('point', [-2.05, 2.10], { color: 'black', size: 4});
+        // const eyeHL1 = board.create('point', [-1.92, 2.2], { color: 'white', size: 0.1});
+
         // const moveable = [];
-        // tobianoArray.forEach(p => {
+        // tobianoCoords.forEach(p => {
         //     const point = board.create('point', [p[0], p[1]], { visible: true, size: 1 });
         //     moveable.push(point);
         // })
@@ -297,14 +348,13 @@
             //horse2Shape.setAttribute({ fillColor: (getBaseColor(horseGenotype)) });
         }
 
-        function logCoordsAsArray() {
-            const coords = moveable.map(p => {
-                const [x, y] = p.coords.usrCoords.slice(1);
-                return [Number(x.toFixed(3)), Number(y.toFixed(3))];
-            });
-            console.log(JSON.stringify(coords));
-        }
-
+        // function logCoordsAsArray() {
+        //     const coords = moveable.map(p => {
+        //         const [x, y] = p.coords.usrCoords.slice(1);
+        //         return [Number(x.toFixed(3)), Number(y.toFixed(3))];
+        //     });
+        //     console.log(JSON.stringify(coords));
+        // }
 
 
     </script>
