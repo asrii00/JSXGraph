@@ -9,6 +9,7 @@
         #box {
             min-width: 590px;
             height: 600px;
+            background-color: #e2e2e2;
         }
 
         #text {
@@ -17,6 +18,9 @@
 
         #flex {
             display: flex
+        }
+        #test {
+            background-color: #080808
         }
     </style>
 </head>
@@ -44,9 +48,9 @@
 
                 <fieldset>
                     <legend>Voikkotekijä</legend>
-                    <label><input type="radio" id="CC" name="C" value="CC" checked> CC - ei-voikko</label><br>
-                    <label><input type="radio" id="CrC" name="C" value="CrC"> CrC - voikko</label><br>
-                    <label><input type="radio" id="CrCr" name="C" value="CrCr"> CrCr - valkovoikko</label>
+                    <label><input type="radio" id="cc" name="C" value="cc" checked> CC - ei-voikko</label><br>
+                    <label><input type="radio" id="Cc" name="C" value="Cc"> CrC - voikko</label><br>
+                    <label><input type="radio" id="CC" name="C" value="CC"> CrCr - valkovoikko</label>
                 </fieldset>
 
                 <fieldset>
@@ -57,15 +61,16 @@
                 </fieldset>
                 <fieldset>
                     <legend>Kirjavuustekijä</legend>
-                    <label><input type="radio" id="TOTO" name="TO" value="TOTO" > TOTO - tobianokirjava</label><br>
-                    <label><input type="radio" id="TOto" name="TO" value="TOto"> TOto - tobianokirjava </label><br>
-                    <label><input type="radio" id="toto" name="TO" value="toto" checked> toto - ei-kirjava</label>
+                    <label><input type="radio" id="TT" name="TO" value="TOTO"> TOTO - tobianokirjava</label><br>
+                    <label><input type="radio" id="Tt" name="TO" value="Tt"> TOto - tobianokirjava </label><br>
+                    <label><input type="radio" id="tt" name="TO" value="tt" checked> toto - ei-kirjava</label>
                 </fieldset>
             </form>
             <div>
                 <button onclick="updateHorse1Color()">Aseta valitut tamman genotyypiksi</button>
             </div>
             <div><button onclick="updateHorse2Color()">Aseta valitut orin genotyypiksi</button></div>
+            <div><button onclick="generateFoal()"> Generoi varsa</button></div>
         </div>
 
     </div>
@@ -81,11 +86,13 @@
         niin, että harjasta tulee valkoinen ja karvasta vaaleanruskea (klassinen voikko). Voikkotekijä mustalla pohjalla
         vaalentaa ainoastaan karvaa hieman, tehden siitä tummanruskean (mustanvoikko). <br>
 
-        Kimotekijä voi vaalentaa minkä tahansa muun värin hevosen ikääntyessä: kimot syntyvät pohjavärinsä värisinä ja harmaantuvat vähitellen, 
-        kunnes ne ovat valkoisia tai lähes valkoisia. Tässä simulaatiossa kimoutta kuvaa harmaa väri. 
+        Kimotekijä voi vaalentaa minkä tahansa muun värin hevosen ikääntyessä: kimot syntyvät pohjavärinsä värisinä ja
+        harmaantuvat vähitellen,
+        kunnes ne ovat valkoisia tai lähes valkoisia. Tässä simulaatiossa kimoutta kuvaa harmaa väri.
 
-        Kirjavuus voi esiintyä minkä tahansa muun värin ohella eikä vaikuta tämän pohjavärin sävyihin - se ainoastaan lisää valkoisia, pohjavärin "peittäviä" laikkuja
-        eri puolille hevosen kehoa. 
+        Kirjavuus voi esiintyä minkä tahansa muun värin ohella eikä vaikuta tämän pohjavärin sävyihin - se ainoastaan
+        lisää valkoisia, pohjavärin "peittäviä" laikkuja
+        eri puolille hevosen kehoa.
 
         <h4> Tehtävät</h4>
         Yksilöllä on kaksi alleelia, joista toinen periytyy sen jälkeläiselle. Valinta on satunnainen eli kummallakin
@@ -127,7 +134,8 @@
             brown: '#8B5E3C',
             darkerbrown: '#714A30',
             darkbrown: '#3E2B20', //make a little greyer
-            black: '#2F2F2F',
+            black: '#080808',
+            almostblack: '#0f0f0f',
             beige: '#D7B89C',
             darkgrey: '#5E5E5E',
             grey: '#A8A8A8',
@@ -198,18 +206,20 @@
 
         const mane1Points = [], frontLock1Points = [], tobiano1Points = [], horse1Points = [];
         const mane2Points = [], frontLock2Points = [], tobiano2Points = [], horse2Points = [];
+        const mane3Points = [], frontLock3Points = [], tobiano3Points = [], horse3Points = [];
 
-        function addMirroredPoints(coords, offsetX, offsetY, arr1, arr2) {
+        function addMirroredPoints(coords, offsetX, offsetY, arr1, arr2, arr3) {
             coords.forEach(([x, y]) => {
                 arr1.push(board.create('point', [x - offsetX, y + offsetY], { visible: false }));
                 arr2.push(board.create('point', [x + offsetX, y + offsetY], { visible: false }));
+                arr3.push(board.create('point', [x, y - offsetY], { visible: false }));
             });
         }
 
-        addMirroredPoints(maneCoords, 7.5, 7.5, mane1Points, mane2Points);
-        addMirroredPoints(frontLockCoords, 7.5, 7.5, frontLock1Points, frontLock2Points);
-        addMirroredPoints(tobianoCoords, 7.5, 7.5, tobiano1Points, tobiano2Points);
-        addMirroredPoints(horseBaseCoords, 7.5, 7.5, horse1Points, horse2Points);
+        addMirroredPoints(maneCoords, 7.5, 7.5, mane1Points, mane2Points, mane3Points);
+        addMirroredPoints(frontLockCoords, 7.5, 7.5, frontLock1Points, frontLock2Points, frontLock3Points);
+        addMirroredPoints(tobianoCoords, 7.5, 7.5, tobiano1Points, tobiano2Points, tobiano3Points);
+        addMirroredPoints(horseBaseCoords, 7.5, 7.5, horse1Points, horse2Points, horse3Points);
 
 
         function createFlatPolygon(points, fillColor) {
@@ -223,17 +233,23 @@
 
         const horse1Shape = createFlatPolygon(horse1Points, 'grey');
         const tobiano1Shape = createFlatPolygon(tobiano1Points, 'white');
-        const mane1Shape = createFlatPolygon(mane1Points, 'black');
-        const frontLock1Shape = createFlatPolygon(frontLock1Points, 'black');
+        const mane1Shape = createFlatPolygon(mane1Points, 'almostblack');
+        const frontLock1Shape = createFlatPolygon(frontLock1Points, 'almostblack');
 
         const horse2Shape = createFlatPolygon(horse2Points, 'grey');
         const tobiano2Shape = createFlatPolygon(tobiano2Points, 'white');
-        const mane2Shape = createFlatPolygon(mane2Points, 'black');
-        const frontLock2Shape = createFlatPolygon(frontLock2Points, 'black');
+        const mane2Shape = createFlatPolygon(mane2Points, 'almostblack');
+        const frontLock2Shape = createFlatPolygon(frontLock2Points, 'almostblack');
+
+        const horse3Shape = createFlatPolygon(horse3Points, 'white');
+        const tobiano3Shape = createFlatPolygon(tobiano3Points, 'white');
+        const mane3Shape = createFlatPolygon(mane3Points, 'white');
+        const frontLock3Shape = createFlatPolygon(frontLock3Points, 'white');
 
         //set tobiano off at the start
-        tobiano1Shape.setAttribute({visible: false});
-        tobiano2Shape.setAttribute({visible: false});
+        tobiano1Shape.setAttribute({ visible: false });
+        tobiano2Shape.setAttribute({ visible: false });
+        tobiano3Shape.setAttribute({ visible: false });
 
 
         let selectedHorseGenotype = {
@@ -241,21 +257,28 @@
             aLocus: 'AA',
             cLocus: 'CC',
             gLocus: 'GG',
-            toLocus: 'toto'
+            toLocus: 'tt'
+        }
+        let foalGenotype = {
+            eLocus: 'EE',
+            aLocus: 'AA',
+            cLocus: 'CC',
+            gLocus: 'GG',
+            toLocus: 'tt'
         }
         let damGenotype = {
             eLocus: 'EE',
             aLocus: 'AA',
             cLocus: 'CC',
             gLocus: 'GG',
-            toLocus: 'toto'
+            toLocus: 'tt'
         }
         let sireGenotype = {
             eLocus: 'EE',
             aLocus: 'AA',
             cLocus: 'CC',
             gLocus: 'GG',
-            toLocus: 'toto'
+            toLocus: 'tt'
         }
 
         function updateHorseGenotype() {
@@ -274,17 +297,17 @@
             let color = horseColors.brown;
             //E -> default brown either way
             if (genotype.aLocus == 'aa' && genotype.eLocus != 'ee') {
-                color = horseColors.black;
+                color = horseColors.almostblack;
             }
-            if (genotype.cLocus == 'CrC') {
+            if (genotype.cLocus == 'Cc') {
                 color = horseColors.beige;
             }
-            console.log(genotype.cLocus, genotype.aLocus)
-            if (genotype.cLocus == 'CrC' && genotype.aLocus == 'aa' && genotype.eLocus != 'ee') {
+            //console.log(genotype.cLocus, genotype.aLocus)
+            if (genotype.cLocus == 'Cc' && genotype.aLocus == 'aa' && genotype.eLocus != 'ee') {
                 color = horseColors.darkbrown;
             }
 
-            if (genotype.cLocus == 'CrCr') {
+            if (genotype.cLocus == 'CC') {
                 color = horseColors.offwhite;
             }
             if (genotype.gLocus != 'gg') { //ADD effect by cream.
@@ -299,14 +322,14 @@
                 color = horseColors.darkerbrown;
             }
 
-            if (genotype.aLocus == 'aa' && genotype.cLocus == 'CrC') {  //voikko + musta
+            if (genotype.aLocus == 'aa' && genotype.cLocus == 'Cc') {  //voikko + musta
                 color = horseColors.black;
             }
-            if (genotype.eLocus == 'ee' && genotype.cLocus == 'CrC') { //voikko + rautias 
+            if (genotype.eLocus == 'ee' && genotype.cLocus == 'Cc') { //voikko + rautias 
                 color = horseColors.white;
             }
 
-            if (genotype.cLocus == 'CrCr') {
+            if (genotype.cLocus == 'CC') {
                 color = horseColors.white;
             }
 
@@ -317,22 +340,47 @@
         }
 
         function updateHorse1Color() {
-            damGenotype = selectedHorseGenotype;
+            damGenotype = { ...selectedHorseGenotype };
             horse1Shape.setAttribute({ fillColor: (getBaseColor(damGenotype)) });
             const maneColor = getManeColor(damGenotype);
             mane1Shape.setAttribute({ fillColor: maneColor });
             frontLock1Shape.setAttribute({ fillColor: maneColor });
-            tobiano1Shape.setAttribute({visible: (damGenotype.toLocus != 'toto' ? true : false)})
+            tobiano1Shape.setAttribute({ visible: (damGenotype.toLocus != 'tt' ? true : false) })
 
         }
         function updateHorse2Color() {
-            sireGenotype = selectedHorseGenotype;
+
+            sireGenotype = { ...selectedHorseGenotype };
             horse2Shape.setAttribute({ fillColor: (getBaseColor(sireGenotype)) });
             const maneColor = getManeColor(sireGenotype);
             mane2Shape.setAttribute({ fillColor: maneColor });
             frontLock2Shape.setAttribute({ fillColor: maneColor });
-            tobiano2Shape.setAttribute({visible: (sireGenotype.toLocus != 'toto' ? true : false)})
+            tobiano2Shape.setAttribute({ visible: (sireGenotype.toLocus != 'tt' ? true : false) })
         }
+
+        function updateHorse3Color() {
+
+            horse3Shape.setAttribute({ fillColor: (getBaseColor(foalGenotype)) });
+            const maneColor = getManeColor(foalGenotype);
+            mane3Shape.setAttribute({ fillColor: maneColor });
+            frontLock3Shape.setAttribute({ fillColor: maneColor });
+            tobiano3Shape.setAttribute({ visible: (foalGenotype.toLocus != 'tt' ? true : false) })
+        }
+
+        function generateFoal() {
+            for (const locus in damGenotype) {
+                const damAllele = damGenotype[locus][Math.random() > 0.5 ? 0 : 1];
+                const sireAllele = sireGenotype[locus][Math.random() > 0.5 ? 0 : 1]
+                foalGenotype[locus] = [damAllele, sireAllele].sort().join('');
+            }
+
+            console.log(damGenotype, sireGenotype, foalGenotype);
+
+            updateHorse3Color();
+        }
+
+        updateHorse1Color();
+        updateHorse2Color();
 
 
 
