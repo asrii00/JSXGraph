@@ -19,6 +19,7 @@
         #flex {
             display: flex
         }
+
         #test {
             background-color: #080808
         }
@@ -28,50 +29,82 @@
 <body>
     <div id="flex">
         <div id="box" class="jxgbox"></div>
-        <div><button onclick="logCoordsAsArray()">log</button></div>
-
+        <!-- <div><button onclick="logCoordsAsArray()">log</button></div> -->
         <div>
-            <form id="genotype-form" onchange="updateHorseGenotype()">
+            <form id="genotype-form-dam" onchange="updateDamGenotype()">
                 <fieldset>
-                    <legend>Rautiastekijä</legend>
+                    <legend>Rautiastekijä - emä</legend>
                     <label><input type="radio" id="EE" name="E" value="EE" checked> EE - ei-rautias</label><br>
                     <label><input type="radio" id="Ee" name="E" value="Ee"> Ee - ei-rautias kantaja</label><br>
                     <label><input type="radio" id="ee" name="E" value="ee"> ee - rautias</label>
                 </fieldset>
 
                 <fieldset>
-                    <legend>Ruunikkotekijä</legend>
+                    <legend>Ruunikkotekijä - emä</legend>
                     <label><input type="radio" id="AA" name="A" value="AA" checked> AA - ruunikko</label><br>
                     <label><input type="radio" id="Aa" name="A" value="Aa"> Aa - ruunikko mustan kantaja</label><br>
                     <label><input type="radio" id="aa" name="A" value="aa"> aa - musta</label>
                 </fieldset>
 
                 <fieldset>
-                    <legend>Voikkotekijä</legend>
+                    <legend>Voikkotekijä - emä</legend>
                     <label><input type="radio" id="cc" name="C" value="cc" checked> CC - ei-voikko</label><br>
                     <label><input type="radio" id="Cc" name="C" value="Cc"> CrC - voikko</label><br>
                     <label><input type="radio" id="CC" name="C" value="CC"> CrCr - valkovoikko</label>
                 </fieldset>
 
                 <fieldset>
-                    <legend>Kimotekijä</legend>
+                    <legend>Kimotekijä - emä</legend>
                     <label><input type="radio" id="GG" name="G" value="GG" checked> GG - kimo</label><br>
                     <label><input type="radio" id="Gg" name="G" value="Gg"> Gg - kimo</label><br>
                     <label><input type="radio" id="gg" name="G" value="gg"> gg - ei-kimo</label>
                 </fieldset>
                 <fieldset>
-                    <legend>Kirjavuustekijä</legend>
+                    <legend>Kirjavuustekijä - emä</legend>
                     <label><input type="radio" id="TT" name="TO" value="TOTO"> TOTO - tobianokirjava</label><br>
                     <label><input type="radio" id="Tt" name="TO" value="Tt"> TOto - tobianokirjava </label><br>
                     <label><input type="radio" id="tt" name="TO" value="tt" checked> toto - ei-kirjava</label>
                 </fieldset>
             </form>
-            <div>
-                <button onclick="updateHorse1Color()">Aseta valitut tamman genotyypiksi</button>
-            </div>
-            <div><button onclick="updateHorse2Color()">Aseta valitut orin genotyypiksi</button></div>
-            <div><button onclick="generateFoal()"> Generoi varsa</button></div>
+            <button onclick="generateFoal()"> Generoi varsa</button>
         </div>
+        <form id="genotype-form-sire" onchange="updateSireGenotype()">
+            <fieldset>
+                <legend>Rautiastekijä - isä</legend>
+                <label><input type="radio" id="EE" name="Es" value="EE" checked> EE - ei-rautias</label><br>
+                <label><input type="radio" id="Ee" name="Es" value="Ee"> Ee - ei-rautias kantaja</label><br>
+                <label><input type="radio" id="ee" name="Es" value="ee"> ee - rautias</label>
+            </fieldset>
+
+            <fieldset>
+                <legend>Ruunikkotekijä - isä</legend>
+                <label><input type="radio" id="AA" name="As" value="AA" checked> AA - ruunikko</label><br>
+                <label><input type="radio" id="Aa" name="As" value="Aa"> Aa - ruunikko mustan kantaja</label><br>
+                <label><input type="radio" id="aa" name="As" value="aa"> aa - musta</label>
+            </fieldset>
+
+            <fieldset>
+                <legend>Voikkotekijä - isä</legend>
+                <label><input type="radio" id="cc" name="Cs" value="cc" checked> CC - ei-voikko</label><br>
+                <label><input type="radio" id="Cc" name="Cs" value="Cc"> CrC - voikko</label><br>
+                <label><input type="radio" id="CC" name="Cs" value="CC"> CrCr - valkovoikko</label>
+            </fieldset>
+
+            <fieldset>
+                <legend>Kimotekijä - isä</legend>
+                <label><input type="radio" id="GG" name="Gs" value="GG" checked> GG - kimo</label><br>
+                <label><input type="radio" id="Gg" name="Gs" value="Gg"> Gg - kimo</label><br>
+                <label><input type="radio" id="gg" name="Gs" value="gg"> gg - ei-kimo</label>
+            </fieldset>
+            <fieldset>
+                <legend>Kirjavuustekijä - isä</legend>
+                <label><input type="radio" id="TT" name="TOs" value="TOTO"> TOTO - tobianokirjava</label><br>
+                <label><input type="radio" id="Tt" name="TOs" value="Tt"> TOto - tobianokirjava </label><br>
+                <label><input type="radio" id="tt" name="TOs" value="tt" checked> toto - ei-kirjava</label>
+            </fieldset>
+        </form>
+    </div>
+
 
     </div>
     <div id="text">
@@ -127,6 +160,10 @@
             boundingbox: [-15, 15, 15, -15],
             axis: false,
             showCopyright: false,
+            zoom: {
+                enabled: false
+            },
+            showNavigation: false
 
         });
 
@@ -281,16 +318,21 @@
             toLocus: 'tt'
         }
 
-        function updateHorseGenotype() {
+        function updateDamGenotype() {
             selectedHorseGenotype.eLocus = document.querySelector('input[name="E"]:checked')?.value || '';
             selectedHorseGenotype.aLocus = document.querySelector('input[name="A"]:checked')?.value || '';
             selectedHorseGenotype.cLocus = document.querySelector('input[name="C"]:checked')?.value || '';
             selectedHorseGenotype.gLocus = document.querySelector('input[name="G"]:checked')?.value || '';
             selectedHorseGenotype.toLocus = document.querySelector('input[name="TO"]:checked')?.value || '';
-
-            console.log(selectedHorseGenotype);
-            console.log('base: ', getBaseColor(selectedHorseGenotype))
-            console.log('mane ', getManeColor(selectedHorseGenotype))
+            updateHorse1Color();
+        }
+        function updateSireGenotype() {
+            selectedHorseGenotype.eLocus = document.querySelector('input[name="Es"]:checked')?.value || '';
+            selectedHorseGenotype.aLocus = document.querySelector('input[name="As"]:checked')?.value || '';
+            selectedHorseGenotype.cLocus = document.querySelector('input[name="Cs"]:checked')?.value || '';
+            selectedHorseGenotype.gLocus = document.querySelector('input[name="Gs"]:checked')?.value || '';
+            selectedHorseGenotype.toLocus = document.querySelector('input[name="TOs"]:checked')?.value || '';
+            updateHorse2Color();
         }
 
         function getBaseColor(genotype) {
@@ -299,17 +341,17 @@
             if (genotype.aLocus == 'aa' && genotype.eLocus != 'ee') {
                 color = horseColors.almostblack;
             }
+
             if (genotype.cLocus == 'Cc') {
                 color = horseColors.beige;
             }
-            //console.log(genotype.cLocus, genotype.aLocus)
             if (genotype.cLocus == 'Cc' && genotype.aLocus == 'aa' && genotype.eLocus != 'ee') {
                 color = horseColors.darkbrown;
             }
-
             if (genotype.cLocus == 'CC') {
                 color = horseColors.offwhite;
             }
+
             if (genotype.gLocus != 'gg') { //ADD effect by cream.
                 color = horseColors.grey; // ADD GRADIENT.
             }
@@ -346,10 +388,9 @@
             mane1Shape.setAttribute({ fillColor: maneColor });
             frontLock1Shape.setAttribute({ fillColor: maneColor });
             tobiano1Shape.setAttribute({ visible: (damGenotype.toLocus != 'tt' ? true : false) })
-
         }
-        function updateHorse2Color() {
 
+        function updateHorse2Color() {
             sireGenotype = { ...selectedHorseGenotype };
             horse2Shape.setAttribute({ fillColor: (getBaseColor(sireGenotype)) });
             const maneColor = getManeColor(sireGenotype);
@@ -359,7 +400,6 @@
         }
 
         function updateHorse3Color() {
-
             horse3Shape.setAttribute({ fillColor: (getBaseColor(foalGenotype)) });
             const maneColor = getManeColor(foalGenotype);
             mane3Shape.setAttribute({ fillColor: maneColor });
@@ -373,9 +413,7 @@
                 const sireAllele = sireGenotype[locus][Math.random() > 0.5 ? 0 : 1]
                 foalGenotype[locus] = [damAllele, sireAllele].sort().join('');
             }
-
-            console.log(damGenotype, sireGenotype, foalGenotype);
-
+            //console.log(damGenotype, sireGenotype, foalGenotype);
             updateHorse3Color();
         }
 
