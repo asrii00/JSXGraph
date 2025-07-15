@@ -31,8 +31,9 @@
             display: flex
         }
 
-        #foal-sex-display, #foal-genotype-display {
-            border:#453a35 1px solid;
+        #foal-sex-display,
+        #foal-genotype-display {
+            border: #453a35 1px solid;
             padding: 5px;
         }
 
@@ -136,14 +137,17 @@
     </div>
     <div style="display: flex;">
         <button onclick="generateFoal()"> Generoi varsa</button>
-        <div id="foal-genotype-display" style="font-family: monospace; margin: 8px;"> Varsan genotyyppi: -- -- -- -- -- --
+        <div id="foal-genotype-display" style="font-family: monospace; margin: 8px;"> Varsan genotyyppi: -- -- -- -- --
+            --
         </div>
-        <div id="foal-sex-display" style="font-family: monospace; margin: 8px; margin-left: 16px;">   Sukupuoli: - </div>
+        <div id="foal-sex-display" style="font-family: monospace; margin: 8px; margin-left: 16px;"> Sukupuoli: - </div>
     </div>
+    <!-- <button onclick="logCoordsAsArray()"> log</button> -->
     <div id="text">
         <h4> Simulaattorista ja värigeeneistä</h4>
 
-        Rautiaan hevosen karvapeite ja jouhet ovat ruskeat. Ruunikko hevonen on sen sijaan ruskea mustilla jouhilla ja yleensä myös sen jalat ovat mustat.
+        Rautiaan hevosen karvapeite ja jouhet ovat ruskeat. Ruunikko hevonen on sen sijaan ruskea mustilla jouhilla ja
+        yleensä myös sen jalat ovat mustat.
         Rautiastekijä vaikuttaa ruunikkotekijän ilmenemiseen: EE- tai Ee-yksilöt voivat olla ulkoisesti ruunikkoja tai
         mustia,
         mutta ee-yksilö on rautias riippumatta siitä, mikä sen genotyyppi ruunikkotekijän osalta on. <br><br>
@@ -155,8 +159,10 @@
 
         Kimotekijä voi vaalentaa minkä tahansa muun värin hevosen ikääntyessä: kimot syntyvät pohjavärinsä värisinä ja
         harmaantuvat vähitellen,
-        kunnes ne ovat valkoisia tai lähes valkoisia. Tässä simulaatiossa kimoutta kuvaa aina sama harmaa väri, vaikka todellisuudessa
-        kimon hevosen väritys riippuu sen pohjaväristä, iästä ja muista tekijöistä. Simulaation hevosilla olevat vaaleat pilkut kuvaavat kimoilla hevosilla yleistä
+        kunnes ne ovat valkoisia tai lähes valkoisia. Tässä simulaatiossa kimoutta kuvaa aina sama harmaa väri, vaikka
+        todellisuudessa
+        kimon hevosen väritys riippuu sen pohjaväristä, iästä ja muista tekijöistä. Simulaation hevosilla olevat vaaleat
+        pilkut kuvaavat kimoilla hevosilla yleistä
         papurikkokuviointia, jota ei kuitenkaan esiinny aivan kaikilla kimoilla. <br><br>
 
 
@@ -164,10 +170,10 @@
         lisää valkoisia, pohjavärin "peittäviä" laikkuja
         eri puolille hevosen kehoa. <br><br>
 
-        Hopeageeni vaikuttaa mustaan pigmenttiin ja vaalentaa mustan harjan hopeisen vaaleaksi. Rautiaalla hevosella sen vaikutus ei näy. 
-        Mustan pohjavärin hopeageeni sen sijaan vaalentaa ja lisäksi on tyypillistä, että se aiheuttaa vaaleita papurikkokuvioita.
-
-
+        Hopeageeni vaikuttaa mustaan pigmenttiin ja vaalentaa mustan harjan hopeisen vaaleaksi. Rautiaalla hevosella sen
+        vaikutus ei näy.
+        Mustan pohjavärin hopeageeni sen sijaan vaalentaa ja lisäksi on tyypillistä, että se aiheuttaa vaaleita
+        papurikkokuvioita.
 
         <h4> Tehtävät</h4>
         Yksilöllä on kaksi alleelia, joista toinen periytyy sen jälkeläiselle. Valinta on satunnainen eli kummallakin
@@ -212,7 +218,7 @@
         const horseColors = {
             brown: '#8B5E3C',
             darkerbrown: '#714A30',
-            darkbrown: '#1f1915', 
+            darkbrown: '#1f1915',
             black: '#080808',
             almostblack: '#0f0f0f',
             silverblack: '#2e2926',
@@ -302,6 +308,22 @@
 
         ]
 
+        const maneStripeCoords = [
+            [1.16, 3.964],
+            [0.011, 4.036],
+            [0.634, 2.869],
+            [0.869, 3.545],
+            [1.743, 2.536],
+            [2.038, 1.609],
+            [2.486, 2.516],
+            [2.999, 0.206],
+            [3.394, 1.872],
+            [4.186, -1],
+            [4.517, -0.012],
+            [5.131, -1.227],
+            [5.501, -0.136],
+            [3.606, 2.318]];
+
         const mane1Points = [], frontLock1Points = [], tobiano1Points = [], horse1Points = [], dapple1Points = [];
         const mane2Points = [], frontLock2Points = [], tobiano2Points = [], horse2Points = [], dapple2Points = [];
         const mane3Points = [], frontLock3Points = [], tobiano3Points = [], horse3Points = [], dapple3Points = [];
@@ -318,7 +340,7 @@
         addMirroredPoints(frontLockCoords, 7.5, 7.5, frontLock1Points, frontLock2Points, frontLock3Points);
         addMirroredPoints(tobianoCoords, 7.5, 7.5, tobiano1Points, tobiano2Points, tobiano3Points);
         addMirroredPoints(horseBaseCoords, 7.5, 7.5, horse1Points, horse2Points, horse3Points);
-        
+
 
 
         function createFlatPolygon(points, fillColor) {
@@ -360,9 +382,9 @@
         tobiano3Shape.setAttribute({ visible: false });
 
         function toggleDapples(points, dapplesOn) {
-            points.forEach((point, i) =>{
-                point.setAttribute({ visible: dapplesOn});
-            })      
+            points.forEach((point, i) => {
+                point.setAttribute({ visible: dapplesOn });
+            })
         };
 
         //"family tree" lines
@@ -384,7 +406,7 @@
             aLocus: 'AA',
             cLocus: 'CC',
             gLocus: 'GG',
-            toLocus: 'tt', 
+            toLocus: 'tt',
             zLocus: 'zz',
         }
         let foalGenotype = {
@@ -392,7 +414,7 @@
             aLocus: 'AA',
             cLocus: 'CC',
             gLocus: 'GG',
-            toLocus: 'tt', 
+            toLocus: 'tt',
             zLocus: 'zz',
         }
         let damGenotype = {
@@ -400,7 +422,7 @@
             aLocus: 'AA',
             cLocus: 'CC',
             gLocus: 'GG',
-            toLocus: 'tt', 
+            toLocus: 'tt',
             zLocus: 'zz',
         }
         let sireGenotype = {
@@ -408,7 +430,7 @@
             aLocus: 'AA',
             cLocus: 'CC',
             gLocus: 'GG',
-            toLocus: 'tt', 
+            toLocus: 'tt',
             zLocus: 'zz',
         }
 
@@ -470,7 +492,7 @@
             }
 
             if (genotype.gLocus != 'gg') { //ADD effect by cream.
-                color = horseColors.grey; 
+                color = horseColors.grey;
             }
             return color;
         }
@@ -487,7 +509,7 @@
             if (genotype.eLocus == 'ee' && genotype.cLocus == 'Cc') { //voikko + rautias 
                 color = horseColors.white;
             }
-            
+
             if (genotype.cLocus == 'CC') {
                 color = horseColors.white;
             }
@@ -496,7 +518,7 @@
                 color = horseColors.darkgrey;
             }
 
-             if (genotype.zLocus != 'zz' && color == horseColors.black){
+            if (genotype.zLocus != 'zz' && color == horseColors.black) {
                 color = horseColors.lighterbeige;
             }
             return color;
@@ -510,7 +532,7 @@
             frontLock1Shape.setAttribute({ fillColor: maneColor });
             tobiano1Shape.setAttribute({ visible: (damGenotype.toLocus != 'tt' ? true : false) })
             toggleDapples(dapple1Points, (damGenotype.gLocus != 'gg') || (damGenotype.zLocus != 'zz' &&
-             damGenotype.aLocus == 'aa' && damGenotype.eLocus != 'ee' && damGenotype.cLocus != 'CC'));
+                damGenotype.aLocus == 'aa' && damGenotype.eLocus != 'ee' && damGenotype.cLocus != 'CC'));
         }
 
         function updateHorse2Color() {
@@ -521,8 +543,8 @@
             frontLock2Shape.setAttribute({ fillColor: maneColor });
             tobiano2Shape.setAttribute({ visible: (sireGenotype.toLocus != 'tt' ? true : false) })
             toggleDapples(dapple2Points, (sireGenotype.gLocus != 'gg') || (sireGenotype.zLocus != 'zz' &&
-             sireGenotype.aLocus == 'aa' && sireGenotype.eLocus != 'ee' && sireGenotype.cLocus != 'CC'));
-            
+                sireGenotype.aLocus == 'aa' && sireGenotype.eLocus != 'ee' && sireGenotype.cLocus != 'CC'));
+
         }
 
         function updateHorse3Color() {
@@ -532,7 +554,7 @@
             frontLock3Shape.setAttribute({ fillColor: maneColor });
             tobiano3Shape.setAttribute({ visible: (foalGenotype.toLocus != 'tt' ? true : false) })
             toggleDapples(dapple3Points, (foalGenotype.gLocus != 'gg') || (foalGenotype.zLocus != 'zz' &&
-             foalGenotype.aLocus == 'aa' && foalGenotype.eLocus != 'ee' && foalGenotype.cLocus != 'CC'));
+                foalGenotype.aLocus == 'aa' && foalGenotype.eLocus != 'ee' && foalGenotype.cLocus != 'CC'));
         }
 
         function updateFoalGenotypeDisplay() {
@@ -551,7 +573,7 @@
             //console.log(damGenotype, sireGenotype, foalGenotype);
             updateHorse3Color();
             updateFoalGenotypeDisplay();
-            const sex = Math.random()>0.5 ? 'Tamma' : 'Ori';
+            const sex = Math.random() > 0.5 ? 'Tamma' : 'Ori';
             document.getElementById('foal-sex-display').textContent = 'Sukupuoli: ' + sex;
 
 
@@ -575,20 +597,21 @@
         // const eye1 = board.create('point', [-2.05, 2.10], { color: 'black', size: 4});
         // const eyeHL1 = board.create('point', [-1.92, 2.2], { color: 'white', size: 0.1});
 
-        // const moveable = [];
-        // tobianoCoords.forEach(p => {
-        //     const point = board.create('point', [p[0], p[1]], { visible: true, size: 1 });
-        //     moveable.push(point);
-        // })
-        // const newhorse1Shape = board.create('polygon', [...moveable], {
-        //     fillColor: 'white',
-        //     strokeColor: 'black',
-        //     strokeWidth: 2,
-        //     fillOpacity: 0.8
-        // });
-        // const horse2Shape = board.create('polygon', [...horse2Points], {
+        const moveable = [];
+        maneStripeCoords.forEach(p => {
+            const point = board.create('point', [p[0], p[1]], { visible: true, size: 1 });
+            moveable.push(point);
+        })
+        const newhorse1Shape = board.create('polygon', [...moveable], {
+            fillColor: 'white',
+            strokeColor: 'black',
+            strokeWidth: 2,
+            fillOpacity: 0.8
+        });
+        // const horseNewShape = board.create('polygon', [...maneCoords], {
         //     fillColor: 'grey',
         //     strokeColor: 'black',
+        //     vertices: { visible: false },
         //     strokeWidth: 2
         // });
 
