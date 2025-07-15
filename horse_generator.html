@@ -211,7 +211,6 @@
         d) musta jälkeläinen, joka voi itse tuottaa rautiaita jälkeläisiä? // aa ee x aa EE (+molemmat myös ei-voikkoja,
         ei-kimoja)<br>
 
-
     </div>
 
 
@@ -353,7 +352,6 @@
         addMirroredPoints(tobianoCoords, 7.5, 7.5, tobiano1Points, tobiano2Points, tobiano3Points);
         addMirroredPoints(horseBaseCoords, 7.5, 7.5, horse1Points, horse2Points, horse3Points);
         addMirroredPoints(maneStripeCoords, 7.5, 7.5, stripe1Points, stripe2Points, stripe3Points);
-
 
 
         function createFlatPolygon(points, fillColor) {
@@ -512,11 +510,23 @@
             if (genotype.zLocus != 'zz' && (color == horseColors.almostblack)) {
                 color = horseColors.silverblack;
             }
+            
             if (genotype.zLocus != 'zz' && (color == horseColors.darkbrown)) {
                 color = horseColors.silvercreamblack;
             }
+           
+            if (genotype.dLocus != 'dd' && (color == horseColors.beige)) { //keltahallakko (voikonhallakko) tai ruunivoikonhallakko
+                color = horseColors.offwhite;
+            }
+            if (genotype.dLocus != 'dd' && (color == horseColors.brown)) { //tavallinen ruunihallakko tai punahallakko (rautias)
+                color = horseColors.beige;
+            } 
+            if (genotype.dLocus != 'dd' && (color == horseColors.almostblack || color == horseColors.darkbrown)) { //mustanhallakko/hiirakko
+                color = horseColors.grey;
+            }
+            
 
-            if (genotype.gLocus != 'gg') { //ADD effect by cream.
+            if (genotype.gLocus != 'gg') { 
                 color = horseColors.grey;
             }
             return color;
