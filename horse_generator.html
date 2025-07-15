@@ -10,6 +10,16 @@
             min-width: 590px;
             height: 600px;
             background-color: #e2e2e2;
+            margin: 8px;
+        }
+
+        form {
+            margin: 8px;
+            margin-top: 16px;
+        }
+
+        button {
+            margin: 8px;
         }
 
         #text {
@@ -30,44 +40,43 @@
     <div id="flex">
         <div id="box" class="jxgbox"></div>
         <!-- <div><button onclick="logCoordsAsArray()">log</button></div> -->
-        <div>
-            <form id="genotype-form-dam" onchange="updateDamGenotype()">
-                <fieldset>
-                    <legend>Rautiastekijä - emä</legend>
-                    <label><input type="radio" id="EE" name="E" value="EE" checked> EE - ei-rautias</label><br>
-                    <label><input type="radio" id="Ee" name="E" value="Ee"> Ee - ei-rautias kantaja</label><br>
-                    <label><input type="radio" id="ee" name="E" value="ee"> ee - rautias</label>
-                </fieldset>
+        <form id="genotype-form-dam" onchange="updateDamGenotype()">
+            <fieldset>
+                <legend>Rautiastekijä - emä</legend>
+                <label><input type="radio" id="EE" name="E" value="EE" checked> EE - ei-rautias</label><br>
+                <label><input type="radio" id="Ee" name="E" value="Ee"> Ee - ei-rautias kantaja</label><br>
+                <label><input type="radio" id="ee" name="E" value="ee"> ee - rautias</label>
+            </fieldset>
 
-                <fieldset>
-                    <legend>Ruunikkotekijä - emä</legend>
-                    <label><input type="radio" id="AA" name="A" value="AA" checked> AA - ruunikko</label><br>
-                    <label><input type="radio" id="Aa" name="A" value="Aa"> Aa - ruunikko mustan kantaja</label><br>
-                    <label><input type="radio" id="aa" name="A" value="aa"> aa - musta</label>
-                </fieldset>
+            <fieldset>
+                <legend>Ruunikkotekijä - emä</legend>
+                <label><input type="radio" id="AA" name="A" value="AA" checked> AA - ruunikko</label><br>
+                <label><input type="radio" id="Aa" name="A" value="Aa"> Aa - ruunikko mustan kantaja</label><br>
+                <label><input type="radio" id="aa" name="A" value="aa"> aa - musta</label>
+            </fieldset>
 
-                <fieldset>
-                    <legend>Voikkotekijä - emä</legend>
-                    <label><input type="radio" id="cc" name="C" value="cc" checked> CC - ei-voikko</label><br>
-                    <label><input type="radio" id="Cc" name="C" value="Cc"> CrC - voikko</label><br>
-                    <label><input type="radio" id="CC" name="C" value="CC"> CrCr - valkovoikko</label>
-                </fieldset>
+            <fieldset>
+                <legend>Voikkotekijä - emä</legend>
+                <label><input type="radio" id="cc" name="C" value="cc" checked> CC - ei-voikko</label><br>
+                <label><input type="radio" id="Cc" name="C" value="Cc"> CrC - voikko</label><br>
+                <label><input type="radio" id="CC" name="C" value="CC"> CrCr - valkovoikko</label>
+            </fieldset>
 
-                <fieldset>
-                    <legend>Kimotekijä - emä</legend>
-                    <label><input type="radio" id="GG" name="G" value="GG" checked> GG - kimo</label><br>
-                    <label><input type="radio" id="Gg" name="G" value="Gg"> Gg - kimo</label><br>
-                    <label><input type="radio" id="gg" name="G" value="gg"> gg - ei-kimo</label>
-                </fieldset>
-                <fieldset>
-                    <legend>Kirjavuustekijä - emä</legend>
-                    <label><input type="radio" id="TT" name="TO" value="TOTO"> TOTO - tobianokirjava</label><br>
-                    <label><input type="radio" id="Tt" name="TO" value="Tt"> TOto - tobianokirjava </label><br>
-                    <label><input type="radio" id="tt" name="TO" value="tt" checked> toto - ei-kirjava</label>
-                </fieldset>
-            </form>
-            <button onclick="generateFoal()"> Generoi varsa</button>
-        </div>
+            <fieldset>
+                <legend>Kimotekijä - emä</legend>
+                <label><input type="radio" id="GG" name="G" value="GG" checked> GG - kimo</label><br>
+                <label><input type="radio" id="Gg" name="G" value="Gg"> Gg - kimo</label><br>
+                <label><input type="radio" id="gg" name="G" value="gg"> gg - ei-kimo</label>
+            </fieldset>
+            <fieldset>
+                <legend>Kirjavuustekijä - emä</legend>
+                <label><input type="radio" id="TT" name="TO" value="TT"> TOTO - tobianokirjava</label><br>
+                <label><input type="radio" id="Tt" name="TO" value="Tt"> TOto - tobianokirjava </label><br>
+                <label><input type="radio" id="tt" name="TO" value="tt" checked> toto - ei-kirjava</label>
+            </fieldset>
+        </form>
+
+
         <form id="genotype-form-sire" onchange="updateSireGenotype()">
             <fieldset>
                 <legend>Rautiastekijä - isä</legend>
@@ -98,7 +107,7 @@
             </fieldset>
             <fieldset>
                 <legend>Kirjavuustekijä - isä</legend>
-                <label><input type="radio" id="TT" name="TOs" value="TOTO"> TOTO - tobianokirjava</label><br>
+                <label><input type="radio" id="TT" name="TOs" value="TT"> TOTO - tobianokirjava</label><br>
                 <label><input type="radio" id="Tt" name="TOs" value="Tt"> TOto - tobianokirjava </label><br>
                 <label><input type="radio" id="tt" name="TOs" value="tt" checked> toto - ei-kirjava</label>
             </fieldset>
@@ -106,6 +115,11 @@
     </div>
 
 
+    </div>
+    <div style="display: flex;">
+        <button onclick="generateFoal()"> Generoi varsa</button>
+        <div id="foal-genotype-display" style="font-family: monospace; margin: 8px;"> Varsan genotyyppi: -- -- -- -- --
+        </div>
     </div>
     <div id="text">
         <h4> Simulaattorista ja värigeeneistä</h4>
@@ -288,6 +302,19 @@
         tobiano2Shape.setAttribute({ visible: false });
         tobiano3Shape.setAttribute({ visible: false });
 
+        const leftTop = board.create('point', [-7.5, 1], { visible: false });
+        const leftBottom = board.create('point', [-7.5, -0.5], { visible: false });
+        const rightTop = board.create('point', [7.5, 1], { visible: false });
+        const rightBottom = board.create('point', [7.5, -0.5], { visible: false });
+        const center = board.create('point', [0, -0.5], { visible: false });
+        const centerBottom = board.create('point', [0, -1.5], { visible: false });
+
+        board.create('line', [leftTop, leftBottom], { straightFirst: false, straightLast: false, strokeColor: 'grey', strokeWidth: 1 })
+        board.create('line', [rightTop, rightBottom], { straightFirst: false, straightLast: false, strokeColor: 'grey', strokeWidth: 1 })
+        board.create('line', [leftBottom, rightBottom], { straightFirst: false, straightLast: false, strokeColor: 'grey', strokeWidth: 1 })
+        board.create('line', [center, centerBottom], { straightFirst: false, straightLast: false, strokeColor: 'grey', strokeWidth: 1 })
+
+
 
         let selectedHorseGenotype = {
             eLocus: 'EE',
@@ -316,6 +343,20 @@
             cLocus: 'CC',
             gLocus: 'GG',
             toLocus: 'tt'
+        }
+
+        const alleleMap = {
+            c: 'C',
+            C: 'Cr',
+            T: 'TO',
+            t: 'to',
+        };
+
+        function expandAllelePair(pair) {
+            return pair
+                .split('')
+                .map(allele => alleleMap[allele] || allele)
+                .join('');
         }
 
         function updateDamGenotype() {
@@ -407,6 +448,13 @@
             tobiano3Shape.setAttribute({ visible: (foalGenotype.toLocus != 'tt' ? true : false) })
         }
 
+        function updateFoalGenotypeDisplay() {
+            const display = document.getElementById('foal-genotype-display');
+            const expanded = Object.values(foalGenotype).map(expandAllelePair);
+            display.textContent = "Varsan genotyyppi: " + expanded.join(' ');
+
+        }
+
         function generateFoal() {
             for (const locus in damGenotype) {
                 const damAllele = damGenotype[locus][Math.random() > 0.5 ? 0 : 1];
@@ -415,12 +463,11 @@
             }
             //console.log(damGenotype, sireGenotype, foalGenotype);
             updateHorse3Color();
+            updateFoalGenotypeDisplay();
         }
 
         updateHorse1Color();
         updateHorse2Color();
-
-
 
 
 
