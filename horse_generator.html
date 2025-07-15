@@ -16,6 +16,7 @@
         form {
             margin: 8px;
             margin-top: 16px;
+            font-size: smaller;
         }
 
         button {
@@ -28,6 +29,11 @@
 
         #flex {
             display: flex
+        }
+
+        #foal-sex-display, #foal-genotype-display {
+            border:#453a35 1px solid;
+            padding: 5px;
         }
 
         #test {
@@ -75,7 +81,7 @@
                 <label><input type="radio" id="tt" name="TO" value="tt" checked> toto - ei-kirjava</label>
             </fieldset>
             <fieldset>
-                <legend>Hopeatekijä -emä</legend>
+                <legend>Hopeatekijä - emä</legend>
                 <label><input type="radio" id="ZZ" name="Z" value="ZZ"> ZZ - hopea</label><br>
                 <label><input type="radio" id="Zz" name="Z" value="Zz"> Zz - hopea </label><br>
                 <label><input type="radio" id="zz" name="Z" value="zz" checked> zz - ei-hopea</label>
@@ -130,8 +136,9 @@
     </div>
     <div style="display: flex;">
         <button onclick="generateFoal()"> Generoi varsa</button>
-        <div id="foal-genotype-display" style="font-family: monospace; margin: 8px;"> Varsan genotyyppi: -- -- -- -- --
+        <div id="foal-genotype-display" style="font-family: monospace; margin: 8px;"> Varsan genotyyppi: -- -- -- -- -- --
         </div>
+        <div id="foal-sex-display" style="font-family: monospace; margin: 8px; margin-left: 16px;">   Sukupuoli: - </div>
     </div>
     <div id="text">
         <h4> Simulaattorista ja värigeeneistä</h4>
@@ -294,7 +301,7 @@
             coords.forEach(([x, y]) => {
                 arr1.push(board.create('point', [x - offsetX, y + offsetY], { visible: false, opacity: 0 }));
                 arr2.push(board.create('point', [x + offsetX, y + offsetY], { visible: false, opacity: 0 }));
-                arr3.push(board.create('point', [x, y - offsetY], { visible: false, size: 0 }));
+                arr3.push(board.create('point', [x, y - offsetY], { visible: false, opacity: 0 }));
             });
         }
 
@@ -535,6 +542,10 @@
             //console.log(damGenotype, sireGenotype, foalGenotype);
             updateHorse3Color();
             updateFoalGenotypeDisplay();
+            const sex = Math.random()>0.5 ? 'Tamma' : 'Ori';
+            document.getElementById('foal-sex-display').textContent = 'Sukupuoli: ' + sex;
+
+
         }
 
         updateHorse1Color();
