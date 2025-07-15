@@ -8,7 +8,7 @@
     <style>
         #box {
             min-width: 590px;
-            height: 600px;
+            height: 700px;
             background-color: #c9c9c9;
             margin: 8px;
         }
@@ -87,6 +87,12 @@
                 <label><input type="radio" id="Zz" name="Z" value="Zz"> Zz - hopea </label><br>
                 <label><input type="radio" id="zz" name="Z" value="zz" checked> zz - ei-hopea</label>
             </fieldset>
+            <fieldset>
+                <legend>Hallakkotekijä - emä</legend>
+                <label><input type="radio" id="DD" name="D" value="DD"> DD - hallakko</label><br>
+                <label><input type="radio" id="Dd" name="D" value="Dd"> Dd - hallakko </label><br>
+                <label><input type="radio" id="dd" name="D" value="dd" checked> dd - ei-hallakko</label>
+            </fieldset>
         </form>
 
 
@@ -129,6 +135,12 @@
                 <label><input type="radio" id="ZZ" name="Zs" value="ZZ"> ZZ - hopea</label><br>
                 <label><input type="radio" id="Zz" name="Zs" value="Zz"> Zz - hopea </label><br>
                 <label><input type="radio" id="zz" name="Zs" value="zz" checked> zz - ei-hopea</label>
+            </fieldset>
+            <fieldset>
+                <legend>Hallakkotekijä - isä</legend>
+                <label><input type="radio" id="DD" name="Ds" value="DD"> DD - hallakko</label><br>
+                <label><input type="radio" id="Dd" name="Ds" value="Dd"> Dd - hallakko </label><br>
+                <label><input type="radio" id="dd" name="Ds" value="dd" checked> dd - ei-hallakko</label>
             </fieldset>
         </form>
     </div>
@@ -205,7 +217,7 @@
 
     <script>
         const board = JXG.JSXGraph.initBoard('box', {
-            boundingbox: [-15, 15, 15, -15],
+            boundingbox: [-15, 17.5, 15, -17.5],
             axis: false,
             showCopyright: false,
             zoom: {
@@ -324,9 +336,9 @@
             [5.501, -0.136],
             [3.606, 2.318]];
 
-        const mane1Points = [], frontLock1Points = [], tobiano1Points = [], horse1Points = [], dapple1Points = [];
-        const mane2Points = [], frontLock2Points = [], tobiano2Points = [], horse2Points = [], dapple2Points = [];
-        const mane3Points = [], frontLock3Points = [], tobiano3Points = [], horse3Points = [], dapple3Points = [];
+        const mane1Points = [], frontLock1Points = [], tobiano1Points = [], horse1Points = [], dapple1Points = [], stripe1Points = [];
+        const mane2Points = [], frontLock2Points = [], tobiano2Points = [], horse2Points = [], dapple2Points = [], stripe2Points = [];
+        const mane3Points = [], frontLock3Points = [], tobiano3Points = [], horse3Points = [], dapple3Points = [], stripe3Points = [];
 
         function addMirroredPoints(coords, offsetX, offsetY, arr1, arr2, arr3) {
             coords.forEach(([x, y]) => {
@@ -340,6 +352,7 @@
         addMirroredPoints(frontLockCoords, 7.5, 7.5, frontLock1Points, frontLock2Points, frontLock3Points);
         addMirroredPoints(tobianoCoords, 7.5, 7.5, tobiano1Points, tobiano2Points, tobiano3Points);
         addMirroredPoints(horseBaseCoords, 7.5, 7.5, horse1Points, horse2Points, horse3Points);
+        addMirroredPoints(maneStripeCoords, 7.5, 7.5, stripe1Points, stripe2Points, stripe3Points);
 
 
 
@@ -363,23 +376,29 @@
         const tobiano1Shape = createFlatPolygon(tobiano1Points, 'white');
         const mane1Shape = createFlatPolygon(mane1Points, 'white');
         const frontLock1Shape = createFlatPolygon(frontLock1Points, 'white');
+        const stripe1Shape = createFlatPolygon(stripe1Points, 'black');
 
         const horse2Shape = createFlatPolygon(horse2Points, 'white');
         createDapples(dapple2Points, 'white');
         const tobiano2Shape = createFlatPolygon(tobiano2Points, 'white');
         const mane2Shape = createFlatPolygon(mane2Points, 'white');
         const frontLock2Shape = createFlatPolygon(frontLock2Points, 'white');
+        const stripe2Shape = createFlatPolygon(stripe2Points, 'black');
 
         const horse3Shape = createFlatPolygon(horse3Points, 'white');
         createDapples(dapple3Points, 'white');
         const tobiano3Shape = createFlatPolygon(tobiano3Points, 'white');
         const mane3Shape = createFlatPolygon(mane3Points, 'white');
         const frontLock3Shape = createFlatPolygon(frontLock3Points, 'white');
+        const stripe3Shape = createFlatPolygon(stripe3Points, 'black');
 
-        //set tobiano off at the start
+        //set tobiano and dorsal stripe off at the start
         tobiano1Shape.setAttribute({ visible: false });
         tobiano2Shape.setAttribute({ visible: false });
         tobiano3Shape.setAttribute({ visible: false });
+        stripe1Shape.setAttribute({ visible: false });
+        stripe2Shape.setAttribute({ visible: false });
+        stripe3Shape.setAttribute({ visible: false });
 
         function toggleDapples(points, dapplesOn) {
             points.forEach((point, i) => {
@@ -408,6 +427,7 @@
             gLocus: 'GG',
             toLocus: 'tt',
             zLocus: 'zz',
+            dLocus: 'dd',
         }
         let foalGenotype = {
             eLocus: 'EE',
@@ -416,6 +436,7 @@
             gLocus: 'GG',
             toLocus: 'tt',
             zLocus: 'zz',
+            dLocus: 'dd',
         }
         let damGenotype = {
             eLocus: 'EE',
@@ -424,6 +445,7 @@
             gLocus: 'GG',
             toLocus: 'tt',
             zLocus: 'zz',
+            dLocus: 'dd',
         }
         let sireGenotype = {
             eLocus: 'EE',
@@ -432,6 +454,7 @@
             gLocus: 'GG',
             toLocus: 'tt',
             zLocus: 'zz',
+            dLocus: 'dd'
         }
 
         const alleleMap = {
@@ -455,6 +478,7 @@
             selectedHorseGenotype.gLocus = document.querySelector('input[name="G"]:checked')?.value || '';
             selectedHorseGenotype.toLocus = document.querySelector('input[name="TO"]:checked')?.value || '';
             selectedHorseGenotype.zLocus = document.querySelector('input[name="Z"]:checked')?.value || '';
+            selectedHorseGenotype.dLocus = document.querySelector('input[name="D"]:checked')?.value || '';
             updateHorse1Color();
         }
         function updateSireGenotype() {
@@ -464,6 +488,7 @@
             selectedHorseGenotype.gLocus = document.querySelector('input[name="Gs"]:checked')?.value || '';
             selectedHorseGenotype.toLocus = document.querySelector('input[name="TOs"]:checked')?.value || '';
             selectedHorseGenotype.zLocus = document.querySelector('input[name="Zs"]:checked')?.value || '';
+            selectedHorseGenotype.dLocus = document.querySelector('input[name="Ds"]:checked')?.value || '';
             updateHorse2Color();
         }
 
@@ -597,17 +622,17 @@
         // const eye1 = board.create('point', [-2.05, 2.10], { color: 'black', size: 4});
         // const eyeHL1 = board.create('point', [-1.92, 2.2], { color: 'white', size: 0.1});
 
-        const moveable = [];
-        maneStripeCoords.forEach(p => {
-            const point = board.create('point', [p[0], p[1]], { visible: true, size: 1 });
-            moveable.push(point);
-        })
-        const newhorse1Shape = board.create('polygon', [...moveable], {
-            fillColor: 'white',
-            strokeColor: 'black',
-            strokeWidth: 2,
-            fillOpacity: 0.8
-        });
+        // const moveable = [];
+        // maneStripeCoords.forEach(p => {
+        //     const point = board.create('point', [p[0], p[1]], { visible: true, size: 1 });
+        //     moveable.push(point);
+        // })
+        // const newhorse1Shape = board.create('polygon', [...moveable], {
+        //     fillColor: 'white',
+        //     strokeColor: 'black',
+        //     strokeWidth: 2,
+        //     fillOpacity: 0.8
+        // });
         // const horseNewShape = board.create('polygon', [...maneCoords], {
         //     fillColor: 'grey',
         //     strokeColor: 'black',
