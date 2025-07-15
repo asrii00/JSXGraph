@@ -9,7 +9,7 @@
         #box {
             min-width: 590px;
             height: 600px;
-            background-color: #e2e2e2;
+            background-color: #c9c9c9;
             margin: 8px;
         }
 
@@ -31,7 +31,7 @@
         }
 
         #test {
-            background-color: #1f1915
+            background-color: #453a35
         }
     </style>
 </head>
@@ -74,6 +74,12 @@
                 <label><input type="radio" id="Tt" name="TO" value="Tt"> TOto - tobianokirjava </label><br>
                 <label><input type="radio" id="tt" name="TO" value="tt" checked> toto - ei-kirjava</label>
             </fieldset>
+            <fieldset>
+                <legend>Hopeatekijä -emä</legend>
+                <label><input type="radio" id="ZZ" name="Z" value="ZZ"> ZZ - hopea</label><br>
+                <label><input type="radio" id="Zz" name="Z" value="Zz"> Zz - hopea </label><br>
+                <label><input type="radio" id="zz" name="Z" value="zz" checked> zz - ei-hopea</label>
+            </fieldset>
         </form>
 
 
@@ -110,6 +116,12 @@
                 <label><input type="radio" id="TT" name="TOs" value="TT"> TOTO - tobianokirjava</label><br>
                 <label><input type="radio" id="Tt" name="TOs" value="Tt"> TOto - tobianokirjava </label><br>
                 <label><input type="radio" id="tt" name="TOs" value="tt" checked> toto - ei-kirjava</label>
+            </fieldset>
+            <fieldset>
+                <legend>Hopeatekijä - isä</legend>
+                <label><input type="radio" id="ZZ" name="Zs" value="ZZ"> ZZ - hopea</label><br>
+                <label><input type="radio" id="Zz" name="Zs" value="Zz"> Zz - hopea </label><br>
+                <label><input type="radio" id="zz" name="Zs" value="zz" checked> zz - ei-hopea</label>
             </fieldset>
         </form>
     </div>
@@ -187,7 +199,10 @@
             darkbrown: '#1f1915', 
             black: '#080808',
             almostblack: '#0f0f0f',
+            silverblack: '#2e2926',
+            silvercreamblack: '#453a35',
             beige: '#D7B89C',
+            lighterbeige: '#e6e1db',
             darkgrey: '#5E5E5E',
             grey: '#A8A8A8',
             offwhite: '#F1EDE5',
@@ -277,9 +292,9 @@
 
         function addMirroredPoints(coords, offsetX, offsetY, arr1, arr2, arr3) {
             coords.forEach(([x, y]) => {
-                arr1.push(board.create('point', [x - offsetX, y + offsetY], { visible: false }));
-                arr2.push(board.create('point', [x + offsetX, y + offsetY], { visible: false }));
-                arr3.push(board.create('point', [x, y - offsetY], { visible: false }));
+                arr1.push(board.create('point', [x - offsetX, y + offsetY], { visible: false, opacity: 0 }));
+                arr2.push(board.create('point', [x + offsetX, y + offsetY], { visible: false, opacity: 0 }));
+                arr3.push(board.create('point', [x, y - offsetY], { visible: false, size: 0 }));
             });
         }
 
@@ -287,7 +302,7 @@
         addMirroredPoints(frontLockCoords, 7.5, 7.5, frontLock1Points, frontLock2Points, frontLock3Points);
         addMirroredPoints(tobianoCoords, 7.5, 7.5, tobiano1Points, tobiano2Points, tobiano3Points);
         addMirroredPoints(horseBaseCoords, 7.5, 7.5, horse1Points, horse2Points, horse3Points);
-        addMirroredPoints(dappleCoords, 7.5, 7.5, dapple1Points, dapple2Points, dapple3Points);
+        
 
 
         function createFlatPolygon(points, fillColor) {
@@ -304,17 +319,18 @@
             )
         }
 
-        const horse1Shape = createFlatPolygon(horse1Points, 'grey');
+        addMirroredPoints(dappleCoords, 7.5, 7.5, dapple1Points, dapple2Points, dapple3Points);
+        const horse1Shape = createFlatPolygon(horse1Points, 'white');
         createDapples(dapple1Points, 'white');
         const tobiano1Shape = createFlatPolygon(tobiano1Points, 'white');
-        const mane1Shape = createFlatPolygon(mane1Points, 'almostblack');
-        const frontLock1Shape = createFlatPolygon(frontLock1Points, 'almostblack');
+        const mane1Shape = createFlatPolygon(mane1Points, 'white');
+        const frontLock1Shape = createFlatPolygon(frontLock1Points, 'white');
 
-        const horse2Shape = createFlatPolygon(horse2Points, 'grey');
+        const horse2Shape = createFlatPolygon(horse2Points, 'white');
         createDapples(dapple2Points, 'white');
         const tobiano2Shape = createFlatPolygon(tobiano2Points, 'white');
-        const mane2Shape = createFlatPolygon(mane2Points, 'almostblack');
-        const frontLock2Shape = createFlatPolygon(frontLock2Points, 'almostblack');
+        const mane2Shape = createFlatPolygon(mane2Points, 'white');
+        const frontLock2Shape = createFlatPolygon(frontLock2Points, 'white');
 
         const horse3Shape = createFlatPolygon(horse3Points, 'white');
         createDapples(dapple3Points, 'white');
@@ -352,28 +368,32 @@
             aLocus: 'AA',
             cLocus: 'CC',
             gLocus: 'GG',
-            toLocus: 'tt'
+            toLocus: 'tt', 
+            zLocus: 'zz',
         }
         let foalGenotype = {
             eLocus: 'EE',
             aLocus: 'AA',
             cLocus: 'CC',
             gLocus: 'GG',
-            toLocus: 'tt'
+            toLocus: 'tt', 
+            zLocus: 'zz',
         }
         let damGenotype = {
             eLocus: 'EE',
             aLocus: 'AA',
             cLocus: 'CC',
             gLocus: 'GG',
-            toLocus: 'tt'
+            toLocus: 'tt', 
+            zLocus: 'zz',
         }
         let sireGenotype = {
             eLocus: 'EE',
             aLocus: 'AA',
             cLocus: 'CC',
             gLocus: 'GG',
-            toLocus: 'tt'
+            toLocus: 'tt', 
+            zLocus: 'zz',
         }
 
         const alleleMap = {
@@ -396,6 +416,7 @@
             selectedHorseGenotype.cLocus = document.querySelector('input[name="C"]:checked')?.value || '';
             selectedHorseGenotype.gLocus = document.querySelector('input[name="G"]:checked')?.value || '';
             selectedHorseGenotype.toLocus = document.querySelector('input[name="TO"]:checked')?.value || '';
+            selectedHorseGenotype.zLocus = document.querySelector('input[name="Z"]:checked')?.value || '';
             updateHorse1Color();
         }
         function updateSireGenotype() {
@@ -404,6 +425,7 @@
             selectedHorseGenotype.cLocus = document.querySelector('input[name="Cs"]:checked')?.value || '';
             selectedHorseGenotype.gLocus = document.querySelector('input[name="Gs"]:checked')?.value || '';
             selectedHorseGenotype.toLocus = document.querySelector('input[name="TOs"]:checked')?.value || '';
+            selectedHorseGenotype.zLocus = document.querySelector('input[name="Zs"]:checked')?.value || '';
             updateHorse2Color();
         }
 
@@ -424,6 +446,13 @@
                 color = horseColors.offwhite;
             }
 
+            if (genotype.zLocus != 'zz' && (color == horseColors.almostblack)) {
+                color = horseColors.silverblack;
+            }
+            if (genotype.zLocus != 'zz' && (color == horseColors.darkbrown)) {
+                color = horseColors.silvercreamblack;
+            }
+
             if (genotype.gLocus != 'gg') { //ADD effect by cream.
                 color = horseColors.grey; 
             }
@@ -442,13 +471,17 @@
             if (genotype.eLocus == 'ee' && genotype.cLocus == 'Cc') { //voikko + rautias 
                 color = horseColors.white;
             }
-
+            
             if (genotype.cLocus == 'CC') {
                 color = horseColors.white;
             }
 
             if (genotype.gLocus != 'gg') {
                 color = horseColors.darkgrey;
+            }
+
+             if (genotype.zLocus != 'zz' && color == horseColors.black){
+                color = horseColors.lighterbeige;
             }
             return color;
         }
@@ -460,7 +493,8 @@
             mane1Shape.setAttribute({ fillColor: maneColor });
             frontLock1Shape.setAttribute({ fillColor: maneColor });
             tobiano1Shape.setAttribute({ visible: (damGenotype.toLocus != 'tt' ? true : false) })
-            toggleDapples(dapple1Points, damGenotype.gLocus != 'gg');
+            toggleDapples(dapple1Points, (damGenotype.gLocus != 'gg') || (damGenotype.zLocus != 'zz' &&
+             damGenotype.aLocus == 'aa' && damGenotype.eLocus != 'ee' && damGenotype.cLocus != 'CC'));
         }
 
         function updateHorse2Color() {
@@ -470,7 +504,9 @@
             mane2Shape.setAttribute({ fillColor: maneColor });
             frontLock2Shape.setAttribute({ fillColor: maneColor });
             tobiano2Shape.setAttribute({ visible: (sireGenotype.toLocus != 'tt' ? true : false) })
-            toggleDapples(dapple2Points, sireGenotype.gLocus != 'gg');
+            toggleDapples(dapple2Points, (sireGenotype.gLocus != 'gg') || (sireGenotype.zLocus != 'zz' &&
+             sireGenotype.aLocus == 'aa' && sireGenotype.eLocus != 'ee' && sireGenotype.cLocus != 'CC'));
+            
         }
 
         function updateHorse3Color() {
@@ -479,7 +515,8 @@
             mane3Shape.setAttribute({ fillColor: maneColor });
             frontLock3Shape.setAttribute({ fillColor: maneColor });
             tobiano3Shape.setAttribute({ visible: (foalGenotype.toLocus != 'tt' ? true : false) })
-            toggleDapples(dapple3Points, foalGenotype.gLocus != 'gg');
+            toggleDapples(dapple3Points, (foalGenotype.gLocus != 'gg') || (foalGenotype.zLocus != 'zz' &&
+             foalGenotype.aLocus == 'aa' && foalGenotype.eLocus != 'ee' && foalGenotype.cLocus != 'CC'));
         }
 
         function updateFoalGenotypeDisplay() {
