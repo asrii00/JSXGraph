@@ -31,7 +31,7 @@
         }
 
         #test {
-            background-color: #080808
+            background-color: #1f1915
         }
     </style>
 </head>
@@ -184,7 +184,7 @@
         const horseColors = {
             brown: '#8B5E3C',
             darkerbrown: '#714A30',
-            darkbrown: '#3E2B20', //make a little greyer
+            darkbrown: '#1f1915', 
             black: '#080808',
             almostblack: '#0f0f0f',
             beige: '#D7B89C',
@@ -254,10 +254,26 @@
             [5.249, -0.5],
             [2.021, 1.033]]
 
+        const dappleCoords = [
+            [2.331, -2.3],
+            [1.3, -3.0],
+            [2, -3.432],
+            [1, 1.45],
+            [1, -4.23],
+            [1.5, -0.99],
+            [0.5, -2.8],
+            [0.63, 0.65],
+            [1.8, -0.1],
+            [0.07, 1.92],
+            [0.18, 1.28],
+            [3, -1.5],
+            [-0.5, 0.3],
 
-        const mane1Points = [], frontLock1Points = [], tobiano1Points = [], horse1Points = [];
-        const mane2Points = [], frontLock2Points = [], tobiano2Points = [], horse2Points = [];
-        const mane3Points = [], frontLock3Points = [], tobiano3Points = [], horse3Points = [];
+        ]
+
+        const mane1Points = [], frontLock1Points = [], tobiano1Points = [], horse1Points = [], dapple1Points = [];
+        const mane2Points = [], frontLock2Points = [], tobiano2Points = [], horse2Points = [], dapple2Points = [];
+        const mane3Points = [], frontLock3Points = [], tobiano3Points = [], horse3Points = [], dapple3Points = [];
 
         function addMirroredPoints(coords, offsetX, offsetY, arr1, arr2, arr3) {
             coords.forEach(([x, y]) => {
@@ -271,6 +287,7 @@
         addMirroredPoints(frontLockCoords, 7.5, 7.5, frontLock1Points, frontLock2Points, frontLock3Points);
         addMirroredPoints(tobianoCoords, 7.5, 7.5, tobiano1Points, tobiano2Points, tobiano3Points);
         addMirroredPoints(horseBaseCoords, 7.5, 7.5, horse1Points, horse2Points, horse3Points);
+        addMirroredPoints(dappleCoords, 7.5, 7.5, dapple1Points, dapple2Points, dapple3Points);
 
 
         function createFlatPolygon(points, fillColor) {
@@ -281,18 +298,26 @@
                 borders: { visible: false }
             });
         }
+        function createDapples(points, color) {
+            points.forEach((point, i) =>
+                point.setAttribute({ visible: false, color: 'white', size: 6 - (i % 5), layer: 3, fillOpacity: 0.3, strokeOpacity: 0 })
+            )
+        }
 
         const horse1Shape = createFlatPolygon(horse1Points, 'grey');
+        createDapples(dapple1Points, 'white');
         const tobiano1Shape = createFlatPolygon(tobiano1Points, 'white');
         const mane1Shape = createFlatPolygon(mane1Points, 'almostblack');
         const frontLock1Shape = createFlatPolygon(frontLock1Points, 'almostblack');
 
         const horse2Shape = createFlatPolygon(horse2Points, 'grey');
+        createDapples(dapple2Points, 'white');
         const tobiano2Shape = createFlatPolygon(tobiano2Points, 'white');
         const mane2Shape = createFlatPolygon(mane2Points, 'almostblack');
         const frontLock2Shape = createFlatPolygon(frontLock2Points, 'almostblack');
 
         const horse3Shape = createFlatPolygon(horse3Points, 'white');
+        createDapples(dapple3Points, 'white');
         const tobiano3Shape = createFlatPolygon(tobiano3Points, 'white');
         const mane3Shape = createFlatPolygon(mane3Points, 'white');
         const frontLock3Shape = createFlatPolygon(frontLock3Points, 'white');
@@ -302,6 +327,13 @@
         tobiano2Shape.setAttribute({ visible: false });
         tobiano3Shape.setAttribute({ visible: false });
 
+        function toggleDapples(points, dapplesOn) {
+            points.forEach((point, i) =>{
+                point.setAttribute({ visible: dapplesOn});
+            })      
+        };
+
+        //"family tree" lines
         const leftTop = board.create('point', [-7.5, 1], { visible: false });
         const leftBottom = board.create('point', [-7.5, -0.5], { visible: false });
         const rightTop = board.create('point', [7.5, 1], { visible: false });
@@ -313,7 +345,6 @@
         board.create('line', [rightTop, rightBottom], { straightFirst: false, straightLast: false, strokeColor: 'grey', strokeWidth: 1 })
         board.create('line', [leftBottom, rightBottom], { straightFirst: false, straightLast: false, strokeColor: 'grey', strokeWidth: 1 })
         board.create('line', [center, centerBottom], { straightFirst: false, straightLast: false, strokeColor: 'grey', strokeWidth: 1 })
-
 
 
         let selectedHorseGenotype = {
@@ -394,7 +425,7 @@
             }
 
             if (genotype.gLocus != 'gg') { //ADD effect by cream.
-                color = horseColors.grey; // ADD GRADIENT.
+                color = horseColors.grey; 
             }
             return color;
         }
@@ -429,6 +460,7 @@
             mane1Shape.setAttribute({ fillColor: maneColor });
             frontLock1Shape.setAttribute({ fillColor: maneColor });
             tobiano1Shape.setAttribute({ visible: (damGenotype.toLocus != 'tt' ? true : false) })
+            toggleDapples(dapple1Points, damGenotype.gLocus != 'gg');
         }
 
         function updateHorse2Color() {
@@ -438,6 +470,7 @@
             mane2Shape.setAttribute({ fillColor: maneColor });
             frontLock2Shape.setAttribute({ fillColor: maneColor });
             tobiano2Shape.setAttribute({ visible: (sireGenotype.toLocus != 'tt' ? true : false) })
+            toggleDapples(dapple2Points, sireGenotype.gLocus != 'gg');
         }
 
         function updateHorse3Color() {
@@ -446,6 +479,7 @@
             mane3Shape.setAttribute({ fillColor: maneColor });
             frontLock3Shape.setAttribute({ fillColor: maneColor });
             tobiano3Shape.setAttribute({ visible: (foalGenotype.toLocus != 'tt' ? true : false) })
+            toggleDapples(dapple3Points, foalGenotype.gLocus != 'gg');
         }
 
         function updateFoalGenotypeDisplay() {
