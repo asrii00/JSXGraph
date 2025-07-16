@@ -1,488 +1,490 @@
+//currently cremello, perlino and smoky black not distinguished, and those + dun not distinguished
+
 const genotypeMap= {
     "EEAACCDD": {
         "desc": "valkovoikko, hallakko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": offwhite,
+        "maneColor": white,
         "stripeColor": null
     },
     "EEAACCDd": {
         "desc": "valkovoikko, hallakko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": offwhite,
+        "maneColor": white,
         "stripeColor": null
     },
     "EEAACCdd": {
         "desc": "valkovoikko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": offwhite,
+        "maneColor": white,
         "stripeColor": null
     },
     "EEAACcDD": {
         "desc": "valkohallakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": lightgrey,
+        "maneColor": darkgrey,
+        "stripeColor": lightgrey
     },
     "EEAACcDd": {
         "desc": "valkohallakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": lightgrey,
+        "maneColor": darkgrey,
+        "stripeColor": lightgrey
     },
     "EEAACcdd": {
         "desc": "ruunivoikko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": beige,
+        "maneColor": black,
         "stripeColor": null
     },
     "EEAAccDD": {
         "desc": "ruunihallakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": lighterbeige,
+        "maneColor": darkbrown,
+        "stripeColor": lighterbeige
     },
     "EEAAccDd": {
-        "desc": "ruunikko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "desc": "ruunihallakko",
+        "baseColor": lighterbeige,
+        "maneColor": darkbrown,
+        "stripeColor": lighterbeige
     },
     "EEAAccdd": {
-        "desc": "",
-        "baseColor": "",
-        "maneColor": "",
+        "desc": "ruunikko",
+        "baseColor": brown,
+        "maneColor": black,
         "stripeColor": null
     },
     "EEAaCCDD": {
         "desc": "valkovoikko, hallakko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": offwhite,
+        "maneColor": white,
         "stripeColor": null
     },
     "EEAaCCDd": {
         "desc": "valkovoikko, hallakko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": offwhite,
+        "maneColor": white,
         "stripeColor": null
     },
     "EEAaCCdd": {
         "desc": "valkovoikko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": offwhite,
+        "maneColor": white,
         "stripeColor": null
     },
     "EEAaCcDD": {
         "desc": "valkohallakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": lightgrey,
+        "maneColor": darkgrey,
+        "stripeColor": lightgrey
     },
     "EEAaCcDd": {
         "desc": "valkohallakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": lightgrey,
+        "maneColor": darkgrey,
+        "stripeColor": lightgrey
     },
     "EEAaCcdd": {
         "desc": "ruunivoikko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": beige,
+        "maneColor": black,
         "stripeColor": null
     },
     "EEAaccDD": {
         "desc": "ruunihallakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": lighterbeige,
+        "maneColor": darkbrown,
+        "stripeColor": lighterbeige
     },
     "EEAaccDd": {
         "desc": "ruunihallakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": lighterbeige,
+        "maneColor": darkbrown,
+        "stripeColor": lighterbeige
     },
     "EEAaccdd": {
         "desc": "ruunikko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": brown,
+        "maneColor": black,
         "stripeColor": null
     },
     "EEaaCCDD": {
         "desc": "valkovoikko, hallakko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": offwhite,
+        "maneColor": white,
         "stripeColor": null
     },
     "EEaaCCDd": {
         "desc": "valkovoikko, hallakko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": offwhite,
+        "maneColor": white,
         "stripeColor": null
     },
     "EEaaCCdd": {
         "desc": "valkovoikko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": offwhite,
+        "maneColor": white,
         "stripeColor": null
     },
     "EEaaCcDD": {
-        "desc": "mustanvoikko + hallakko", //?
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "desc": "mustanvoikko + hallakko", 
+        "baseColor": greybrown,
+        "maneColor": almostblack,
+        "stripeColor": greybrown
     },
     "EEaaCcDd": {
-        "desc": "mustanvoikko + hallakko", //?
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "desc": "mustanvoikko + hallakko", 
+        "baseColor": greybrown,
+        "maneColor": almostblack,
+        "stripeColor": greybrown
     },
     "EEaaCcdd": {
         "desc": "mustanvoikko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": darkbrown,
+        "maneColor": black,
         "stripeColor": null
     },
     "EEaaccDD": {
         "desc": "hiirakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": grey,
+        "maneColor": black,
+        "stripeColor": grey
     },
     "EEaaccDd": {
         "desc": "hiirakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": grey,
+        "maneColor": black,
+        "stripeColor": grey
     },
     "EEaaccdd": {
         "desc": "musta",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": almostblack,
+        "maneColor": black,
         "stripeColor": null
     },
     "EeAACCDD": {
-        "desc": "valkovoikko + hallakko",
-        "baseColor": "",
-        "maneColor": "",
+        "desc": "valkovoikko, hallakko",
+        "baseColor": offwhite,
+        "maneColor": white,
         "stripeColor": null
     },
     "EeAACCDd": {
-        "desc": "valkovoikko + hallakko",
-        "baseColor": "",
-        "maneColor": "",
+        "desc": "valkovoikko, hallakko",
+        "baseColor": offwhite,
+        "maneColor": white,
         "stripeColor": null
     },
     "EeAACCdd": {
         "desc": "valkovoikko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": offwhite,
+        "maneColor": white,
         "stripeColor": null
     },
     "EeAACcDD": {
         "desc": "valkohallakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": lightgrey,
+        "maneColor": darkgrey,
+        "stripeColor": lightgrey
     },
     "EeAACcDd": {
         "desc": "valkohallakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": lightgrey,
+        "maneColor": darkgrey,
+        "stripeColor": lightgrey
     },
     "EeAACcdd": {
         "desc": "ruunivoikko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": beige,
+        "maneColor": black,
         "stripeColor": null
     },
     "EeAAccDD": {
         "desc": "ruunihallakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": lighterbeige,
+        "maneColor": darkbrown,
+        "stripeColor": lighterbeige
     },
     "EeAAccDd": {
         "desc": "ruunihallakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": lighterbeige,
+        "maneColor": darkbrown,
+        "stripeColor": lighterbeige
     },
     "EeAAccdd": {
         "desc": "ruunikko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": brown,
+        "maneColor": black,
         "stripeColor": null
     },
     "EeAaCCDD": {
         "desc": "valkovoikko, hallakko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": offwhite,
+        "maneColor": white,
         "stripeColor": null
     },
     "EeAaCCDd": {
         "desc": "valkovoikko, hallakko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": offwhite,
+        "maneColor": white,
         "stripeColor": null
     },
     "EeAaCCdd": {
         "desc": "valkovoikko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": offwhite,
+        "maneColor": white,
         "stripeColor": null
     },
     "EeAaCcDD": {
         "desc": "valkohallakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": lightgrey,
+        "maneColor": darkgrey,
+        "stripeColor": lightgrey
     },
     "EeAaCcDd": {
         "desc": "valkohallakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": lightgrey,
+        "maneColor": darkgrey,
+        "stripeColor": lightgrey
     },
     "EeAaCcdd": {
         "desc": "ruunivoikko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": beige,
+        "maneColor": black,
         "stripeColor": null
     },
     "EeAaccDD": {
         "desc": "ruunihallakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": lighterbeige,
+        "maneColor": darkbrown,
+        "stripeColor": lighterbeige
     },
     "EeAaccDd": {
         "desc": "ruunihallakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": lighterbeige,
+        "maneColor": darkbrown,
+        "stripeColor": lighterbeige
     },
     "EeAaccdd": {
         "desc": "ruunikko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": brown,
+        "maneColor": black,
         "stripeColor": null
     },
     "EeaaCCDD": {
-        "desc": "valkovoikko + hallakko", 
-        "baseColor": "",
-        "maneColor": "",
+        "desc": "valkovoikko, hallakko",
+        "baseColor": offwhite,
+        "maneColor": white,
         "stripeColor": null
     },
     "EeaaCCDd": {
-        "desc": "valkovoikko + hallakko",
-        "baseColor": "",
-        "maneColor": "",
+        "desc": "valkovoikko, hallakko",
+        "baseColor": offwhite,
+        "maneColor": white,
         "stripeColor": null
     },
     "EeaaCCdd": {
         "desc": "valkovoikko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": offwhite,
+        "maneColor": white,
         "stripeColor": null
     },
     "EeaaCcDD": {
-        "desc": "hiirakko + mustanvoikko", //?
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "desc": "mustanvoikko + hallakko", 
+        "baseColor": greybrown,
+        "maneColor": almostblack,
+        "stripeColor": greybrown
     },
     "EeaaCcDd": {
-        "desc": "hiirakko + mustanvoikko", //?
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "desc": "mustanvoikko + hallakko", 
+        "baseColor": greybrown,
+        "maneColor": almostblack,
+        "stripeColor": greybrown
     },
     "EeaaCcdd": {
         "desc": "mustanvoikko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": darkbrown,
+        "maneColor": black,
         "stripeColor": null
     },
     "EeaaccDD": {
         "desc": "hiirakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": grey,
+        "maneColor": black,
+        "stripeColor": grey
     },
     "EeaaccDd": {
         "desc": "hiirakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": grey,
+        "maneColor": black,
+        "stripeColor": grey
     },
     "Eeaaccdd": {
         "desc": "musta",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": almostblack,
+        "maneColor": black,
         "stripeColor": null
     },
     "eeAACCDD": {
         "desc": "valkovoikko, hallakko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": offwhite,
+        "maneColor": white,
         "stripeColor": null
     },
     "eeAACCDd": {
         "desc": "valkovoikko, hallakko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": offwhite,
+        "maneColor": white,
         "stripeColor": null
     },
     "eeAACCdd": {
         "desc": "valkovoikko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": offwhite,
+        "maneColor": white,
         "stripeColor": null
     },
     "eeAACcDD": {
         "desc": "keltahallakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": lighterbeige,
+        "maneColor": beige, //maybe lighten
+        "stripeColor": lighterbeige
     },
     "eeAACcDd": {
         "desc": "keltahallakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": lighterbeige,
+        "maneColor": beige, //maybe lighten
+        "stripeColor": lighterbeige
     },
     "eeAACcdd": {
         "desc": "voikko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": beige,
+        "maneColor": white,
         "stripeColor": null
     },
     "eeAAccDD": {
         "desc": "punahallakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": lighterbeige,
+        "maneColor": reddishbeige,
+        "stripeColor": lighterbeige
     },
     "eeAAccDd": {
         "desc": "punahallakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": lighterbeige,
+        "maneColor": reddishbeige,
+        "stripeColor": lighterbeige
     },
     "eeAAccdd": {
         "desc": "rautias",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": brown,
+        "maneColor": darkerbrown,
         "stripeColor": null
     },
     "eeAaCCDD": {
         "desc": "valkovoikko, hallakko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": offwhite,
+        "maneColor": white,
         "stripeColor": null
     },
     "eeAaCCDd": {
         "desc": "valkovoikko, hallakko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": offwhite,
+        "maneColor": white,
         "stripeColor": null
     },
     "eeAaCCdd": {
         "desc": "valkovoikko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": offwhite,
+        "maneColor": white,
         "stripeColor": null
     },
     "eeAaCcDD": {
         "desc": "keltahallakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": lighterbeige,
+        "maneColor": beige, //maybe lighten
+        "stripeColor": lighterbeige
     },
     "eeAaCcDd": {
         "desc": "keltahallakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": lighterbeige,
+        "maneColor": beige, //maybe lighten
+        "stripeColor": lighterbeige
     },
     "eeAaCcdd": {
         "desc": "voikko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": beige,
+        "maneColor": white,
         "stripeColor": null
     },
     "eeAaccDD": {
         "desc": "punahallakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": lighterbeige,
+        "maneColor": reddishbeige,
+        "stripeColor": lighterbeige
     },
     "eeAaccDd": {
         "desc": "punahallakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": lighterbeige,
+        "maneColor": reddishbeige,
+        "stripeColor": lighterbeige
     },
     "eeAaccdd": {
         "desc": "rautias",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": brown,
+        "maneColor": darkerbrown,
         "stripeColor": null
     },
     "eeaaCCDD": {
         "desc": "valkovoikko, hallakko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": offwhite,
+        "maneColor": white,
         "stripeColor": null
     },
     "eeaaCCDd": {
         "desc": "valkovoikko, hallakko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": offwhite,
+        "maneColor": white,
         "stripeColor": null
     },
     "eeaaCCdd": {
         "desc": "valkovoikko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": offwhite,
+        "maneColor": white,
         "stripeColor": null
     },
     "eeaaCcDD": {
         "desc": "keltahallakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": lighterbeige,
+        "maneColor": beige, //maybe lighten
+        "stripeColor": lighterbeige
     },
     "eeaaCcDd": {
         "desc": "keltahallakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": lighterbeige,
+        "maneColor": beige, //maybe lighten
+        "stripeColor": lighterbeige
     },
     "eeaaCcdd": {
         "desc": "voikko",
-        "baseColor": "",
-        "maneColor": "",
+        "baseColor": beige,
+        "maneColor": white,
         "stripeColor": null
     },
     "eeaaccDD": {
         "desc": "punahallakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": lighterbeige,
+        "maneColor": reddishbeige,
+        "stripeColor": lighterbeige
     },
     "eeaaccDd": {
         "desc": "punahallakko",
-        "baseColor": "",
-        "maneColor": "",
-        "stripeColor": null
+        "baseColor": lighterbeige,
+        "maneColor": reddishbeige,
+        "stripeColor": lighterbeige
     },
     "eeaaccdd": {
-        "desc": "rautias, piilomusta",
-        "baseColor": "",
-        "maneColor": "",
+        "desc": "rautias",
+        "baseColor": brown,
+        "maneColor": darkerbrown,
         "stripeColor": null
     }
 }
