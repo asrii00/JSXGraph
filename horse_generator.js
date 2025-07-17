@@ -94,7 +94,7 @@ board.create('line', [leftBottom, rightBottom], { straightFirst: false, straight
 board.create('line', [center, centerBottom], { straightFirst: false, straightLast: false, strokeColor: 'grey', strokeWidth: 1 })
 
 
-let selectedHorseGenotype = {
+const defaultGenotype = {
     eLocus: 'EE',
     aLocus: 'AA',
     cLocus: 'cc',
@@ -102,34 +102,12 @@ let selectedHorseGenotype = {
     toLocus: 'tt',
     zLocus: 'zz',
     dLocus: 'dd',
-}
-let foalGenotype = {
-    eLocus: 'EE',
-    aLocus: 'AA',
-    cLocus: 'cc',
-    gLocus: 'GG',
-    toLocus: 'tt',
-    zLocus: 'zz',
-    dLocus: 'dd',
-}
-let damGenotype = {
-    eLocus: 'EE',
-    aLocus: 'AA',
-    cLocus: 'cc',
-    gLocus: 'GG',
-    toLocus: 'tt',
-    zLocus: 'zz',
-    dLocus: 'dd',
-}
-let sireGenotype = {
-    eLocus: 'EE',
-    aLocus: 'AA',
-    cLocus: 'cc',
-    gLocus: 'GG',
-    toLocus: 'tt',
-    zLocus: 'zz',
-    dLocus: 'dd'
-}
+};
+
+let selectedHorseGenotype = { ...defaultGenotype };
+let foalGenotype = { ...defaultGenotype };
+let damGenotype = { ...defaultGenotype };
+let sireGenotype = { ...defaultGenotype };
 
 const alleleMap = {
     c: 'C',
@@ -176,132 +154,67 @@ function genotypeToString(genotype) {
     return genotype.eLocus + genotype.aLocus + genotype.cLocus + genotype.dLocus;
 }
 
-// function getBaseColor(genotype) {
-//     let color = horseColors.brown;
-//     //E -> default brown either way
-//     if (genotype.aLocus == 'aa' && genotype.eLocus != 'ee') {
-//         color = horseColors.almostblack;
-//     }
+function updateHorseColor(genotype, baseShape, maneShape, frontLockShape, tobianoShape, stripeShape, dapplePoints) {
+    const genotypeCopy = { ...genotype };
+    const string = genotypeToString(genotypeCopy);
+    const colorObject = genotypeMap[string];
+    console.log(string, colorObject);
 
-//     if (genotype.cLocus == 'Cc') {
-//         color = horseColors.beige;
-//     }
-//     if (genotype.cLocus == 'Cc' && genotype.aLocus == 'aa' && genotype.eLocus != 'ee') {
-//         color = horseColors.darkbrown;
-//     }
-//     if (genotype.cLocus == 'CC') {
-//         color = horseColors.offwhite;
-//     }
+    let baseColor = colorObject.baseColor;
+    let maneColor = colorObject.maneColor;
 
-//     if (genotype.zLocus != 'zz' && (color == horseColors.almostblack)) {
-//         color = horseColors.silverblack;
-//     }
+    if (genotypeCopy.zLocus != 'zz' && baseColor == almostblack) {
+        baseColor = silverblack;
+        if (genotypeCopy.dLocus != 'dd') {
+            baseColor = grey;
+        }
+    }
+    if (genotypeCopy.zLocus != 'zz' && (baseColor == greybrown || baseColor == darkbrown)) {
+        baseColor = silvercreamblack;
+        if (genotypeCopy.dLocus != 'dd') {
+            baseColor = grey;
+        }
+    }
 
-//     if (genotype.zLocus != 'zz' && (color == horseColors.darkbrown)) {
-//         color = horseColors.silvercreamblack;
-//     }
+    if (genotypeCopy.zLocus != 'zz' && [black, almostblack, darkgrey, darkbrown].includes(maneColor)) {
+        maneColor = lighterbeige;
+    }
 
-//     if (genotype.dLocus != 'dd' && (color == horseColors.beige)) { //keltahallakko (voikonhallakko) tai ruunivoikonhallakko
-//         color = horseColors.offwhite;
-//     }
-//     if (genotype.dLocus != 'dd' && (genotype.aLocus != 'aa' || genotype.eLocus == 'ee')) { //tavallinen ruunihallakko tai punahallakko (rautias)
-//         color = horseColors.lighterbeige;
-//     }
-//     if (genotype.dLocus != 'dd' && (color == horseColors.almostblack || color == horseColors.darkbrown)) { //mustanhallakko/hiirakko
-//         color = horseColors.grey;
-//     }
+    if (genotypeCopy.gLocus != 'gg') {
+        baseColor = grey;
+        maneColor = darkgrey;
+    }
 
-//     if (genotype.gLocus != 'gg') {
-//         color = horseColors.grey;
-//     }
-//     return color;
-// }
+    baseShape.setAttribute({ fillColor: baseColor });
+    maneShape.setAttribute({ fillColor: maneColor });
+    frontLockShape.setAttribute({ fillColor: maneColor });
 
-// function getManeColor(genotype) {
-//     let color = horseColors.black;
-//     if (genotype.eLocus === 'ee') {
-//         color = horseColors.darkerbrown;
-//     }
+    tobianoShape.setAttribute({ visible: (genotypeCopy.toLocus != 'tt') });
+    stripeShape.setAttribute({
+        visible: (genotypeCopy.dLocus != 'dd' && genotypeCopy.gLocus == 'gg'),
+        color: baseColor
+    });
 
-//     if (genotype.aLocus == 'aa' && genotype.cLocus == 'Cc') {  //voikko + musta
-//         color = horseColors.black;
-//     }
-//     if (genotype.eLocus == 'ee' && genotype.cLocus == 'Cc') { //voikko + rautias 
-//         color = horseColors.white;
-//     }
+    const showDapples = genotypeCopy.gLocus != 'gg' ||
+        (genotypeCopy.zLocus != 'zz' &&
+            genotypeCopy.aLocus == 'aa' &&
+            genotypeCopy.eLocus != 'ee' &&
+            genotypeCopy.cLocus != 'CC' &&
+            genotypeCopy.dLocus == 'dd');
 
-//     if (genotype.cLocus == 'CC') {
-//         color = horseColors.white;
-//     }
-//     if (genotype.dLocus != 'dd' && genotype.eLocus == 'ee') { //rautias -> punahallakko -> punainen siima
-//         color = horseColors.reddishbeige;
-//     }
-//     if (genotype.dLocus != 'dd' && genotype.cLocus != 'cc' && genotype.aLocus != 'aa') { //voikko -> keltahallakko -> vaalea siima
-//         color = horseColors.beige;
-//     }
-//     //add correct mane for: ruunikko + voikko/valkovoikko 
-
-
-//     if (genotype.zLocus != 'zz' && color == horseColors.black) {
-//         color = horseColors.lighterbeige;
-//     }
-//     if (genotype.gLocus != 'gg') {
-//         color = horseColors.darkgrey;
-//     }
-//     return color;
-// }
+    toggleDapples(dapplePoints, showDapples);
+}
 
 function updateHorse1Color() {
     damGenotype = { ...selectedHorseGenotype };
-    const string = genotypeToString(damGenotype);
-    console.log(string)
-    const colorObject = genotypeMap[string];
-    console.log(colorObject);
-    let baseColor = colorObject.baseColor;
-    const maneColor = colorObject.maneColor;
-
-    if (damGenotype.zLocus != 'zz' && baseColor == almostblack) { //silver dapple on black 
-        baseColor = silverblack; //if not dun
-        if (damGenotype.dLocus != 'dd') { //with dun
-            baseColor = grey;
-        }
-    }
-    if (damGenotype.zLocus != 'zz' && (baseColor == greybrown || baseColor == darkbrown)) { //silver dapple on smoky (cream) black
-        baseColor = silvercreamblack; //if not dun
-        if (damGenotype.dLocus != 'dd') {
-            baseColor = grey;
-        }
-    }
-
-    horse1Shape.setAttribute({ fillColor: baseColor });
-    mane1Shape.setAttribute({ fillColor: maneColor });
-    frontLock1Shape.setAttribute({ fillColor: maneColor });
-
-    if (damGenotype.zLocus != 'zz' && (maneColor == black || maneColor == almostblack || maneColor == darkgrey || maneColor == darkbrown)) { //silver dapple on black or bay
-        mane1Shape.setAttribute({ fillColor: lighterbeige });
-        frontLock1Shape.setAttribute({ fillColor: lighterbeige });
-    }
-
-    if (damGenotype.gLocus != 'gg') { //simple override for grey
-        horse1Shape.setAttribute({ fillColor: grey });
-        mane1Shape.setAttribute({ fillColor: darkgrey });
-        frontLock1Shape.setAttribute({ fillColor: darkgrey });
-    }
-
-    tobiano1Shape.setAttribute({ visible: (damGenotype.toLocus != 'tt' ? true : false) })
-    stripe1Shape.setAttribute({ visible: ((damGenotype.dLocus != 'dd' && damGenotype.gLocus == 'gg') ? true : false), color: baseColor })
-    toggleDapples(dapple1Points, (damGenotype.gLocus != 'gg') || (damGenotype.zLocus != 'zz' &&
-        damGenotype.aLocus == 'aa' && damGenotype.eLocus != 'ee' && damGenotype.cLocus != 'CC' && damGenotype.dLocus == 'dd'));
-
+    updateHorseColor(damGenotype, horse1Shape, mane1Shape, frontLock1Shape, tobiano1Shape, stripe1Shape, dapple1Points);
 }
-
 function updateHorse2Color() {
-
-
+    sireGenotype = { ...selectedHorseGenotype };
+    updateHorseColor(sireGenotype, horse2Shape, mane2Shape, frontLock2Shape, tobiano2Shape, stripe2Shape, dapple2Points);
 }
-
 function updateHorse3Color() {
-
+    updateHorseColor(foalGenotype, horse3Shape, mane3Shape, frontLock3Shape, tobiano3Shape, stripe3Shape, dapple3Points);
 }
 
 function updateFoalGenotypeDisplay() {
