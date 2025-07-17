@@ -98,7 +98,7 @@ const defaultGenotype = {
     eLocus: 'EE',
     aLocus: 'AA',
     cLocus: 'cc',
-    gLocus: 'GG',
+    gLocus: 'gg',
     toLocus: 'tt',
     zLocus: 'zz',
     dLocus: 'dd',
