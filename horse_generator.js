@@ -1,4 +1,4 @@
-import { genotypeMap, grey, darkgrey } from "./horse_colors.js";
+import { genotypeMap, grey, darkgrey, silverblack, silvercreamblack, lighterbeige, black, greybrown, darkbrown, almostblack } from "./horse_colors.js";
 import { horseBaseCoords, maneCoords, frontLockCoords, maneStripeCoords, dappleCoords, tobianoCoords } from "./horse_coords.js";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -257,12 +257,31 @@ function updateHorse1Color() {
     console.log(string)
     const colorObject = genotypeMap[string];
     console.log(colorObject);
-    const baseColor = colorObject.baseColor;
+    let baseColor = colorObject.baseColor;
     const maneColor = colorObject.maneColor;
+
+    if (damGenotype.zLocus != 'zz' && baseColor == almostblack) { //silver dapple on black 
+        baseColor = silverblack; //if not dun
+        if (damGenotype.dLocus != 'dd') { //with dun
+            baseColor = grey;
+        }
+    }
+    if (damGenotype.zLocus != 'zz' && (baseColor == greybrown || baseColor == darkbrown)) { //silver dapple on smoky (cream) black
+        baseColor = silvercreamblack; //if not dun
+        if (damGenotype.dLocus != 'dd') {
+            baseColor = grey;
+        }
+    }
 
     horse1Shape.setAttribute({ fillColor: baseColor });
     mane1Shape.setAttribute({ fillColor: maneColor });
     frontLock1Shape.setAttribute({ fillColor: maneColor });
+
+    if (damGenotype.zLocus != 'zz' && (maneColor == black || maneColor == almostblack || maneColor == darkgrey || maneColor == darkbrown)) { //silver dapple on black or bay
+        mane1Shape.setAttribute({ fillColor: lighterbeige });
+        frontLock1Shape.setAttribute({ fillColor: lighterbeige });
+    }
+
     if (damGenotype.gLocus != 'gg') { //simple override for grey
         horse1Shape.setAttribute({ fillColor: grey });
         mane1Shape.setAttribute({ fillColor: darkgrey });
@@ -272,7 +291,7 @@ function updateHorse1Color() {
     tobiano1Shape.setAttribute({ visible: (damGenotype.toLocus != 'tt' ? true : false) })
     stripe1Shape.setAttribute({ visible: ((damGenotype.dLocus != 'dd' && damGenotype.gLocus == 'gg') ? true : false), color: baseColor })
     toggleDapples(dapple1Points, (damGenotype.gLocus != 'gg') || (damGenotype.zLocus != 'zz' &&
-        damGenotype.aLocus == 'aa' && damGenotype.eLocus != 'ee' && damGenotype.cLocus != 'CC'));
+        damGenotype.aLocus == 'aa' && damGenotype.eLocus != 'ee' && damGenotype.cLocus != 'CC' && damGenotype.dLocus == 'dd'));
 
 }
 
