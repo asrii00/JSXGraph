@@ -1,6 +1,8 @@
 import { genotypeMap, grey, darkgrey, silverblack, silvercreamblack, lighterbeige, black, greybrown, darkbrown, almostblack } from "./horse_colors.js";
 import { horseBaseCoords, maneCoords, frontLockCoords, maneStripeCoords, dappleCoords, tobianoCoords } from "./horse_coords.js";
 
+//voikko + hopea + hallakko + ruunikkopohjalla on vähän hassu väriyhdistelmä
+//hiirakko on turhan vaalea, ainakin verrattuna hiirakko + voikkoon?
 document.addEventListener("DOMContentLoaded", () => {
     const damForm = document.getElementById("genotype-form-dam");
     damForm.addEventListener("change", updateDamGenotype);
@@ -13,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 const board = JXG.JSXGraph.initBoard('box', {
-    boundingbox: [-15, 17.5, 15, -17.5],
+    boundingbox: [-15, 16.25, 15, -16.25],
     axis: false,
     showCopyright: false,
     zoom: {
