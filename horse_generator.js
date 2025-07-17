@@ -23,8 +23,6 @@ const board = JXG.JSXGraph.initBoard('box', {
 
 });
 
-
-
 const mane1Points = [], frontLock1Points = [], tobiano1Points = [], horse1Points = [], dapple1Points = [], stripe1Points = [];
 const mane2Points = [], frontLock2Points = [], tobiano2Points = [], horse2Points = [], dapple2Points = [], stripe2Points = [];
 const mane3Points = [], frontLock3Points = [], tobiano3Points = [], horse3Points = [], dapple3Points = [], stripe3Points = [];
@@ -154,7 +152,7 @@ function genotypeToString(genotype) {
     return genotype.eLocus + genotype.aLocus + genotype.cLocus + genotype.dLocus;
 }
 
-function updateHorseColor(genotype, baseShape, maneShape, frontLockShape, tobianoShape, stripeShape, dapplePoints) {
+function updateHorseColor(genotype, baseShape, maneShape, frontLockShape, tobianoShape, stripeShape, dapplePoints, id, text) {
     const genotypeCopy = { ...genotype };
     const string = genotypeToString(genotypeCopy);
     const colorObject = genotypeMap[string];
@@ -162,27 +160,37 @@ function updateHorseColor(genotype, baseShape, maneShape, frontLockShape, tobian
 
     let baseColor = colorObject.baseColor;
     let maneColor = colorObject.maneColor;
+    let description = colorObject.desc;
 
     if (genotypeCopy.zLocus != 'zz' && baseColor == almostblack) {
         baseColor = silverblack;
+        description = "hopeanmusta";
         if (genotypeCopy.dLocus != 'dd') {
             baseColor = grey;
+            description = "hopeanmusta + hallakko";
         }
     }
     if (genotypeCopy.zLocus != 'zz' && (baseColor == greybrown || baseColor == darkbrown)) {
         baseColor = silvercreamblack;
+        description = "hopeanmusta + mustanvoikko";
         if (genotypeCopy.dLocus != 'dd') {
             baseColor = grey;
+            description = "hopeanmusta + mustanvoikko + hallakko";
         }
     }
 
     if (genotypeCopy.zLocus != 'zz' && [black, almostblack, darkgrey, darkbrown].includes(maneColor)) {
         maneColor = lighterbeige;
+        
     }
+    if (genotypeCopy.zLocus != 'zz' && !description.includes("hopea") && !description.includes("valkovoikko") && genotypeCopy.eLocus != 'ee') {
+            description = description + ", hopeageeni";
+        }
 
     if (genotypeCopy.gLocus != 'gg') {
         baseColor = grey;
         maneColor = darkgrey;
+        description = "kimo";
     }
 
     baseShape.setAttribute({ fillColor: baseColor });
@@ -190,6 +198,9 @@ function updateHorseColor(genotype, baseShape, maneShape, frontLockShape, tobian
     frontLockShape.setAttribute({ fillColor: maneColor });
 
     tobianoShape.setAttribute({ visible: (genotypeCopy.toLocus != 'tt') });
+    if (genotypeCopy.toLocus != 'tt') {
+            description = description + ", tobiano";
+        }
     stripeShape.setAttribute({
         visible: (genotypeCopy.dLocus != 'dd' && genotypeCopy.gLocus == 'gg'),
         color: baseColor
@@ -203,25 +214,29 @@ function updateHorseColor(genotype, baseShape, maneShape, frontLockShape, tobian
             genotypeCopy.dLocus == 'dd');
 
     toggleDapples(dapplePoints, showDapples);
+
+
+
+
+    document.getElementById(id).textContent = text + description;
 }
 
 function updateHorse1Color() {
     damGenotype = { ...selectedHorseGenotype };
-    updateHorseColor(damGenotype, horse1Shape, mane1Shape, frontLock1Shape, tobiano1Shape, stripe1Shape, dapple1Points);
+    updateHorseColor(damGenotype, horse1Shape, mane1Shape, frontLock1Shape, tobiano1Shape, stripe1Shape, dapple1Points, 'dam-color-display', "Emän väri: ");
 }
 function updateHorse2Color() {
     sireGenotype = { ...selectedHorseGenotype };
-    updateHorseColor(sireGenotype, horse2Shape, mane2Shape, frontLock2Shape, tobiano2Shape, stripe2Shape, dapple2Points);
+    updateHorseColor(sireGenotype, horse2Shape, mane2Shape, frontLock2Shape, tobiano2Shape, stripe2Shape, dapple2Points, 'sire-color-display', "Isän väri: ");
 }
 function updateHorse3Color() {
-    updateHorseColor(foalGenotype, horse3Shape, mane3Shape, frontLock3Shape, tobiano3Shape, stripe3Shape, dapple3Points);
+    updateHorseColor(foalGenotype, horse3Shape, mane3Shape, frontLock3Shape, tobiano3Shape, stripe3Shape, dapple3Points, 'foal-color-display', "Varsan väri: ");
 }
 
 function updateFoalGenotypeDisplay() {
     const display = document.getElementById('foal-genotype-display');
     const expanded = Object.values(foalGenotype).map(expandAllelePair);
     display.textContent = "Varsan genotyyppi: " + expanded.join(' ');
-
 }
 
 function generateFoal() {
@@ -236,14 +251,10 @@ function generateFoal() {
     const sex = Math.random() > 0.5 ? 'Tamma' : 'Ori';
     document.getElementById('foal-sex-display').textContent = 'Sukupuoli: ' + sex;
 
-
 }
 
 updateHorse1Color();
 updateHorse2Color();
-
-
-
 
 
 
