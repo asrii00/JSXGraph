@@ -1,6 +1,22 @@
 //currently cremello, perlino and smoky black not distinguished, and those + dun not distinguished
+const brown = '#8B5E3C';
+const darkerbrown = '#714A30';
+const greybrown = '#534136ff';
+const darkbrown = '#1f1915';
+const black = '#080808';
+const almostblack = '#0f0f0f';
+const silverblack = '#2e2926';
+const silvercreamblack = '#453a35';
+const beige = '#D7B89C';
+const reddishbeige = '#c38c72';
+const lighterbeige = '#e6e1db';
+export const darkgrey = '#5E5E5E';
+export const grey = '#A8A8A8';
+const lightgrey = '#e0e0e0ff';
+const offwhite = '#F1EDE5';
+const white = '#FAFAFA';
 
-const genotypeMap= {
+export const genotypeMap = {
     "EEAACCDD": {
         "desc": "valkovoikko, hallakko",
         "baseColor": offwhite,
@@ -487,4 +503,6 @@ const genotypeMap= {
         "maneColor": darkerbrown,
         "stripeColor": null
     }
-}
+};
+
+
