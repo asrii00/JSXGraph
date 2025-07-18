@@ -10,6 +10,12 @@
             width: 1000px;
             height: 600px;
         }
+
+        .text-with-bg {
+            background-color: white;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
     </style>
 </head>
 
@@ -28,8 +34,8 @@
         const startX = 3.5;
         const ySpacing = 4;
 
-        let leftCounts = {white: 0, black: 0};
-        let rightCounts = {white: 0, black: 0};
+        let leftCounts = { white: 0, black: 0 };
+        let rightCounts = { white: 0, black: 0 };
 
         const p1 = board.create('point', [-19, -19], { visible: false });
         const p2 = board.create('point', [-19, 19], { visible: false });
@@ -48,6 +54,8 @@
             fillOpacity: 0.7,
             highlight: false
         });
+        const leftCounterText = board.create('text', [-14, -17, 'Vaaleita: -, Tummia: -'], { fontSize: 18, anchorX: 'middle', cssClass: 'text-with-bg' })
+        const rightCounterText = board.create('text', [14, -17, 'Vaaleita: -, Tummia: -'], { fontSize: 18, anchorX: 'middle', cssClass: 'text-with-bg' })
 
         const coords = [
             [0, -0.5], [0.164, -0.939], [0.418, -0.848], [0.509, -0.545], [0.382, -0.242], [0.745, 0.061], [0.709, 0.636], [0.4, 0.97],
@@ -85,25 +93,27 @@
             }
             spots.forEach(spot => {
                 const color = Math.random() < probabilityOfMelanistic ? 'black' : 'white';
-                if (side == 'left'){
-                    if(color == 'black') leftCounts.black++;
+                if (side == 'left') {
+                    if (color == 'black') leftCounts.black++;
                     else leftCounts.white++;
                 }
                 else {
-                    if(color == 'black') rightCounts.black++;
+                    if (color == 'black') rightCounts.black++;
                     else rightCounts.white++;
-                    
+
                 }
                 createButterfly(spot.x, spot.y, color)
             })
             board.unsuspendUpdate();
-            
+
         }
 
 
         createManyButterflies(40, 'right', 0.9);
         createManyButterflies(40, 'left', 0.1);
         console.log(leftCounts, rightCounts);
+        leftCounterText.setText("Vaaleita: " + leftCounts.white + ", tummia: " + leftCounts.black)
+        rightCounterText.setText("Vaaleita: " + rightCounts.white + ", tummia: " + rightCounts.black)
 
 
     </script>
