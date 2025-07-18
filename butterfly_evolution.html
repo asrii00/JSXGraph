@@ -13,8 +13,14 @@
 
         .text-with-bg {
             background-color: white;
-            padding: 2px 4px;
+            padding: 4px 6px;
             border-radius: 4px;
+        }
+        #textbox{
+            width: 1000px;
+        }
+        div{
+            margin: 8px;
         }
     </style>
 </head>
@@ -22,11 +28,20 @@
 <body>
 
     <div id="box" class="jxgbox"></div>
+    <div id="textbox">
+        1. Vasemmalla oleva alue kuvaa perhospopulaatiota, joka elää maaseudulla paikassa, jossa ei ole juuri saasteita.
+        Oikeanpuoleinen alue kuvaa perhospopulaatiota, joka elää kaupungissa alueella, jossa teollisuus tuottaa
+        merkittävän määrän saasteita ja hiilipölyä. Onko tummien ja vaaleiden perhosten määrässä merkittävää eroa näiden kahden eri
+        populaation välillä?
+    </div>
 
     <script>
         const board = JXG.JSXGraph.initBoard('box', {
             boundingbox: [-20, 20, 20, -20],
-            axis: true
+            axis: true, 
+            showNavigation: false, 
+            showCopyright: false, 
+            axis: false
         });
 
         const columns = 5;
@@ -54,8 +69,8 @@
             fillOpacity: 0.7,
             highlight: false
         });
-        const leftCounterText = board.create('text', [-14, -17, 'Vaaleita: -, Tummia: -'], { fontSize: 18, anchorX: 'middle', cssClass: 'text-with-bg' })
-        const rightCounterText = board.create('text', [14, -17, 'Vaaleita: -, Tummia: -'], { fontSize: 18, anchorX: 'middle', cssClass: 'text-with-bg' })
+        const leftCounterText = board.create('text', [-10, -15, 'Vaaleita: -, Tummia: -'], { fontSize: 18, anchorX: 'middle', cssClass: 'text-with-bg', highlight: false })
+        const rightCounterText = board.create('text', [10, -15, 'Vaaleita: -, Tummia: -'], { fontSize: 18, anchorX: 'middle', cssClass: 'text-with-bg', highlight: false })
 
         const coords = [
             [0, -0.5], [0.164, -0.939], [0.418, -0.848], [0.509, -0.545], [0.382, -0.242], [0.745, 0.061], [0.709, 0.636], [0.4, 0.97],
@@ -109,8 +124,8 @@
         }
 
 
-        createManyButterflies(40, 'right', 0.9);
-        createManyButterflies(40, 'left', 0.1);
+        createManyButterflies(40, 'right', 0.6); //put melanistic probability/ratio as the last param
+        createManyButterflies(40, 'left', 0.4);
         console.log(leftCounts, rightCounts);
         leftCounterText.setText("Vaaleita: " + leftCounts.white + ", tummia: " + leftCounts.black)
         rightCounterText.setText("Vaaleita: " + rightCounts.white + ", tummia: " + rightCounts.black)
