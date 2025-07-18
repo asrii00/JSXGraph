@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>JSXGraph Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+    <style>
+        #box {
+            width: 1000px;
+            height: 600px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="box" class="jxgbox"></div>
+
+    <script>
+        const board = JXG.JSXGraph.initBoard('box', {
+            boundingbox: [-20, 20, 20, -20],
+            axis: true
+        });
+
+        const columns = 5;
+        const startY = 17;
+        const startX = 3.5;
+        const ySpacing = 4;
+
+        let leftCounts = {white: 0, black: 0};
+        let rightCounts = {white: 0, black: 0};
+
+        const p1 = board.create('point', [-19, -19], { visible: false });
+        const p2 = board.create('point', [-19, 19], { visible: false });
+        const p3 = board.create('point', [0, 19], { visible: false });
+        const p4 = board.create('point', [0, -19], { visible: false });
+        const p5 = board.create('point', [19, -19], { visible: false });
+        const p6 = board.create('point', [19, 19], { visible: false });
+
+        board.create('polygon', [p1, p2, p3, p4], {
+            color: 'lightgrey',
+            fillOpacity: 0.9,
+            highlight: false,
+        });
+        board.create('polygon', [p3, p4, p5, p6], {
+            color: 'black',
+            fillOpacity: 0.7,
+            highlight: false
+        });
+
+        const coords = [
+            [0, -0.5], [0.164, -0.939], [0.418, -0.848], [0.509, -0.545], [0.382, -0.242], [0.745, 0.061], [0.709, 0.636], [0.4, 0.97],
+            [0, 0.227], [-0.4, 0.97], [-0.709, 0.636], [-0.745, 0.061], [-0.382, -0.242], [-0.509, -0.545], [-0.418, -0.848], [-0.164, -0.939],]
+
+
+        const butterflies = [];
+
+        function randomInt(min, max) {
+            return Number(Math.floor(Math.random() * (max - min + 1)) + min);
+        }
+
+        function createButterfly(x, y, color = 'white') {
+            const vertices = [];
+            coords.forEach(p => {
+                const point = board.create('point', [p[0] + x, p[1] + y], { visible: false, fixed: true });
+                vertices.push(point);
+            })
+            const shape = board.create('polygon', [...vertices], {
+                fillColor: color,
+                fillOpacity: 0.9,
+                highlight: false
+            });
+            butterflies.push(shape);
+        }
+
+        function createManyButterflies(number, side = 'left', probabilityOfMelanistic = 0.5) {
+            board.suspendUpdate();
+            const sign = side == 'left' ? -1 : 1;
+            const spots = [];
+            for (let i = 0; i < number; i++) {
+                const x = (startX + 3 * (i % columns)) * sign;
+                const y = startY - ySpacing * Math.floor(i / columns);
+                spots.push({ x: x, y: y });
+            }
+            spots.forEach(spot => {
+                const color = Math.random() < probabilityOfMelanistic ? 'black' : 'white';
+                if (side == 'left'){
+                    if(color == 'black') leftCounts.black++;
+                    else leftCounts.white++;
+                }
+                else {
+                    if(color == 'black') rightCounts.black++;
+                    else rightCounts.white++;
+                    
+                }
+                createButterfly(spot.x, spot.y, color)
+            })
+            board.unsuspendUpdate();
+            
+        }
+
+
+        createManyButterflies(40, 'right', 0.9);
+        createManyButterflies(40, 'left', 0.1);
+        console.log(leftCounts, rightCounts);
+
+
+    </script>
+
+</body>
+
+</html>
