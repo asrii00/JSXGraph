@@ -50,7 +50,7 @@
         Oikeanpuoleinen alue kuvaa perhospopulaatiota, joka elää kaupungissa alueella, jossa teollisuus tuottaa
         merkittävän määrän saasteita ja hiilipölyä. Onko tummien ja vaaleiden perhosten määrässä merkittävää eroa näiden
         kahden eri
-        populaation välillä?
+        populaation välillä? <br> <br>
         2. Vasemmalla oleva alue kuvaa perhospopulaatiota, joka elää maaseudulla, ja oikeanpuoleinen alue kuvaa
         perhospopulaatiota, joka elää kaupungissa. <br>
         Tee tarvittavat laskelmat ja yhdistä havainto (simulaatio/kuva) oikeaan vaiheeseen kuvauksen perusteella. <br>
@@ -86,7 +86,9 @@
 
         let leftCounts = { white: 0, black: 0 };
         let rightCounts = { white: 0, black: 0 };
-        const butterflies = [];
+        const leftButterflies = [];
+        const rightButterflies = [];
+        let rightMelanisticProbability = 0.5;
 
         const p1 = board.create('point', [-19, -19], { visible: false });
         const p2 = board.create('point', [-19, 19], { visible: false });
@@ -118,21 +120,24 @@
             return Number(Math.floor(Math.random() * (max - min + 1)) + min);
         }
 
-        function createButterfly(x, y, color = 'white') {
-            const vertices = [];
-            coords.forEach(p => {
-                const point = board.create('point', [p[0] + x, p[1] + y], { visible: false, fixed: true });
-                vertices.push(point);
-            })
-            const shape = board.create('polygon', [...vertices], {
+        function createButterfly(x, y, color = 'white', side = 'left') {
+            const translated = coords.map(p => [p[0] + x, p[1] + y]);
+            const shape = board.create('polygon', translated, {
                 fillColor: color,
                 fillOpacity: 0.9,
+                borders: { visible: false },
+                vertices: {visible: false},
                 highlight: false
             });
-            butterflies.push(shape);
+            if (side == 'left'){
+                leftButterflies.push(shape);
+            }else{
+                rightButterflies.push(shape);
+            }
+            
         }
 
-        function createManyButterflies(number, side = 'left', probabilityOfMelanistic = 0.5) {
+        function createManyButterflies(number, side = 'left', probabilityOfMelanistic ) {
             board.suspendUpdate();
             const sign = side == 'left' ? -1 : 1;
             const spots = [];
@@ -152,7 +157,7 @@
                     else rightCounts.white++;
 
                 }
-                createButterfly(spot.x, spot.y, color)
+                createButterfly(spot.x, spot.y, color, side)
             })
             board.unsuspendUpdate();
 
@@ -166,15 +171,17 @@
             board.suspendUpdate();
             leftCounts = { white: 0, black: 0 };
             rightCounts = { white: 0, black: 0 };
-            butterflies.forEach(obj => { board.removeObject(obj) });
-            butterflies.length = 0;
+            leftButterflies.forEach(obj => { board.removeObject(obj) });
+            leftButterflies.length = 0;
+            rightButterflies.forEach(obj => { board.removeObject(obj) });
+            rightButterflies.length = 0;
             board.unsuspendUpdate();
         }
 
         function stage2a() {
             reset();
             rightArea.setAttribute({ fillColor: 'grey' })
-            createManyButterflies(40, 'right', 0.05);
+            createManyButterflies(40, 'right', rightMelanisticProbability);
             createManyButterflies(40, 'left', 0.05);
             updateCounters();
         }
