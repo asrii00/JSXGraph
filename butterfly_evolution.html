@@ -16,10 +16,16 @@
             padding: 4px 6px;
             border-radius: 4px;
         }
-        #textbox{
+
+        #textbox {
             width: 1000px;
         }
-        div{
+
+        #flex {
+            display: flexbox;
+        }
+
+        div {
             margin: 8px;
         }
     </style>
@@ -28,19 +34,48 @@
 <body>
 
     <div id="box" class="jxgbox"></div>
+    <div id="flex">
+        <button onclick="defaultScene()">Default</button>
+        <button onclick="stage1()">Vaihe 1</button>
+        <button onclick="stage2a()">Vaihe 2a</button>
+        <button onclick="stage2b()">Vaihe 2b</button>
+        <button onclick="stage3()">Vaihe 3</button>
+        <button onclick="stage4()">Vaihe 4</button>
+        <button onclick="stage5()">Vaihe 5</button>
+    </div>
+
     <div id="textbox">
-        1. Vasemmalla oleva alue kuvaa perhospopulaatiota, joka elää maaseudulla paikassa, jossa ei ole juuri saasteita.
+        Default: 1. Vasemmalla oleva alue kuvaa perhospopulaatiota, joka elää maaseudulla paikassa, jossa ei ole juuri
+        saasteita.
         Oikeanpuoleinen alue kuvaa perhospopulaatiota, joka elää kaupungissa alueella, jossa teollisuus tuottaa
-        merkittävän määrän saasteita ja hiilipölyä. Onko tummien ja vaaleiden perhosten määrässä merkittävää eroa näiden kahden eri
+        merkittävän määrän saasteita ja hiilipölyä. Onko tummien ja vaaleiden perhosten määrässä merkittävää eroa näiden
+        kahden eri
         populaation välillä?
+        2. Vasemmalla oleva alue kuvaa perhospopulaatiota, joka elää maaseudulla, ja oikeanpuoleinen alue kuvaa
+        perhospopulaatiota, joka elää kaupungissa. <br>
+        Tee tarvittavat laskelmat ja yhdistä havainto (simulaatio/kuva) oikeaan vaiheeseen kuvauksen perusteella. <br>
+        Vaihe 1. Ennen teollistumista. Perhospopulaatiossa on keskimäärin sama määrä tummia yksilöitä riippumatta
+        paikasta.
+        Vaihe 2a. Teollistuminen on alkanut, ja saasteiden ja nokipölyn määrä lisääntyy kaupungissa. Kaupungin
+        perhospopulaatio ei ole vielä muuttunut merkittävästi verrattuna maaseutuun.
+        Vaihe 2b. Teollistuminen on alkanut, ja saasteiden ja nokipölyn määrä lisääntyy kaupungissa. Kaupungin
+        perhospopulaatio on muuttunut merkittävästi verrattuna maaseutuun.
+        Vaihe 3. Kaupungissa on merkittävä määrä saasteita. Kaupungin populaatiossa on 70% tummia perhosia.
+        Vaihe 3. Kaupungissa on edelleen merkittävä määrä saasteita. Kaupungin populaatiossa on 95% tummia perhosia.
+        Vaihe 5. Kaupungin ilma on parantunut merkittävästi eikä nokipölyä enää ole, ja perhospopulaatio on palautumassa
+        alkuperäiseen. Se ei kuitenkaan ole
+        vielä täysin alkuperäisellä tasolla: kaupungin ja maaseudun välillä on edelleen eroa tummien ja vaaleiden
+        yksilöiden
+        suhteellisessa määrässä.
+
     </div>
 
     <script>
         const board = JXG.JSXGraph.initBoard('box', {
             boundingbox: [-20, 20, 20, -20],
-            axis: true, 
-            showNavigation: false, 
-            showCopyright: false, 
+            axis: true,
+            showNavigation: false,
+            showCopyright: false,
             axis: false
         });
 
@@ -51,6 +86,7 @@
 
         let leftCounts = { white: 0, black: 0 };
         let rightCounts = { white: 0, black: 0 };
+        const butterflies = [];
 
         const p1 = board.create('point', [-19, -19], { visible: false });
         const p2 = board.create('point', [-19, 19], { visible: false });
@@ -59,12 +95,12 @@
         const p5 = board.create('point', [19, -19], { visible: false });
         const p6 = board.create('point', [19, 19], { visible: false });
 
-        board.create('polygon', [p1, p2, p3, p4], {
+        const leftArea = board.create('polygon', [p1, p2, p3, p4], {
             color: 'lightgrey',
             fillOpacity: 0.9,
             highlight: false,
         });
-        board.create('polygon', [p3, p4, p5, p6], {
+        const rightArea = board.create('polygon', [p3, p4, p5, p6], {
             color: 'black',
             fillOpacity: 0.7,
             highlight: false
@@ -77,7 +113,6 @@
             [0, 0.227], [-0.4, 0.97], [-0.709, 0.636], [-0.745, 0.061], [-0.382, -0.242], [-0.509, -0.545], [-0.418, -0.848], [-0.164, -0.939],]
 
 
-        const butterflies = [];
 
         function randomInt(min, max) {
             return Number(Math.floor(Math.random() * (max - min + 1)) + min);
@@ -122,13 +157,27 @@
             board.unsuspendUpdate();
 
         }
+        function updateCounters() {
+            leftCounterText.setText("Vaaleita: " + leftCounts.white + ", tummia: " + leftCounts.black)
+            rightCounterText.setText("Vaaleita: " + rightCounts.white + ", tummia: " + rightCounts.black)
+        }
 
+        function reset() {
+            board.suspendUpdate();
+            leftCounts = { white: 0, black: 0 };
+            rightCounts = { white: 0, black: 0 };
+            butterflies.forEach(obj => { board.removeObject(obj) });
+            butterflies.length = 0;
+            board.unsuspendUpdate();
+        }
 
-        createManyButterflies(40, 'right', 0.6); //put melanistic probability/ratio as the last param
-        createManyButterflies(40, 'left', 0.4);
-        console.log(leftCounts, rightCounts);
-        leftCounterText.setText("Vaaleita: " + leftCounts.white + ", tummia: " + leftCounts.black)
-        rightCounterText.setText("Vaaleita: " + rightCounts.white + ", tummia: " + rightCounts.black)
+        function stage2a() {
+            reset();
+            rightArea.setAttribute({ fillColor: 'grey' })
+            createManyButterflies(40, 'right', 0.05);
+            createManyButterflies(40, 'left', 0.05);
+            updateCounters();
+        }
 
 
     </script>
