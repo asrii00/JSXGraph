@@ -15,6 +15,7 @@
             background-color: white;
             padding: 4px 6px;
             border-radius: 4px;
+            transform: translateX(-8px);
         }
 
         #textbox {
@@ -28,6 +29,29 @@
         div {
             margin: 8px;
         }
+
+        .jsx-text {
+            background-color: #333;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-family: sans-serif;
+            user-select: none;
+            transform: translateX(-8px);
+        }
+
+        .jsx-button {
+            background-color: #333;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: sans-serif;
+            user-select: none;
+            transform: translateX(-8px);
+        }
+
+        .jsx-button:hover {
+            background-color: #444;
+        }
     </style>
 </head>
 
@@ -35,7 +59,6 @@
 
     <div id="box" class="jxgbox"></div>
     <div id="flex">
-        <button onclick="defaultScene()">Default</button>
         <button onclick="stage1()">Vaihe 1</button>
         <button onclick="stage2a()">Vaihe 2a</button>
         <button onclick="stage2b()">Vaihe 2b</button>
@@ -45,23 +68,29 @@
     </div>
 
     <div id="textbox">
-        //UPDATE
-        Painamalla kunkin vaiheen nappia näkyviin tulee 40 yksilön näyte molemmista populaatioista. <br>
-        Default: 1. Vasemmalla oleva alue kuvaa perhospopulaatiota, joka elää maaseudulla paikassa, jossa ei ole juuri
+        <br>
+        <!-- 1. Vasemmalla oleva alue kuvaa perhospopulaatiota, joka elää maaseudulla paikassa, jossa ei ole juuri
         saasteita.
         Oikeanpuoleinen alue kuvaa perhospopulaatiota, joka elää kaupungissa alueella, jossa teollisuus tuottaa
         merkittävän määrän saasteita ja hiilipölyä. Onko tummien ja vaaleiden perhosten määrässä merkittävää eroa näiden
         kahden eri
-        populaation välillä? <br> <br>
-        2. Vasemmalla oleva alue kuvaa perhospopulaatiota, joka elää maaseudulla, ja oikeanpuoleinen alue kuvaa
+        populaation välillä? <br> <br> -->
+        // Lopullisessa tehtävässä eri vaiheiden järjestys olisi sekoitettu ja 1, 2b jne. sijasta näkyvissä esimerkiksi
+        A, B, C. <br> <br>
+        1. Vasemmalla oleva alue kuvaa perhospopulaatiota, joka elää maaseudulla, ja oikeanpuoleinen alue kuvaa
         perhospopulaatiota, joka elää kaupungissa. Yhdistä havainto (simulaatio/kuva) oikeaan vaiheeseen kuvauksen
         perusteella. <br>
-        (2a) Paina kunkin vaiheen nappia vain 1-2 kertaa ja yritä päätellä oikeat vastaukset näiden pienten näytteiden
+        Painamalla kunkin vaiheen nappia näkyviin tulee 40 yksilön näytteet molemmista populaatioista. Otetut näytteet
+        kunkin vaiheen osalta pysyvät muistissa ja voit vertailla niitä. Jos haluat generoida uudet näytteet, paina
+        Uudet
+        näytteet -nappia, jolloin näytteet generoituvat uudelleen valitun (näkyvissä olevan) vaiheen osalta. <br>
+        (1a) Älä generoi uusia näytteitä, vaan käy ainoastaan läpi joka vaiheelle automaattisesti generoidut näytteet.
+        Yritä päätellä oikeat vastaukset näiden pienten näytteiden
         perusteella. Kuinka varma olet siitä,
         että vastauksesi ovat oikeat?)
-        (2b) Voit nyt painaa nappeja niin monta kertaa kuin haluat. Muutitko vastauksiasi uusien näytteiden perusteella?
-        Miten näytteiden määrä vaikuttaa siihen,
-        kuinka varma vastauksiesi oikeellisuudesta olet?)<br>
+        (1b) Voit nyt käyttää Uudet näytteet -nappia niin monta kertaa kuin haluat ja kerätä suuremman määrän dataa.
+        Muutitko vastauksiasi uusien näytteiden perusteella?
+        Miten näytteiden määrä vaikuttaa siihen, kuinka varma vastaustesi oikeellisuudesta olet?)<br>
         Vaihe 1. Ennen teollistumista. Perhospopulaatiossa on keskimäärin sama määrä tummia yksilöitä riippumatta
         paikasta. <br>
         Vaihe 2a. Teollistuminen on alkanut, ja saasteiden ja nokipölyn määrä lisääntyy kaupungissa. Kaupungin
@@ -74,7 +103,15 @@
         Vaihe 5. Kaupungin ilma on parantunut merkittävästi eikä nokipölyä enää ole, ja perhospopulaatio on palautumassa
         alkuperäiseen. Se ei kuitenkaan ole vielä täysin alkuperäisellä tasolla: kaupungin ja maaseudun välillä on
         edelleen eroa tummien ja vaaleiden yksilöiden suhteellisessa määrässä. <br><br>
-        3.
+        2. //Sampling// Valitse vaihe 1. Tässä vaiheessa molemmat populaatiot ovat identtiset, joten niiden voidaan ajatella olevan
+        toistaiseksi samaa suurta populaatiota. Generoi uudet näytteet 10 kertaa ja merkitse jokaisen kerran osalta muistiin, montako tummaa
+        yksilöä esiintyi (yhteensä 80:stä mahdollisesta yksilöstä) ja mikä niiden prosentuaalinen osuus oli.
+        a) Mikä oli keskimääräinen tummien yksilöiden määrä ja keskimääräinen prosenttiosuus?
+        b) Mikä oli suurin kerralla esiintynyt tummien yksilöiden määrä?
+        c) Mikä oli pienin kerralla esiintynyt tummien yksilöiden määrä?
+        d) Mikä oli vaihteluvälin suuruus? <br><br>
+
+        3. //Confidence interval// Arvioi tummien perhosten osuutta koko populaatiossa yhden 40 yksilön näytteen perusteella. Laske 95%:n luottamusväli. 
 
     </div>
 
@@ -99,7 +136,6 @@
         const leftButterflies = [];
         const rightButterflies = [];
         let baseMelanisticProbability = 0.05;
-        let rightMelanisticProbability = 0.5;
 
         let colorsStage1 = { left: [], right: [] };
         let colorsStage2a = { left: [], right: [] };
@@ -107,7 +143,6 @@
         let colorsStage3 = { left: [], right: [] };
         let colorsStage4 = { left: [], right: [] };
         let colorsStage5 = { left: [], right: [] };
-        let defaultStage = { left: [], right: [] };
 
         let currentStage = 0;
 
@@ -122,20 +157,46 @@
             color: 'lightgrey',
             fillOpacity: 0.7,
             highlight: false,
+            borders: { highlight: false }
         });
         const rightArea = board.create('polygon', [p3, p4, p5, p6], {
             color: 'lightgrey',
             fillOpacity: 0.7,
-            highlight: false
+            highlight: false,
+            borders: { highlight: false }
         });
+
         const leftCounterText = board.create('text', [-10, -15, 'Vaaleita: -, Tummia: -'], { fontSize: 18, anchorX: 'middle', cssClass: 'text-with-bg', highlight: false })
         const rightCounterText = board.create('text', [10, -15, 'Vaaleita: -, Tummia: -'], { fontSize: 18, anchorX: 'middle', cssClass: 'text-with-bg', highlight: false })
 
+        const stageText = board.create('text', [-16, 19, 'Vaihe: '], {
+            fontSize: 16,
+            color: 'white',
+            cssClass: 'jsx-text',
+            anchorX: 'middle',
+            anchorY: 'middle',
+            fixed: true,
+            layer: 100,
+            highlight: false
+        });
+        const newSampleBtn = board.create('text', [0, -15, 'Uudet näytteet'], {
+            fontSize: 16,
+            color: 'white',
+            cssClass: 'jsx-button',
+            anchorX: 'middle',
+            anchorY: 'middle',
+            fixed: true,
+            layer: 100,
+            highlight: false
+        });
+
+        newSampleBtn.on('down', function () {
+            generateNewSample();
+        });
+
         const coords = [
             [0, -0.5], [0.164, -0.939], [0.418, -0.848], [0.509, -0.545], [0.382, -0.242], [0.745, 0.061], [0.709, 0.636], [0.4, 0.97],
-            [0, 0.227], [-0.4, 0.97], [-0.709, 0.636], [-0.745, 0.061], [-0.382, -0.242], [-0.509, -0.545], [-0.418, -0.848], [-0.164, -0.939],]
-
-
+            [0, 0.227], [-0.4, 0.97], [-0.709, 0.636], [-0.745, 0.061], [-0.382, -0.242], [-0.509, -0.545], [-0.418, -0.848], [-0.164, -0.939],];
 
         function randomInt(min, max) {
             return Number(Math.floor(Math.random() * (max - min + 1)) + min);
@@ -228,102 +289,118 @@
             })
             board.unsuspendUpdate();
             updateCounters();
-            
+
         }
 
         function updateCounters() {
             leftCounterText.setText("Vaaleita: " + leftCounts.white + ", tummia: " + leftCounts.black)
             rightCounterText.setText("Vaaleita: " + rightCounts.white + ", tummia: " + rightCounts.black)
         }
-
-        function reset() {
-            board.suspendUpdate();
-            leftCounts = { white: 0, black: 0 };
-            rightCounts = { white: 0, black: 0 };
-            leftButterflies.forEach(obj => { board.removeObject(obj) });
-            leftButterflies.length = 0;
-            rightButterflies.forEach(obj => { board.removeObject(obj) });
-            rightButterflies.length = 0;
-            board.unsuspendUpdate();
+        function updateStage() {
+            let stage = currentStage.toString();
+            if (stage == '21') stage = '2a';
+            if (stage == '22') stage = '2b';
+            stageText.setText("Vaihe: " + stage);
         }
 
-        function stage1() {
+        function stage1(refresh = false) {
             currentStage = 1;
             rightArea.setAttribute({ fillColor: 'lightgrey', fillOpacity: 0.7 });
-            if (colorsStage1.left.length == 0) {
+            if (colorsStage1.left.length == 0 || refresh) {
                 recolorButterflies(leftButterflies, colorsStage1, 'left', baseMelanisticProbability);
                 recolorButterflies(rightButterflies, colorsStage1, 'right', baseMelanisticProbability);
                 updateCounters();
-                console.log(colorsStage1);
+
             } else {
                 recolorFromArray(colorsStage1);
             }
+            updateStage();
         }
-        function stage2a() {
+        function stage2a(refresh = false) {
             currentStage = 21;
             rightArea.setAttribute({ fillColor: 'black', fillOpacity: 0.6 });
-            if (colorsStage2a.left.length == 0) {
+            if (colorsStage2a.left.length == 0 || refresh) {
                 recolorButterflies(leftButterflies, colorsStage2a, 'left', baseMelanisticProbability);
                 recolorButterflies(rightButterflies, colorsStage2a, 'right', baseMelanisticProbability);
                 updateCounters();
             } else {
                 recolorFromArray(colorsStage2a);
             }
+            updateStage();
         }
-        function stage2b() {
+        function stage2b(refresh = false) {
             currentStage = 22;
             rightArea.setAttribute({ fillColor: 'black', fillOpacity: 0.6 });
-            if (colorsStage2b.left.length == 0) {
+            if (colorsStage2b.left.length == 0 || refresh) {
                 recolorButterflies(leftButterflies, colorsStage2b, 'left', baseMelanisticProbability);
                 recolorButterflies(rightButterflies, colorsStage2b, 'right', 0.2);
                 updateCounters();
             } else {
                 recolorFromArray(colorsStage2b);
             }
+            updateStage();
         }
-        function stage3() {
+        function stage3(refresh = false) {
             currentStage = 3;
             rightArea.setAttribute({ fillColor: 'black', fillOpacity: 0.75 });
-            if (colorsStage3.left.length == 0) {
+            if (colorsStage3.left.length == 0 || refresh) {
                 recolorButterflies(leftButterflies, colorsStage3, 'left', baseMelanisticProbability);
-                recolorButterflies(rightButterflies, colorsStage3, 'right', 0.8);
+                recolorButterflies(rightButterflies, colorsStage3, 'right', 0.7);
                 updateCounters();
             } else {
                 recolorFromArray(colorsStage3);
             }
+            updateStage();
         }
-        function stage4() {
+        function stage4(refresh = false) {
             currentStage = 4;
             rightArea.setAttribute({ fillColor: 'black', fillOpacity: 0.75 });
-            if (colorsStage4.left.length == 0) {
+            if (colorsStage4.left.length == 0 || refresh) {
                 recolorButterflies(leftButterflies, colorsStage4, 'left', baseMelanisticProbability);
                 recolorButterflies(rightButterflies, colorsStage4, 'right', 0.95);
                 updateCounters();
             } else {
                 recolorFromArray(colorsStage4);
             }
+            updateStage();
         }
-        function stage5() {
+        function stage5(refresh = false) {
             currentStage = 5;
             rightArea.setAttribute({ fillColor: 'lightgrey', fillOpacity: 0.7 });
-            if (colorsStage5.left.length == 0) {
+            if (colorsStage5.left.length == 0 || refresh) {
                 recolorButterflies(leftButterflies, colorsStage5, 'left', baseMelanisticProbability);
                 recolorButterflies(rightButterflies, colorsStage5, 'right', 0.15);
                 updateCounters();
             } else {
-                recolorFromArray(colorsStage4);
+                recolorFromArray(colorsStage5);
+            }
+            updateStage();
+        }
+
+        function generateNewSample() {
+            switch (currentStage) {
+                case 1:
+                    stage1(true);
+                    break;
+                case 21:
+                    stage2a(true);
+                    break;
+                case 22:
+                    stage2b(true);
+                    break;
+                case 3:
+                    stage3(true);
+                    break;
+                case 4:
+                    stage4(true);
+                    break;
+                case 5:
+                    stage5(true);
+                    break;
             }
         }
 
-        function defaultScene() {
-            rightArea.setAttribute({ fillColor: 'black', fillOpacity: 0.75 });
-            recolorButterflies(leftButterflies, defaultStage, 'left', 0.05);
-            recolorButterflies(rightButterflies, defaultStage, 'right', 0.10);
-            updateCounters();
-
-        }
-
-        createManyButterflies(40, 'right', rightMelanisticProbability);
+        createManyButterflies(40, 'right', 0.05);
         createManyButterflies(40, 'left', 0.05);
         stage1();
 
