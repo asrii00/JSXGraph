@@ -45,6 +45,7 @@
     </div>
 
     <div id="textbox">
+        Painamalla kunkin vaiheen nappia näkyviin tulee 40 yksilön näyte molemmista populaatioista. <br>
         Default: 1. Vasemmalla oleva alue kuvaa perhospopulaatiota, joka elää maaseudulla paikassa, jossa ei ole juuri
         saasteita.
         Oikeanpuoleinen alue kuvaa perhospopulaatiota, joka elää kaupungissa alueella, jossa teollisuus tuottaa
@@ -52,21 +53,21 @@
         kahden eri
         populaation välillä? <br> <br>
         2. Vasemmalla oleva alue kuvaa perhospopulaatiota, joka elää maaseudulla, ja oikeanpuoleinen alue kuvaa
-        perhospopulaatiota, joka elää kaupungissa. <br>
-        Tee tarvittavat laskelmat ja yhdistä havainto (simulaatio/kuva) oikeaan vaiheeseen kuvauksen perusteella. <br>
+        perhospopulaatiota, joka elää kaupungissa. Yhdistä havainto (simulaatio/kuva) oikeaan vaiheeseen kuvauksen
+        perusteella. <br>
         Vaihe 1. Ennen teollistumista. Perhospopulaatiossa on keskimäärin sama määrä tummia yksilöitä riippumatta
-        paikasta.
+        paikasta. <br>
         Vaihe 2a. Teollistuminen on alkanut, ja saasteiden ja nokipölyn määrä lisääntyy kaupungissa. Kaupungin
-        perhospopulaatio ei ole vielä muuttunut merkittävästi verrattuna maaseutuun.
+        perhospopulaatio ei ole vielä muuttunut merkittävästi verrattuna maaseutuun.<br>
         Vaihe 2b. Teollistuminen on alkanut, ja saasteiden ja nokipölyn määrä lisääntyy kaupungissa. Kaupungin
-        perhospopulaatio on muuttunut merkittävästi verrattuna maaseutuun.
-        Vaihe 3. Kaupungissa on merkittävä määrä saasteita. Kaupungin populaatiossa on 70% tummia perhosia.
-        Vaihe 3. Kaupungissa on edelleen merkittävä määrä saasteita. Kaupungin populaatiossa on 95% tummia perhosia.
+        perhospopulaatio on muuttunut merkittävästi verrattuna maaseutuun.<br>
+        Vaihe 3. Kaupungissa on merkittävä määrä saasteita. Kaupungin populaatiossa on 70% tummia perhosia.<br>
+        Vaihe 4. Kaupungissa on edelleen merkittävä määrä saasteita. Kaupungin populaatiossa on 95% tummia perhosia.
+        <br>
         Vaihe 5. Kaupungin ilma on parantunut merkittävästi eikä nokipölyä enää ole, ja perhospopulaatio on palautumassa
-        alkuperäiseen. Se ei kuitenkaan ole
-        vielä täysin alkuperäisellä tasolla: kaupungin ja maaseudun välillä on edelleen eroa tummien ja vaaleiden
-        yksilöiden
-        suhteellisessa määrässä.
+        alkuperäiseen. Se ei kuitenkaan ole vielä täysin alkuperäisellä tasolla: kaupungin ja maaseudun välillä on
+        edelleen eroa tummien ja vaaleiden yksilöiden suhteellisessa määrässä. <br>
+        3.
 
     </div>
 
@@ -80,7 +81,7 @@
         });
 
         const columns = 5;
-        const startY = 17;
+        const startY = 16;
         const startX = 3.5;
         const ySpacing = 4;
 
@@ -104,7 +105,7 @@
             highlight: false,
         });
         const rightArea = board.create('polygon', [p3, p4, p5, p6], {
-            color: 'black',
+            color: 'lightgrey',
             fillOpacity: 0.7,
             highlight: false
         });
@@ -180,7 +181,7 @@
                 }
             })
             board.unsuspendUpdate();
-            
+
         }
 
         function updateCounters() {
@@ -200,14 +201,13 @@
         }
 
         function stage1() {
-            rightArea.setAttribute({ fillColor: 'black', fillOpacity: 0.7  });
-            rightArea.setAttribute({ fillColor: 'lightgrey' });
+            rightArea.setAttribute({ fillColor: 'lightgrey', fillOpacity: 0.7 });
             recolorButterflies(leftButterflies, 'left', baseMelanisticProbability);
             recolorButterflies(rightButterflies, 'right', baseMelanisticProbability);
             updateCounters();
         }
         function stage2a() {
-            rightArea.setAttribute({ fillColor: 'black', fillOpacity: 0.6  });
+            rightArea.setAttribute({ fillColor: 'black', fillOpacity: 0.6 });
             recolorButterflies(leftButterflies, 'left', baseMelanisticProbability);
             recolorButterflies(rightButterflies, 'right', baseMelanisticProbability);
             updateCounters();
@@ -215,33 +215,40 @@
         function stage2b() {
             rightArea.setAttribute({ fillColor: 'black', fillOpacity: 0.6 });
             recolorButterflies(leftButterflies, 'left', baseMelanisticProbability);
-            recolorButterflies(rightButterflies, 'right', 0.15);
+            recolorButterflies(rightButterflies, 'right', 0.2);
             updateCounters();
         }
         function stage3() {
-            rightArea.setAttribute({ fillColor: 'black', fillOpacity: 0.7  });
+            rightArea.setAttribute({ fillColor: 'black', fillOpacity: 0.75 });
             recolorButterflies(leftButterflies, 'left', baseMelanisticProbability);
-            recolorButterflies(rightButterflies, 'right', 0.7);
+            recolorButterflies(rightButterflies, 'right', 0.80);
             updateCounters();
         }
         function stage4() {
-            rightArea.setAttribute({ fillColor: 'black', fillOpacity: 0.7  });
-            rightArea.setAttribute({ fillColor: 'black' });
+            rightArea.setAttribute({ fillColor: 'black', fillOpacity: 0.75 });
             recolorButterflies(leftButterflies, 'left', baseMelanisticProbability);
             recolorButterflies(rightButterflies, 'right', 0.95);
             updateCounters();
         }
         function stage5() {
-            rightArea.setAttribute({ fillColor: 'black', fillOpacity: 0.7  });
-            rightArea.setAttribute({ fillColor: 'lightgrey' });
+            rightArea.setAttribute({ fillColor: 'lightgrey', fillOpacity: 0.7 });
             recolorButterflies(leftButterflies, 'left', baseMelanisticProbability);
-            recolorButterflies(rightButterflies, 'right', 0.1);
+            recolorButterflies(rightButterflies, 'right', 0.15);
             updateCounters();
+        }
+
+        function defaultScene() {
+            rightArea.setAttribute({ fillColor: 'black', fillOpacity: 0.75 });
+
+            recolorButterflies(leftButterflies, 'left', 0.05);
+            recolorButterflies(rightButterflies, 'right', 0.10);
+            updateCounters();
+
         }
 
         createManyButterflies(40, 'right', rightMelanisticProbability);
         createManyButterflies(40, 'left', 0.05);
-        updateCounters();
+        defaultScene();
 
     </script>
 
