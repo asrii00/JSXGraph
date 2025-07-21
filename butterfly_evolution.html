@@ -88,6 +88,7 @@
         let rightCounts = { white: 0, black: 0 };
         const leftButterflies = [];
         const rightButterflies = [];
+        let baseMelanisticProbability = 0.05;
         let rightMelanisticProbability = 0.5;
 
         const p1 = board.create('point', [-19, -19], { visible: false });
@@ -99,7 +100,7 @@
 
         const leftArea = board.create('polygon', [p1, p2, p3, p4], {
             color: 'lightgrey',
-            fillOpacity: 0.9,
+            fillOpacity: 0.7,
             highlight: false,
         });
         const rightArea = board.create('polygon', [p3, p4, p5, p6], {
@@ -126,18 +127,18 @@
                 fillColor: color,
                 fillOpacity: 0.9,
                 borders: { visible: false },
-                vertices: {visible: false},
+                vertices: { visible: false },
                 highlight: false
             });
-            if (side == 'left'){
+            if (side == 'left') {
                 leftButterflies.push(shape);
-            }else{
+            } else {
                 rightButterflies.push(shape);
             }
-            
+
         }
 
-        function createManyButterflies(number, side = 'left', probabilityOfMelanistic ) {
+        function createManyButterflies(number, side = 'left', probabilityOfMelanistic) {
             board.suspendUpdate();
             const sign = side == 'left' ? -1 : 1;
             const spots = [];
@@ -160,8 +161,28 @@
                 createButterfly(spot.x, spot.y, color, side)
             })
             board.unsuspendUpdate();
-
         }
+
+        function recolorButterflies(array, side, probabilityOfMelanistic) {
+            if (side == 'left') leftCounts = { white: 0, black: 0 };
+            if (side == 'right') rightCounts = { white: 0, black: 0 };
+            board.suspendUpdate();
+            array.forEach(butterfly => {
+                const color = Math.random() < probabilityOfMelanistic ? 'black' : 'white';
+                butterfly.setAttribute({ fillColor: color });
+                if (side == 'left') {
+                    if (color == 'black') leftCounts.black++;
+                    else leftCounts.white++;
+                }
+                else {
+                    if (color == 'black') rightCounts.black++;
+                    else rightCounts.white++;
+                }
+            })
+            board.unsuspendUpdate();
+            
+        }
+
         function updateCounters() {
             leftCounterText.setText("Vaaleita: " + leftCounts.white + ", tummia: " + leftCounts.black)
             rightCounterText.setText("Vaaleita: " + rightCounts.white + ", tummia: " + rightCounts.black)
@@ -178,14 +199,49 @@
             board.unsuspendUpdate();
         }
 
+        function stage1() {
+            rightArea.setAttribute({ fillColor: 'black', fillOpacity: 0.7  });
+            rightArea.setAttribute({ fillColor: 'lightgrey' });
+            recolorButterflies(leftButterflies, 'left', baseMelanisticProbability);
+            recolorButterflies(rightButterflies, 'right', baseMelanisticProbability);
+            updateCounters();
+        }
         function stage2a() {
-            reset();
-            rightArea.setAttribute({ fillColor: 'grey' })
-            createManyButterflies(40, 'right', rightMelanisticProbability);
-            createManyButterflies(40, 'left', 0.05);
+            rightArea.setAttribute({ fillColor: 'black', fillOpacity: 0.6  });
+            recolorButterflies(leftButterflies, 'left', baseMelanisticProbability);
+            recolorButterflies(rightButterflies, 'right', baseMelanisticProbability);
+            updateCounters();
+        }
+        function stage2b() {
+            rightArea.setAttribute({ fillColor: 'black', fillOpacity: 0.6 });
+            recolorButterflies(leftButterflies, 'left', baseMelanisticProbability);
+            recolorButterflies(rightButterflies, 'right', 0.15);
+            updateCounters();
+        }
+        function stage3() {
+            rightArea.setAttribute({ fillColor: 'black', fillOpacity: 0.7  });
+            recolorButterflies(leftButterflies, 'left', baseMelanisticProbability);
+            recolorButterflies(rightButterflies, 'right', 0.7);
+            updateCounters();
+        }
+        function stage4() {
+            rightArea.setAttribute({ fillColor: 'black', fillOpacity: 0.7  });
+            rightArea.setAttribute({ fillColor: 'black' });
+            recolorButterflies(leftButterflies, 'left', baseMelanisticProbability);
+            recolorButterflies(rightButterflies, 'right', 0.95);
+            updateCounters();
+        }
+        function stage5() {
+            rightArea.setAttribute({ fillColor: 'black', fillOpacity: 0.7  });
+            rightArea.setAttribute({ fillColor: 'lightgrey' });
+            recolorButterflies(leftButterflies, 'left', baseMelanisticProbability);
+            recolorButterflies(rightButterflies, 'right', 0.1);
             updateCounters();
         }
 
+        createManyButterflies(40, 'right', rightMelanisticProbability);
+        createManyButterflies(40, 'left', 0.05);
+        updateCounters();
 
     </script>
 
