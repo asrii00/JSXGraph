@@ -45,6 +45,7 @@
     </div>
 
     <div id="textbox">
+        //UPDATE
         Painamalla kunkin vaiheen nappia näkyviin tulee 40 yksilön näyte molemmista populaatioista. <br>
         Default: 1. Vasemmalla oleva alue kuvaa perhospopulaatiota, joka elää maaseudulla paikassa, jossa ei ole juuri
         saasteita.
@@ -55,6 +56,12 @@
         2. Vasemmalla oleva alue kuvaa perhospopulaatiota, joka elää maaseudulla, ja oikeanpuoleinen alue kuvaa
         perhospopulaatiota, joka elää kaupungissa. Yhdistä havainto (simulaatio/kuva) oikeaan vaiheeseen kuvauksen
         perusteella. <br>
+        (2a) Paina kunkin vaiheen nappia vain 1-2 kertaa ja yritä päätellä oikeat vastaukset näiden pienten näytteiden
+        perusteella. Kuinka varma olet siitä,
+        että vastauksesi ovat oikeat?)
+        (2b) Voit nyt painaa nappeja niin monta kertaa kuin haluat. Muutitko vastauksiasi uusien näytteiden perusteella?
+        Miten näytteiden määrä vaikuttaa siihen,
+        kuinka varma vastauksiesi oikeellisuudesta olet?)<br>
         Vaihe 1. Ennen teollistumista. Perhospopulaatiossa on keskimäärin sama määrä tummia yksilöitä riippumatta
         paikasta. <br>
         Vaihe 2a. Teollistuminen on alkanut, ja saasteiden ja nokipölyn määrä lisääntyy kaupungissa. Kaupungin
@@ -66,12 +73,14 @@
         <br>
         Vaihe 5. Kaupungin ilma on parantunut merkittävästi eikä nokipölyä enää ole, ja perhospopulaatio on palautumassa
         alkuperäiseen. Se ei kuitenkaan ole vielä täysin alkuperäisellä tasolla: kaupungin ja maaseudun välillä on
-        edelleen eroa tummien ja vaaleiden yksilöiden suhteellisessa määrässä. <br>
+        edelleen eroa tummien ja vaaleiden yksilöiden suhteellisessa määrässä. <br><br>
         3.
 
     </div>
 
     <script>
+
+        //TODO: separate refresh/regenerate button: can compare without refreshing sample. 
         const board = JXG.JSXGraph.initBoard('box', {
             boundingbox: [-20, 20, 20, -20],
             axis: true,
@@ -91,6 +100,16 @@
         const rightButterflies = [];
         let baseMelanisticProbability = 0.05;
         let rightMelanisticProbability = 0.5;
+
+        let colorsStage1 = { left: [], right: [] };
+        let colorsStage2a = { left: [], right: [] };
+        let colorsStage2b = { left: [], right: [] };
+        let colorsStage3 = { left: [], right: [] };
+        let colorsStage4 = { left: [], right: [] };
+        let colorsStage5 = { left: [], right: [] };
+        let defaultStage = { left: [], right: [] };
+
+        let currentStage = 0;
 
         const p1 = board.create('point', [-19, -19], { visible: false });
         const p2 = board.create('point', [-19, 19], { visible: false });
@@ -164,24 +183,52 @@
             board.unsuspendUpdate();
         }
 
-        function recolorButterflies(array, side, probabilityOfMelanistic) {
-            if (side == 'left') leftCounts = { white: 0, black: 0 };
-            if (side == 'right') rightCounts = { white: 0, black: 0 };
+        function recolorButterflies(array, colorArray, side, probabilityOfMelanistic,) {
+            if (side == 'left') {
+                leftCounts = { white: 0, black: 0 };
+                colorArray.left.length = 0;
+            }
+            if (side == 'right') {
+                rightCounts = { white: 0, black: 0 };
+                colorArray.right.length = 0;
+            }
+
             board.suspendUpdate();
             array.forEach(butterfly => {
                 const color = Math.random() < probabilityOfMelanistic ? 'black' : 'white';
                 butterfly.setAttribute({ fillColor: color });
                 if (side == 'left') {
+                    colorArray.left.push(color);
                     if (color == 'black') leftCounts.black++;
                     else leftCounts.white++;
                 }
                 else {
+                    colorArray.right.push(color);
                     if (color == 'black') rightCounts.black++;
                     else rightCounts.white++;
                 }
             })
             board.unsuspendUpdate();
-
+        }
+        function recolorFromArray(colorArray) {
+            board.suspendUpdate();
+            leftCounts.black = 0; leftCounts.white = 0;
+            rightCounts.black = 0; rightCounts.white = 0;
+            leftButterflies.forEach((obj, i) => {
+                const c = colorArray.left[i];
+                obj.setAttribute({ fillColor: c });
+                if (c == 'black') leftCounts.black++;
+                else leftCounts.white++;
+            })
+            rightButterflies.forEach((obj, i) => {
+                const c = colorArray.right[i];
+                obj.setAttribute({ fillColor: c });
+                if (c == 'black') rightCounts.black++;
+                else rightCounts.white++;
+            })
+            board.unsuspendUpdate();
+            updateCounters();
+            
         }
 
         function updateCounters() {
@@ -201,54 +248,84 @@
         }
 
         function stage1() {
+            currentStage = 1;
             rightArea.setAttribute({ fillColor: 'lightgrey', fillOpacity: 0.7 });
-            recolorButterflies(leftButterflies, 'left', baseMelanisticProbability);
-            recolorButterflies(rightButterflies, 'right', baseMelanisticProbability);
-            updateCounters();
+            if (colorsStage1.left.length == 0) {
+                recolorButterflies(leftButterflies, colorsStage1, 'left', baseMelanisticProbability);
+                recolorButterflies(rightButterflies, colorsStage1, 'right', baseMelanisticProbability);
+                updateCounters();
+                console.log(colorsStage1);
+            } else {
+                recolorFromArray(colorsStage1);
+            }
         }
         function stage2a() {
+            currentStage = 21;
             rightArea.setAttribute({ fillColor: 'black', fillOpacity: 0.6 });
-            recolorButterflies(leftButterflies, 'left', baseMelanisticProbability);
-            recolorButterflies(rightButterflies, 'right', baseMelanisticProbability);
-            updateCounters();
+            if (colorsStage2a.left.length == 0) {
+                recolorButterflies(leftButterflies, colorsStage2a, 'left', baseMelanisticProbability);
+                recolorButterflies(rightButterflies, colorsStage2a, 'right', baseMelanisticProbability);
+                updateCounters();
+            } else {
+                recolorFromArray(colorsStage2a);
+            }
         }
         function stage2b() {
+            currentStage = 22;
             rightArea.setAttribute({ fillColor: 'black', fillOpacity: 0.6 });
-            recolorButterflies(leftButterflies, 'left', baseMelanisticProbability);
-            recolorButterflies(rightButterflies, 'right', 0.2);
-            updateCounters();
+            if (colorsStage2b.left.length == 0) {
+                recolorButterflies(leftButterflies, colorsStage2b, 'left', baseMelanisticProbability);
+                recolorButterflies(rightButterflies, colorsStage2b, 'right', 0.2);
+                updateCounters();
+            } else {
+                recolorFromArray(colorsStage2b);
+            }
         }
         function stage3() {
+            currentStage = 3;
             rightArea.setAttribute({ fillColor: 'black', fillOpacity: 0.75 });
-            recolorButterflies(leftButterflies, 'left', baseMelanisticProbability);
-            recolorButterflies(rightButterflies, 'right', 0.80);
-            updateCounters();
+            if (colorsStage3.left.length == 0) {
+                recolorButterflies(leftButterflies, colorsStage3, 'left', baseMelanisticProbability);
+                recolorButterflies(rightButterflies, colorsStage3, 'right', 0.8);
+                updateCounters();
+            } else {
+                recolorFromArray(colorsStage3);
+            }
         }
         function stage4() {
+            currentStage = 4;
             rightArea.setAttribute({ fillColor: 'black', fillOpacity: 0.75 });
-            recolorButterflies(leftButterflies, 'left', baseMelanisticProbability);
-            recolorButterflies(rightButterflies, 'right', 0.95);
-            updateCounters();
+            if (colorsStage4.left.length == 0) {
+                recolorButterflies(leftButterflies, colorsStage4, 'left', baseMelanisticProbability);
+                recolorButterflies(rightButterflies, colorsStage4, 'right', 0.95);
+                updateCounters();
+            } else {
+                recolorFromArray(colorsStage4);
+            }
         }
         function stage5() {
+            currentStage = 5;
             rightArea.setAttribute({ fillColor: 'lightgrey', fillOpacity: 0.7 });
-            recolorButterflies(leftButterflies, 'left', baseMelanisticProbability);
-            recolorButterflies(rightButterflies, 'right', 0.15);
-            updateCounters();
+            if (colorsStage5.left.length == 0) {
+                recolorButterflies(leftButterflies, colorsStage5, 'left', baseMelanisticProbability);
+                recolorButterflies(rightButterflies, colorsStage5, 'right', 0.15);
+                updateCounters();
+            } else {
+                recolorFromArray(colorsStage4);
+            }
         }
 
         function defaultScene() {
             rightArea.setAttribute({ fillColor: 'black', fillOpacity: 0.75 });
-
-            recolorButterflies(leftButterflies, 'left', 0.05);
-            recolorButterflies(rightButterflies, 'right', 0.10);
+            recolorButterflies(leftButterflies, defaultStage, 'left', 0.05);
+            recolorButterflies(rightButterflies, defaultStage, 'right', 0.10);
             updateCounters();
 
         }
 
         createManyButterflies(40, 'right', rightMelanisticProbability);
         createManyButterflies(40, 'left', 0.05);
-        defaultScene();
+        stage1();
 
     </script>
 
