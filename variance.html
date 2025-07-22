@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Variance</title>
+  <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+  <style>
+    #box {
+      width: 600px;
+      height: 600px;
+    }
+
+    div {
+      margin-top: 10px;
+      font-size: 16px;
+      max-width: 1000px;
+    }
+
+    .jsx-text {
+      background-color: #e5e3e3;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-family: sans-serif;
+      user-select: none;
+      transform: translateX(-8px);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="box"></div>
+  <div style="margin-top:10px;">
+    <label><input type="radio" name="divisor" value="n-1" checked> Jakaja: n-1 (otosvarianssi)</label>
+    <label><input type="radio" name="divisor" value="n"> Jakaja: n (populaatiovarianssi)</label>
+  </div>
+  <div> Ohje: Voit liikuttaa sinisiä pisteitä. Myös keskiarvoa voi liikuttaa. Pisteen etäisyys keskiarvosta on jäännös, ja neliöt kuvaavat
+    neliöityä jäännöstä. Kaikkien neliöityjen jäännösten summa (SSR, Sum of Squared Residuals) jaettuna pisteiden määrällä n on populaatiovarianssi. SSR jaettuna termillä (n-1) on otosvarianssi. 
+    Pienempi nimittäjä kompensoi rajallisesta otoksesta syntyvää harhaa, kun pyritään arvioimaan koko populaation varianssia pienemmän otoksen perusteella.</div>
+  <div id="varianceText"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/jsxgraph@1.4.6/distrib/jsxgraphcore.js"></script>
+  <script>
+    const board = JXG.JSXGraph.initBoard('box', {
+      boundingbox: [-0.5, 10, 10, -0.5],
+      axis: true,
+      showNavigation: false
+    });
+
+    const verticalLines = [];
+    const pointsCount = 4;
+    for (let i = 1; i <= pointsCount; i++) {
+      verticalLines.push(board.create('line', [[i, -10], [i, 10]], {
+        strokeColor: '#888',
+        strokeOpacity: 0.3,
+        dash: 1,
+        fixed: true
+      }));
+    }
+
+    const points = [];
+    const initYs = [3, 7.5, 4.5, 6];
+    for (let i = 0; i < pointsCount; i++) {
+      points.push(board.create('glider', [i + 1, initYs[i], verticalLines[i]], {
+        name: 'x' + (i + 1),
+        size: 3,
+        highlight: true,
+        color: 'blue',
+        opacity: 0.7
+      }));
+    }
+
+    const meanGlider = board.create('glider', [0, 5, board.defaultAxes.y], {
+      name: 'Keskiarvo',
+      size: 3,
+      color: 'orange',
+      highlight: true
+    });
+
+    const meanLine = board.create('line', [
+      () => [-10, meanGlider.Y()],
+      () => [10, meanGlider.Y()]
+    ], {
+      strokeColor: 'orange',
+      strokeOpacity: 0.4,
+      dash: 2,
+      fixed: true
+    });
+
+
+    const residualSegments = points.map(pt => {
+      return board.create('segment', [pt, () => [pt.X(), meanGlider.Y()]], {
+        strokeColor: 'blue',
+        strokeWidth: 2,
+        dash: 1
+      });
+    });
+
+    const squarePolygons = [];
+
+    function createSquareForResidual(pt) {
+      // square side length = |residual|
+      return board.create('polygon', [
+        () => [pt.X(), meanGlider.Y()],                     // bottom-left
+        () => [pt.X() + Math.abs(pt.Y() - meanGlider.Y()), meanGlider.Y()],  // bottom-right
+        () => [pt.X() + Math.abs(pt.Y() - meanGlider.Y()), pt.Y()],         // top-right
+        () => [pt.X(), pt.Y()]                             // top-left
+      ], {
+        fillColor: 'lightblue',
+        fillOpacity: 0.3,
+        strokeColor: 'blue',
+        strokeOpacity: 0.5,
+        fixed: true,
+        vertices: { visible: false }
+      });
+    }
+
+    points.forEach(pt => {
+      squarePolygons.push(createSquareForResidual(pt));
+    });
+
+
+    function computeSSR() {
+      const meanY = meanGlider.Y();
+      return points.reduce((sum, pt) => {
+        const diff = pt.Y() - meanY;
+        return sum + diff * diff;
+      }, 0);
+    }
+
+    const varianceText = document.getElementById('varianceText');
+
+    function updateVarianceDisplay() {
+      const SSR = computeSSR();
+      const n = points.length;
+      const divisorChoice = document.querySelector('input[name="divisor"]:checked').value;
+      let divisor = divisorChoice === 'n-1' ? n - 1 : n;
+      let variance = SSR / divisor;
+      varianceText.innerHTML =
+        `<b>Neliöityjen jäännösten summa (SSR):</b> ${SSR.toFixed(3)}<br>` +
+        `<b>Jakaja:</b> ${divisor} (${divisorChoice})<br>` +
+        `<b>Varianssi:</b> ${variance.toFixed(3)}`;
+    }
+
+
+    points.forEach(pt => pt.on('drag', () => {
+      updateVarianceDisplay();
+    }));
+    meanGlider.on('drag', () => {
+      updateVarianceDisplay();
+    });
+
+    document.querySelectorAll('input[name="divisor"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        updateVarianceDisplay();
+      });
+    });
+
+    updateVarianceDisplay();
+
+  </script>
+
+</body>
+
+</html>
