@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Degrees of freedom</title>
+  <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+  <style>
+    #box {
+      width: 1000px;
+      height: 600px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="box" class="jxgbox"></div>
+  <form id="radios">
+    <label>
+      <input type="radio" id="num3" name="numpoints" value="3" checked> 3 pistettä
+    </label>
+    <label>
+      <input type="radio" id="num4" name="numpoints" value="4"> 4 pistettä
+    </label>
+    <label>
+      <input type="radio" id="num5" name="numpoints" value="5"> 5 pistettä
+    </label>
+  </form>
+
+  <script>
+
+    const board = JXG.JSXGraph.initBoard('box', {
+      boundingbox: [-0.5, 10, 6, -1],
+      axis: true
+    });
+
+    const activePoints = [];
+    let n = 3;
+
+    let v1 = board.create('line', [[1, -10], [1, 10]], {
+      strokeColor: '#888', strokeOpacity: 0.3, dash: 1, fixed: true
+    });
+    let v2 = board.create('line', [[2, -10], [2, 10]], {
+      strokeColor: '#888', strokeOpacity: 0.3, dash: 1, fixed: true
+    });
+    let v3 = board.create('line', [[3, -10], [3, 10]], {
+      strokeColor: '#888', strokeOpacity: 0.3, dash: 1, fixed: true
+    });
+    let v4 = board.create('line', [[4, -10], [4, 10]], {
+      strokeColor: '#888', strokeOpacity: 0.3, dash: 1, fixed: true
+    });
+    let v5 = board.create('line', [[5, -10], [5, 10]], {
+      strokeColor: '#888', strokeOpacity: 0.3, dash: 1, fixed: true
+    });
+
+    let p1 = board.create('glider', [1, 3, v1], { name: 'x₁', size: 3 });
+    let p2 = board.create('glider', [2, 7, v2], { name: 'x₂', size: 3 });
+    activePoints.push(p1)
+    activePoints.push(p2)
+
+    let p4 = board.create('glider', [4, 3, v4], { name: 'x₄', size: 3, visible: false });
+    let p5 = board.create('glider', [5, 7, v5], { name: 'x₅', size: 3, visible: false });
+
+    let meanGlider = board.create('glider', [0, 5, board.defaultAxes.y], {
+      name: 'Keskiarvo',
+      size: 2,
+      color: 'orange',
+      showInfobox: false
+    });
+
+    let meanLine = board.create('line', [
+      () => [-10, meanGlider.Y()],
+      () => [10, meanGlider.Y()]
+    ], {
+      strokeColor: 'orange',
+      strokeOpacity: 0.4,
+      dash: 2
+    });
+
+    function getP3Position() {
+      let sum = 0;
+      activePoints.forEach(element => {
+        sum += element.Y();
+      });
+      //console.log('p3 calc:', activePoints.length, n, meanGlider.Y(), sum)
+      return n * meanGlider.Y() - sum;
+    }
+
+    let p3 = board.create('point', [
+      3,
+      () => {
+        // force JSXGraph to track these as dependencies:
+        meanGlider.Y();
+        activePoints.forEach(pt => pt.Y());
+        return getP3Position();
+      }
+    ], {
+      name: 'x₃',
+      size: 3,
+      color: 'red',
+      fixed: true
+    });
+
+    function set3Points() {
+      while (activePoints.length > 2) {
+        const p = activePoints.pop();
+        p.setAttribute({ visible: false });
+      }
+      n = 3;
+    }
+
+    function make4visible() {
+      activePoints.push(p4);
+      p4.setAttribute({ visible: true });
+      p4.moveTo([4, meanGlider.Y()])
+    }
+
+    function set4Points() {
+      if (activePoints.length == 2) {
+        make4visible();
+      }
+      while (activePoints.length > 3) {
+        const p = activePoints.pop();
+        p.setAttribute({ visible: false });
+      }
+      n = 4;
+    }
+    function set5Points() {
+
+      if (activePoints.length == 2) {
+        make4visible();
+      }
+      if (activePoints.length == 3) {
+        activePoints.push(p5);
+        p5.setAttribute({ visible: true });
+        p5.moveTo([5, meanGlider.Y()])
+      }
+      n = 5;
+    }
+
+    document.getElementById('radios').addEventListener('change', (event) => {
+      const value = parseInt(event.target.value);
+      if (value === 3) {
+        set3Points();
+      } else if (value === 4) {
+        set4Points();
+      } else if (value === 5) {
+        set5Points();
+      }
+      board.update();
+    });
+
+  </script>
+
+</body>
+
+</html>
