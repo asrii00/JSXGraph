@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Confidence Intervals</title>
+  <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+  <style>
+    #box {
+      width: 800px;
+      height: 600px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="box"></div>
+<button onclick="drawIntervals()">Uusi otosjoukko</button>
+<div> Luottamustaso: 0.95</div>
+
+<script>
+  const board = JXG.JSXGraph.initBoard("box", {
+    boundingbox: [-1, 15, 31, -2],
+    axis: true,
+    showNavigation: false,
+    showCopyright: false
+  });
+
+  const trueMean = 5;
+  const sampleSize = 10;
+  const numSamples = 30;
+  const confLevel = 0.95;
+  const populationSD = 2;
+
+  
+  board.create("line", [[0, trueMean], [numSamples + 1, trueMean]], {
+    straightFirst: false,
+    straightLast: false,
+    strokeColor: "orange",
+    dash: 2,
+    name: "True Mean",
+    fixed: true
+  });
+
+  let intervalElements = [];
+
+  function drawIntervals() {
+    board.suspendUpdate();
+
+    for (const el of intervalElements) {
+      board.removeObject(el);
+    }
+    intervalElements = [];
+
+    for (let i = 1; i <= numSamples; i++) {
+      const sample = [];
+      for (let j = 0; j < sampleSize; j++) {
+        sample.push(trueMean + populationSD * randn());
+      }
+
+      const mean = sample.reduce((a, b) => a + b, 0) / sampleSize;
+      const sem = populationSD / Math.sqrt(sampleSize);
+      const margin = zScore(confLevel) * sem;
+
+      const lower = mean - margin;
+      const upper = mean + margin;
+      const containsMean = lower <= trueMean && trueMean <= upper;
+
+      const p1 = board.create("point", [i, lower], { visible: false });
+      const p2 = board.create("point", [i, upper], { visible: false });
+
+      const interval = board.create("segment", [p1, p2], {
+        strokeColor: containsMean ? "blue" : "red",
+        strokeWidth: 2
+      });
+
+      const meanDot = board.create("point", [i, mean], {
+        size: 2,
+        fixed: true,
+        color: "black",
+        showInfobox: false, 
+        name: ''
+      });
+
+      intervalElements.push(p1, p2, interval, meanDot);
+    }
+
+    board.unsuspendUpdate();
+  }
+
+ 
+  function randn() {
+    let u = 0, v = 0;
+    while (u === 0) u = Math.random();
+    while (v === 0) v = Math.random();
+    return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+  }
+
+  function zScore(conf) {
+    if (conf === 0.90) return 1.645;
+    if (conf === 0.95) return 1.96;
+    if (conf === 0.99) return 2.576;
+    return 1.96;
+  }
+
+  drawIntervals(); 
+</script>
+
+</body>
+</html>
