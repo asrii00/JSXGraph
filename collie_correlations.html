@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Collie trait plot</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+    <style>
+        #box {
+            width: 1200px;
+            height: 600px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="box"></div>
+
+    <script src="collie_data.js"></script> 
+
+    <script>
+        const board = JXG.JSXGraph.initBoard('box', {
+            boundingbox: [-2, 6, 24, 0], 
+            axis: true,
+            showCopyright: false,
+            showNavigation: false
+        });
+        const xStartRough = 11;
+        const xStartSmooth = 0;
+        const trait = 'Calm'
+
+        for (let score = 1; score <= 5; score++) {
+            board.create('text', [-1.8, score, score.toString()], { anchorX: 'right' });
+            board.create('line', [[-1.5, score], [5.5, score]], {
+                straightFirst: false,
+                straightLast: false,
+                dash: 1,
+                strokeColor: '#ccc'
+            });
+        }
+        board.create('text', [xStartSmooth + 0.25, 5.5, 'Smooth Collie'], { fontSize: 14 });
+        board.create('text', [xStartRough + 0.25, 5.5, 'Rough Collie'], { fontSize: 14 });
+
+        function plotDots(data, yKey, xStart, color) {
+            const countByScore = {};
+            data.forEach(entry => {
+                const score = entry[yKey];
+                if (!countByScore[score]) countByScore[score] = [];
+                countByScore[score].push(entry);
+            });
+
+            for (let score = 1; score <= 5; score++) {
+                const entries = countByScore[score] || [];
+                entries.forEach((entry, i) => {
+                    const x = xStart + i * 0.15; // uniform left-to-right spacing
+                    board.create('point', [x, score], {
+                        size: 3,
+                        strokeColor: color,
+                        fillColor: color,
+                        fillOpacity: 0.5,
+                        fixed: true,
+                        highlight: false, 
+                        name: ''
+                    });
+                });
+            }
+        }
+
+        plotDots(collieSmooth, trait, xStartSmooth, '#4472c4'); 
+        plotDots(collieRough, trait, xStartRough, '#c55a11'); 
+    </script>
+
+    </script>
+
+</body>
+
+</html>
