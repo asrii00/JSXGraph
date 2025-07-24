@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Collie trait plot</title>
+    <title>Aggression by sex</title>
     <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
     <style>
@@ -10,128 +10,182 @@
             width: 1200px;
             height: 600px;
         }
+
+        table {
+            border-collapse: collapse;
+            margin: 20px;
+        }
+
+        th, td {
+            padding: 8px 12px;
+            border: 1px solid #888;
+            text-align: center;
+        }
+
+        th {
+            background-color: #eee;
+        }
     </style>
 </head>
 
 <body>
 
+    <h3>Koiran aggressiivisuus, jaoteltu sukupuolen mukaan, n = 1500 (495 urosta, 763 narttua)</h3>
     <div id="box"></div>
+    <div> Väite: Koira vahingoittaa tai uhkaa vahingoittaa ihmisiä, reagoi usein vihamielisesti ja on resurssiaggressiivinen. Esim. Koira murisee tai yrittää näykätä tai purra. <br>
+        Arvio: <br>
+        1. Vahvasti eri mieltä<br>
+        2. Jokseenkin eri mieltä <br>
+        3. Ei samaa eikä eri mieltä <br>
+        4. Jokseenkin samaa mieltä <br>
+        5. Vahvasti samaa mieltä <br>
+        
+        <br>
+        1. Onko urosten ja narttujen välillä merkittävää eroa aggression määrässä? Yksilöiden lukumäärät arvion ja sukupuolen mukaan jaoteltuina löytyvät alla olevasta taulukosta. </div>
+
+    <div id="count-table"></div>
+    <div> https://pmc.ncbi.nlm.nih.gov/articles/PMC10165416/#bib35 </div>
 
     <script src="aggression_by_sex.js"></script>
 
     <script>
-        //male:
-        //  1:  0.651 %
-        //  2:  0.263 %
-        //  3:  0.028 %
-        //  4:  0.042 %
-        //  5:  0.016 %
-
-        //female:
-        //  1:  0.668 %
-        //  2:  0.240 %
-        //  3:  0.030 %
-        //  4:  0.050 %
-        //  5:  0.012 %
-        //  F:  495 M:  763
-       
-    const board = JXG.JSXGraph.initBoard('box', {
-        boundingbox: [-1, 1.05, 6, 0],
-        axis: false,
-        showCopyright: false,
-        showNavigation: false
-    });
-
-    const trait = 'Erratic';
-
-    function getScoreDistribution(data, yKey) {
-        const counts = [0, 0, 0, 0, 0]; // index 0 = score 1
-        data.forEach(entry => {
-            const score = entry[yKey];
-            if (score >= 1 && score <= 5) {
-                counts[score - 1]++;
-            }
-        });
-        const total = counts.reduce((a, b) => a + b, 0);
-        const percentages = counts.map(c => c / total);
-        return { percentages, total };
-    }
-
-    const maleData = getScoreDistribution(maleDogs, trait);
-    const femaleData = getScoreDistribution(femaleDogs, trait);
-
-    const barWidth = 0.3;
-    const spacing = 1;
-
-    for (let i = 0; i < 5; i++) {
-        const score = i + 1;
-        const xBase = spacing * i + 1;
-
-        // Male bar
-        const x1 = xBase - barWidth;
-        const x2 = xBase;
-        const y = maleData.percentages[i];
-        board.create('polygon', [
-            [x1, 0],
-            [x2, 0],
-            [x2, y],
-            [x1, y]
-        ], {
-            fillColor: '#4472c4',
-            fillOpacity: 0.6,
-            borders: { strokeWidth: 0 },
-            fixed: true
+        const board = JXG.JSXGraph.initBoard('box', {
+            boundingbox: [-0.5, 1.05, 4.5, -0.2],
+            axis: false,
+            showCopyright: false,
+            showNavigation: false
         });
 
-        // Female bar
-        const x3 = xBase;
-        const x4 = xBase + barWidth;
-        const yF = femaleData.percentages[i];
-        board.create('polygon', [
-            [x3, 0],
-            [x4, 0],
-            [x4, yF],
-            [x3, yF]
-        ], {
-            fillColor: '#c55a11',
-            fillOpacity: 0.6,
-            borders: { strokeWidth: 0 },
-            fixed: true
-        });
+        const trait = 'aggressive_people';
 
-        // Add score label
-        board.create('text', [xBase - 0.05, -0.03, score.toString()], {
-            anchorY: 'top',
-            fixed: true
-        });
-    }
+        function getScoreDistribution(data, yKey) {
+            const counts = [0, 0, 0, 0, 0]; 
+            data.forEach(entry => {
+                const score = entry[yKey];
+                if (score >= 1 && score <= 5) {
+                    counts[score - 1]++;
+                }
+            });
+            const total = counts.reduce((a, b) => a + b, 0);
+            const percentages = counts.map(c => c / total);
+            return { percentages, counts, total };
+        }
 
-    // Add y-axis label percentages
-    for (let y = 0.2; y <= 1.0; y += 0.2) {
-        board.create('text', [-0.3, y, `${(y * 100).toFixed(0)}%`], {
-            anchorX: 'right',
-            fixed: true
-        });
+        const maleData = getScoreDistribution(maleDogs, trait);
+        const femaleData = getScoreDistribution(femaleDogs, trait);
 
-        board.create('line', [[0, y], [6, y]], {
+        const barWidth = 0.3;
+        const spacing = 0.75;
+
+        for (let i = 0; i < 5; i++) {
+            const score = i + 1;
+            const xBase = spacing * i + 0.5;
+
+            const x1 = xBase - barWidth;
+            const x2 = xBase;
+            const y = maleData.percentages[i];
+            board.create('polygon', [
+                [x1, 0],
+                [x2, 0],
+                [x2, y],
+                [x1, y]
+            ], {
+                fillColor: '#4472c4',
+                fillOpacity: 0.6,
+                borders: { strokeWidth: 0 },
+                vertices: { visible: false },
+                fixed: true
+            });
+            const mText = (100 * y).toFixed(2) + '%';
+            board.create('text', [xBase - 0.15, y, mText], {
+                anchorY: 'bottom',
+                anchorX: 'middle',
+                fixed: true
+            });
+
+            const x3 = xBase;
+            const x4 = xBase + barWidth;
+            const yF = femaleData.percentages[i];
+            board.create('polygon', [
+                [x3, 0],
+                [x4, 0],
+                [x4, yF],
+                [x3, yF]
+            ], {
+                fillColor: '#c55a11',
+                fillOpacity: 0.6,
+                borders: { strokeWidth: 0 },
+                vertices: { visible: false },
+                fixed: true
+            });
+            const fText = (100 * yF).toFixed(2) + '%';
+            board.create('text', [xBase + 0.15, yF, fText], {
+                anchorY: 'bottom',
+                anchorX: 'middle',
+                fixed: true
+            });
+
+            board.create('text', [xBase, -0.04, score.toString()], {
+                anchorY: 'top',
+                anchorX: 'middle',
+                fontSize: 14,
+                fixed: true
+            });
+
+            board.create('text', [xBase - 0.15, -0.02, 'Uros'], { fontSize: 10, anchorX: 'middle' });
+            board.create('text', [xBase + 0.15, -0.02, 'Narttu'], { fontSize: 10, anchorX: 'middle' });
+        }
+
+        for (let y = 0.2; y <= 1.0; y += 0.2) {
+            board.create('text', [-0.15, y, `${(y * 100).toFixed(0)}%`], {
+                anchorX: 'right',
+                anchorY: 'top',
+                fixed: true
+            });
+
+            board.create('line', [[0, y], [4, y]], {
+                straightFirst: false,
+                straightLast: false,
+                strokeColor: '#ccc',
+                dash: 1,
+                fixed: true
+            });
+        }
+        board.create('line', [[0, 0], [4, 0]], {
             straightFirst: false,
             straightLast: false,
-            strokeColor: '#ccc',
-            dash: 1,
+            strokeColor: 'black',
+            strokeWidth: 1,
             fixed: true
         });
-    }
 
-    // Labels
-    board.create('text', [2.5, 1.02, 'Male'], { fontSize: 14 });
-    board.create('text', [2.9, 1.02, 'Female'], { fontSize: 14 });
+        board.create('text', [-0.05, -0.04, "Arvio:"], { fontSize: 14, anchorX: 'middle', anchorY: 'top' });
 
-    console.log("Male counts:", maleData.percentages.map(p => p.toFixed(3)));
-    console.log("Female counts:", femaleData.percentages.map(p => p.toFixed(3)));
-</script>
+        console.log("Male counts:", maleData.counts);
+        console.log("Female counts:", femaleData.counts);
 
+        const tableContainer = document.getElementById('count-table');
+        let tableHTML = `<table>
+            <thead>
+                <tr>
+                    <th>Arvio</th>
+                    <th>Uroksia (n=${maleData.total})</th>
+                    <th>Narttuja (n=${femaleData.total})</th>
+                </tr>
+            </thead>
+            <tbody>`;
 
-   
+        for (let i = 0; i < 5; i++) {
+            tableHTML += `<tr>
+                <td>${i + 1}</td>
+                <td>${maleData.counts[i]}</td>
+                <td>${femaleData.counts[i]}</td>
+            </tr>`;
+        }
+
+        tableHTML += `</tbody></table>`;
+        tableContainer.innerHTML = tableHTML;
+    </script>
 
 </body>
 
