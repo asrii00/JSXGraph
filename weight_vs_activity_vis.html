@@ -38,9 +38,37 @@
     </div>
 
     <div id="box"></div>
+    <div> Huom. data latautuu melko hitaasti. <br><br>
+        Kuvaajan data on kerätty kyselyn avulla. Koiranomistajalle annettiin sanallinen kuvaus esimerkiksi
+        rauhallisesta koirasta,
+        ja omistaja vastasi, kuinka vahvasti hän on samaa mieltä siitä, että kuvaus vastaa hänen koiraansa: <br>
+        1. Vahvasti eri mieltä<br>
+        2. Jokseenkin eri mieltä <br>
+        3. Ei samaa eikä eri mieltä <br>
+        4. Jokseenkin samaa mieltä <br>
+        5. Vahvasti samaa mieltä <br> <br>
+
+        X-akselilla on koiran paino kiloina ja y-akselilla arvio valitun luonteenpiirteen vahvuudesta. n = 1576. <br> <br>
+
+        1. Tutki dataa eri luonteenpiirteiden osalta. Vaikuttaako siltä, että koiran painon/koon ja luonteenpiirteiden
+        välillä on yhteyksiä? Minkä luonteenpiirteiden osalta näin on? <br>
+        2. Tukeeko kuvaajan data seuraavia väitteitä? Arvioi silmämääräisesti kuvaajasta. <br>
+        a) Suuret koirat (40kg+) ovat yleensä laiskoja. <br>
+        b) Pienet ja keskikokoiset koirat ovat useammin arvaamattomia kuin suuret koirat.<br>
+        c) Suuret koirat ovat usein aggressiivisia.<br><br>
+
+        //Vaihtoehtoinen:
+        3.
+        a) Ovatko hyvin suuret koirat (esim. 50kg+) selvästi laiskempia kuin pienet ja keskikokoiset koirat(<30kg)?<br>
+            b) Ovatko pienet ja keskisuuret koirat useammin arvaamattomampia kuin hyvin suuret koirat?<br>
+            c) Ovatko suuret koirat yleisesti ottaen vähemmän aggressiivisia kuin pienet ja keskisuuret koirat?<br>
+
+    </div>
 
     <script src="all_breeds_temperament_data.js"></script>
     <script>
+        //TODO: Plot in a different way
+
         const board = JXG.JSXGraph.initBoard('box', {
             boundingbox: [-10, 5.5, 100, -0.5],
             axis: true,
@@ -54,7 +82,7 @@
 
         board.create('text', [45, -0.25, 'Paino (kg)'], { anchorX: 'middle', anchorY: 'top' });
         board.create('text', [-7.5, 3.5, 'Arvio'], { anchorX: 'left', anchorY: 'middle', rotate: -90 });
-    
+
         for (let i = 1; i <= 5; i += 0.5) {
             board.create('text', [-2, i, i.toString()], {
                 anchorX: 'right',
@@ -89,7 +117,8 @@
                     opacity: 0.3,
                     color: 'blue',
                     fixed: true,
-                    showInfobox: false
+                    showInfobox: false,
+                    name: ''
                 });
                 points.push(p);
             }
