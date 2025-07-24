@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dog Behavior Scatterplot</title>
+  <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css">
+  <style>
+    #box {
+      width: 600px;
+      height: 500px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h3>GSD scatterplot test</h3>
+  <label for="xVar">X-axis:</label>
+  <select id="xVar"></select>
+
+  <label for="yVar" style="margin-left: 20px;">Y-axis:</label>
+  <select id="yVar"></select>
+
+  <button onclick="plotScatter()">Plot</button>
+
+  <div id="box"></div>
+  <script src="german_shepherd_data.js"></script>
+
+  <script>
+    const data = germanShepherdData;
+
+    const board = JXG.JSXGraph.initBoard('box', {
+      boundingbox: [-1, 6, 8, -1],
+      axis: true,
+      showCopyright: false,
+      showNavigation: false
+    });
+
+    const plottedObjects = [];
+
+    const categoricalMappings = {
+      daily_exercise: {
+        "under_1_hour": 1,
+        "1-2_hours": 2,
+        "2-3_hours": 3,
+        "over_3_hours": 4
+      },
+      hobby_frequency_home: {
+        "never_no_hobby": 1,
+        "infrequent": 2,
+        "active": 3
+      },
+      hobby_frequency_out: {
+        "never_no_hobby": 1,
+        "infrequent": 2,
+        "active": 3
+      },
+      alone_time: {
+        "under_1_hour": 1,
+        "1-3_hours": 2,
+        "3-6_hours": 3,
+        "6-8_hours": 4,
+        "over_8_hours": 5
+      }
+    };
+
+    function convertToNumeric(val, key) {
+      if (typeof val === "number") return val;
+      if (categoricalMappings[key]) return categoricalMappings[key][val] ?? null;
+      return null;
+    }
+
+    function clearPlottedObjects() {
+      for (const obj of plottedObjects) {
+        board.removeObject(obj);
+      }
+      plottedObjects.length = 0;
+    }
+
+    function plotScatter() {
+      const xKey = document.getElementById("xVar").value;
+      const yKey = document.getElementById("yVar").value;
+
+      clearPlottedObjects();
+
+      for (const entry of data) {
+        const xRaw = convertToNumeric(entry[xKey], xKey);
+        const yRaw = convertToNumeric(entry[yKey], yKey);
+
+        if (xRaw !== null && yRaw !== null) {
+          const jitterX = xRaw + (Math.random() - 0.5) * 0.2;
+          const jitterY = yRaw + (Math.random() - 0.5) * 0.2;
+          const pt = board.create('point', [jitterX, jitterY], {
+            size: 3,
+            fixed: true,
+            showInfobox: false,
+            opacity: 0.4
+          });
+          plottedObjects.push(pt);
+        }
+      }
+    }
+
+    function populateDropdowns() {
+      const selectX = document.getElementById("xVar");
+      const selectY = document.getElementById("yVar");
+      const keys = Object.keys(data[0]);
+
+      for (const key of keys) {
+        const optX = new Option(key, key);
+        const optY = new Option(key, key);
+        selectX.add(optX);
+        selectY.add(optY);
+      }
+
+      selectX.value = "daily_exercise";
+      selectY.value = "Calm";
+    }
+
+    populateDropdowns();
+    plotScatter(); 
+  </script>
+</body>
+</html>

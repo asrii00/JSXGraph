@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Dog weight vs temperament</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+    <style>
+        #box {
+            width: 600px;
+            height: 500px;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            width: 600px;
+            margin-bottom: 10px;
+        }
+
+        .controls label {
+            white-space: nowrap;
+        }
+    </style>
+</head>
+
+<body>
+    <h3>Koiran painon ja temperamentin suhde</h3>
+    <div class="controls">
+        <label><input type="radio" name="trait" value="Calm" checked> Rauhallinen</label>
+        <label><input type="radio" name="trait" value="Lazy"> Laiska</label>
+        <label><input type="radio" name="trait" value="avg_calm"> Rauhallisuuden ja laiskuuden keskiarvo</label>
+        <label><input type="radio" name="trait" value="Energetic"> Energinen</label>
+        <label><input type="radio" name="trait" value="Erratic"> Arvaamaton</label>
+        <label><input type="radio" name="trait" value="avg_activity"> Energisyyden ja arvaamattomuuden keskiarvo</label>
+        <label><input type="radio" name="trait" value="aggression_people"> Aggressiivinen ihmisiä kohtaan</label>
+    </div>
+
+    <div id="box"></div>
+
+    <script src="all_breeds_temperament_data.js"></script>
+    <script>
+        const board = JXG.JSXGraph.initBoard('box', {
+            boundingbox: [-10, 5.5, 100, -0.5],
+            axis: true,
+            withLabel: false,
+            showNavigation: false,
+            showCopyright: false
+        });
+        board.defaultAxes.y.defaultTicks.setAttribute({
+            drawLabels: false
+        });
+
+        board.create('text', [45, -0.25, 'Paino (kg)'], { anchorX: 'middle', anchorY: 'top' });
+        board.create('text', [-7.5, 3.5, 'Arvio'], { anchorX: 'left', anchorY: 'middle', rotate: -90 });
+    
+        for (let i = 1; i <= 5; i += 0.5) {
+            board.create('text', [-2, i, i.toString()], {
+                anchorX: 'right',
+                anchorY: 'middle',
+                fixed: true,
+                fontSize: 12
+            });
+        }
+
+        let points = [];
+
+        function jitter(val, amount = 0.1) {
+            return val + (Math.random() - 0.5) * amount;
+        }
+
+        function plotData(trait) {
+            board.suspendUpdate();
+
+            for (const pt of points) {
+                board.removeObject(pt);
+            }
+            points = [];
+
+            for (const dog of allBreedsTemperamentData) {
+                if (typeof dog[trait] !== "number") continue;
+
+                const x = jitter(dog.weight, 0.3);
+                const y = jitter(dog[trait], 0.1);
+
+                const p = board.create('point', [x, y], {
+                    size: 2,
+                    opacity: 0.3,
+                    color: 'blue',
+                    fixed: true,
+                    showInfobox: false
+                });
+                points.push(p);
+            }
+
+            board.unsuspendUpdate();
+        }
+
+        plotData('Calm');
+
+        document.querySelectorAll('input[name="trait"]').forEach(input => {
+            input.addEventListener('change', () => {
+                plotData(input.value);
+            });
+        });
+    </script>
+</body>
+
+</html>
