@@ -10,13 +10,26 @@
             width: 1200px;
             height: 500px;
         }
+
         #box2 {
             width: 300px;
-            height: 500px;
+            height: 400px;
         }
-        div{
+
+        #box3 {
+            width: 800px;
+            height: 400px;
+        }
+
+        div {
             margin: 8px;
         }
+
+        #flex {
+            display: flex;
+            width: 1800px;
+        }
+
         .controls {
             display: flex;
             flex-wrap: wrap;
@@ -42,15 +55,27 @@
 
     <div id="box"></div>
     <div> Taulukko 1. Skaalalla 1-5 arvioidut luonteenpiirteet. Punainen piste kuvaa keskiarvoa. <br> <br></div>
-    <div id="box2"></div>
-    <div>
+    <div id='flex'>
+        <div id="box2" style="margin-right: 50px;"></div>
+        <div id="box3"></div>
+
+    </div>
+    <div id="flex">
+    <div style="width: 300px;margin-right: 50px;">
         Taulukko 2. Shelttien paino jaoteltuna sukupuolen mukaan. <br><br>
 
+    </div>
+    <div style="width: 800px;">
+        Taulukko 3. Shelttien elämäntyyli. <br><br>
+
+    </div></div>
+    
     </div>
 
     <script src="sheltie_data.js"></script>
     <script>
         //TODO: regenerate data to exclude puppies
+        //TODO: don't reload all data every time
         const board = JXG.JSXGraph.initBoard('box', {
             boundingbox: [-10, 5.5, 100, -0.75],
             axis: true,
@@ -68,7 +93,7 @@
                 }
             }
         });
-    
+
 
         const traits = [
             "Playful_dogs",
@@ -111,6 +136,7 @@
         }));
 
         const data = sheltieData;
+        const boxWidth = 3;
         board.create('text', [-5, 3, 'Arvio'], { fontSize: 14, anchorX: 'middle', anchorY: 'middle', rotate: -90 });
         board.create('text', [45, -0.5, 'Luonteenpiirre'], { anchorX: 'middle', anchorY: 'middle' });
 
@@ -118,6 +144,15 @@
         let weights = [];
         let femaleWeights = [];
         let maleWeights = [];
+
+        const categoricalFields = [
+            "daily_exercise",
+            "hobby_frequency_home",
+            "hobby_frequency_out",
+            "alone_time"
+        ];
+
+        let categoricalCounts = {};
 
         function quantiles(arr) {
             const sorted = arr.slice().sort((a, b) => a - b);
@@ -149,6 +184,10 @@
             for (const bin of bins) {
                 bin.values = [];
             }
+            femaleWeights = [];
+            maleWeights = [];
+            weights = [];
+            categoricalCounts = {};
 
             const selectedSex = document.querySelector('input[name="sex"]:checked').value;
 
@@ -161,14 +200,14 @@
             }
 
             let filteredMales = data.filter(dog => dog.sex === 'male');
-                for (const dog of filteredMales) {
+            for (const dog of filteredMales) {
                 const val = dog.weight;
                 if (typeof val === 'number') {
                     maleWeights.push(val);
                 }
             }
+
             weights = [...femaleWeights, ...maleWeights];
-            
 
             let filteredDogs = data;
             if (selectedSex === 'females') {
@@ -185,22 +224,32 @@
                     }
                 }
             }
-            console.log(weights);
 
+            for (const field of categoricalFields) {
+                categoricalCounts[field] = {};
+            }
 
-            const boxWidth = 3;
+            for (const dog of filteredDogs) {
+                for (const field of categoricalFields) {
+                    const value = dog[field];
+                    if (!value) continue;
+
+                    if (!categoricalCounts[field][value]) {
+                        categoricalCounts[field][value] = 0;
+                    }
+                    categoricalCounts[field][value]++;
+                }
+            }
+
             for (let i = 0; i < bins.length; i++) {
                 const bin = bins[i];
                 const x = i * 6 + 5; // bin center
                 if (bin.values.length < 3) continue;
 
                 const q = quantiles(bin.values);
-
-                // Mean
                 const sum = bin.values.reduce((a, b) => a + b, 0);
                 const mean = sum / bin.values.length;
 
-                // Draw box (Q1 to Q3)
                 const box = board.create('polygon', [
                     [x - boxWidth / 2, q.q1],
                     [x + boxWidth / 2, q.q1],
@@ -214,7 +263,6 @@
                     vertices: { visible: false }
                 });
 
-                // Median line
                 const median = board.create('line', [
                     [x - boxWidth / 2, q.median],
                     [x + boxWidth / 2, q.median]
@@ -225,7 +273,6 @@
                     fixed: true
                 });
 
-                // Whiskers
                 const whiskerLow = board.create('line', [
                     [x, q.min],
                     [x, q.q1]
@@ -246,7 +293,6 @@
                     straightLast: false
                 });
 
-                // Mean dot
                 const meanDot = board.create('point', [x, mean], {
                     size: 2,
                     color: 'red',
@@ -255,7 +301,6 @@
                     showInfobox: false
                 });
 
-                // Count label
                 const label = board.create('text', [x, -0.2, `${labels[i]}`], {
                     anchorX: 'middle',
                     anchorY: 'top',
@@ -263,7 +308,6 @@
                     fontSize: 10,
                     color: 'grey'
                 });
-                // Add to cleanup list
                 points.push(box, median, whiskerLow, whiskerHigh, meanDot);
             }
 
@@ -273,6 +317,7 @@
 
         plotData()
 
+        console.log(categoricalCounts)
         document.querySelectorAll('input[name="sex"]').forEach(radio => {
             radio.addEventListener('change', plotData);
         });
@@ -304,7 +349,8 @@
                 color: 'red',
                 fixed: true,
                 name: '',
-                showInfobox: false
+                showInfobox: false, 
+                opacity: 0.3
             });
         });
         maleWeights.forEach(value => {
@@ -313,15 +359,106 @@
                 color: 'blue',
                 fixed: true,
                 name: '',
-                showInfobox: false
+                showInfobox: false, 
+                opacity: 0.3
             });
         });
 
-         board2.create('text', [5, -0.5, 'Nartut'], { anchorX: 'middle', anchorY: 'middle' });
-         board2.create('text', [10, -0.5, 'Urokset'], { anchorX: 'middle', anchorY: 'middle' });
-         board2.create('text', [-3, 11, 'Paino (kg)'], { anchorX: 'middle', anchorY: 'middle', rotate: -90 });
+        board2.create('text', [5, -0.5, 'Nartut'], { anchorX: 'middle', anchorY: 'middle' });
+        board2.create('text', [10, -0.5, 'Urokset'], { anchorX: 'middle', anchorY: 'middle' });
+        board2.create('text', [-3, 11, 'Paino (kg)'], { anchorX: 'middle', anchorY: 'middle', rotate: -90 });
+
+        ///////////////////////////////////////////////////////
+        const board3 = JXG.JSXGraph.initBoard('box3', {
+            boundingbox: [-30, 15, 30, -15],
+            axis: false,
+            withLabel: false,
+            showNavigation: false,
+            showCopyright: false,
+        });
+
+        const exerciseLabels = {
+            "under_1_hour": "Alle tunti",
+            "1-2_hours": "1–2 tuntia",
+            "2-3_hours": "2–3 tuntia",
+            "over_3_hours": "Yli 3 tuntia"
+        };
+
+        const hobbyHomeLabels = {
+            "never_no_hobby": "Ei koskaan",
+            "infrequent": "Harvoin",
+            "active": "Säännöllisesti"
+        };
+
+        const hobbyOutLabels = {
+            "never_no_hobby": "Ei koskaan",
+            "infrequent": "Harvoin",
+            "active": "Säännöllisesti"
+        };
+
+        const aloneTimeLabels = {
+            "under_1_hour": "Alle tunti",
+            "1-3_hours": "1–3 tuntia",
+            "3-6_hours": "3–6 tuntia",
+            "6-8_hours": "6–8 tuntia",
+            "over_8_hours": "Yli 8 tuntia"
+        };
+
+        const exerciseValues = Object.values(categoricalCounts.daily_exercise);
+        const exerciseKeys = Object.keys(categoricalCounts.daily_exercise);
+
+        const hobbyInValues = Object.values(categoricalCounts.hobby_frequency_home);
+        const hobbyInKeys = Object.keys(categoricalCounts.hobby_frequency_home);
+
+        const hobbyOutValues = Object.values(categoricalCounts.hobby_frequency_out);
+        const hobbyOutKeys = Object.keys(categoricalCounts.hobby_frequency_out);
+
+        const aloneValues = Object.values(categoricalCounts.alone_time);
+        const aloneKeys = Object.keys(categoricalCounts.alone_time);
+
+        // translate
+        const exerciseTranslatedLabels = exerciseKeys.map(k => exerciseLabels[k] ?? k);
+        const hobbyInTranslatedLabels = hobbyInKeys.map(k => hobbyHomeLabels[k] ?? k);
+        const hobbyOutTranslatedLabels = hobbyOutKeys.map(k => hobbyOutLabels[k] ?? k);
+        const aloneTranslatedLabels = aloneKeys.map(k => aloneTimeLabels[k] ?? k);
+
+
+        const xPositions = [
+            { x: -22.5, array: exerciseValues, label: 'Liikunta (tuntia päivässä)', labels: exerciseTranslatedLabels },
+            { x: -7.5, array: hobbyInValues, label: 'Harrastaminen kotona', labels: hobbyInTranslatedLabels },
+            { x: 7.5, array: hobbyOutValues, label: 'Harrastaminen muualla', labels: hobbyOutTranslatedLabels },
+            { x: 22.5, array: aloneValues, label: 'Yksinolo (tuntia päivässä)', labels: aloneTranslatedLabels }
+        ];
+
+        for (const item of xPositions) {
+            const pie = board3.create('chart', [item.array], {
+                chartStyle: 'pie',
+                colors: ['#ff9999', '#66b3ff', '#99ff99', '#ffcc99', '#cc99ff', '#ffb366'],
+                center: [item.x, 0],
+                radius: 5,
+                strokeColor: '#000'
+            });
+
+            board3.create('text', [item.x, -10, item.label], { anchorX: 'middle', fontSize: 14 });
+
+            let angle = 0;
+            const total = item.array.reduce((a, b) => a + b, 0);
+
+            item.array.forEach((value, i) => {
+                const midAngle = angle + (value / total) * Math.PI;
+                const labelX = item.x + 6 * Math.cos(midAngle);
+                const labelY = 6 * Math.sin(midAngle);
+                board3.create('text', [labelX, labelY, item.labels[i]], {
+                    anchorX: 'middle',
+                    anchorY: 'middle',
+                    fontSize: 12
+                });
+                angle += (value / total) * 2 * Math.PI;
+            });
+        }
 
     </script>
+
 
 </body>
 
