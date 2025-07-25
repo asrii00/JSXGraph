@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Sheltie Clustering</title>
+    <script src="https://jsxgraph.org/distrib/jsxgraphcore.js"></script>
+    <link rel="stylesheet" href="https://jsxgraph.org/distrib/jsxgraph.css">
+    <style>
+        #box {
+            width: 500px;
+            height: 500px;
+            margin: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Sheltie Clusters</h2>
+    <div id="box"></div>
+    <script src="sheltie_data.js"></script>
+
+    <script>
+         const board = JXG.JSXGraph.initBoard('box', {
+            boundingbox: [-0.75, 6.5, 6.5, -0.75],
+            axis: true,
+            showNavigation: false,
+            showCopyright: false
+        });
+        
+        // --- Basic 2D KMeans Clustering --- BY CHATGPT
+        function kmeans(data, k, maxIter = 100) {
+            const centroids = data.slice(0, k).map(p => [...p]);
+            let assignments = new Array(data.length).fill(0);
+
+            for (let iter = 0; iter < maxIter; iter++) {
+                for (let i = 0; i < data.length; i++) {
+                    let minDist = Infinity;
+                    for (let j = 0; j < k; j++) {
+                        const d = dist2(data[i], centroids[j]);
+                        if (d < minDist) {
+                            assignments[i] = j;
+                            minDist = d;
+                        }
+                    }
+                }
+
+                let counts = Array(k).fill(0);
+                let newCentroids = Array(k).fill(null).map(() => [0, 0]);
+
+                for (let i = 0; i < data.length; i++) {
+                    const cluster = assignments[i];
+                    newCentroids[cluster][0] += data[i][0];
+                    newCentroids[cluster][1] += data[i][1];
+                    counts[cluster]++;
+                }
+
+                for (let j = 0; j < k; j++) {
+                    if (counts[j] > 0) {
+                        centroids[j][0] = newCentroids[j][0] / counts[j];
+                        centroids[j][1] = newCentroids[j][1] / counts[j];
+                    }
+                }
+            }
+
+            return { clusters: assignments, centroids };
+        }
+
+        function dist2(p1, p2) {
+            const dx = p1[0] - p2[0];
+            const dy = p1[1] - p2[1];
+            return dx * dx + dy * dy;
+        }
+
+        board.create('text', [3, -0.5, 'Leikkisyys (muut koirat)'], { fontSize: 14, anchorX: 'middle', anchorY: 'middle' });
+        board.create('text', [-0.5, 3, 'Saalistusvietti, jahtaaminen'], { fontSize: 14, anchorX: 'middle', anchorY: 'middle', rotate: -90 });
+
+        // const traitPairs = sheltieData
+        //     .filter(d => d.Calm!== undefined && d.Impulsive !== undefined)
+        //     .map(d => [d.Calm, d.Impulsive]);
+        // const traitPairs = sheltieData
+        //     .filter(d => d.Fearful_dogs!== undefined && d.Playful_dogs !== undefined)
+        //     .map(d => [d.Fearful_dogs, d.Playful_dogs]);
+        const traitPairs = sheltieData
+            .filter(d => d.Playful_dogs !== undefined && d.Prey_driven_chase !== undefined)
+            .map(d => [d.Playful_dogs, d.Prey_driven_chase]);
+
+        const k = 3; 
+        const result = kmeans(traitPairs, k);
+
+        const colors = ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00'];
+
+        for (let i = 0; i < traitPairs.length; i++) {
+            const jitter = () => (Math.random() - 0.5) * 0.2; // ±0.1 jitter on points
+            const [x, y] = traitPairs[i];
+            const cluster = result.clusters[i];
+            const jitteredX = x + jitter();
+            const jitteredY = y + jitter();
+
+            board.create('point', [jitteredX, jitteredY], {
+                size: 4,
+                face: 'o',
+                strokeColor: colors[cluster % colors.length],
+                fillColor: colors[cluster % colors.length],
+                fillOpacity: 0.3,
+                strokeOpacity: 0.3,
+                highlight: false,
+                fixed: true, 
+                name: ''
+            });
+        }
+
+        result.centroids.forEach(([x, y], i) => {
+            board.create('point', [x, y], {
+                name: 'C' + i,
+                size: 6,
+                face: 'x',
+                strokeColor: colors[i % colors.length],
+                fillColor: colors[i % colors.length],
+                fixed: true
+            });
+        });
+    </script>
+</body>
+
+</html>

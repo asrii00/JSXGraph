@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Shelttidataa</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+    <style>
+        #box {
+            width: 1200px;
+            height: 500px;
+        }
+        #box2 {
+            width: 300px;
+            height: 500px;
+        }
+        div{
+            margin: 8px;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            width: 600px;
+            margin: 0px;
+        }
+
+        .controls label {
+            white-space: nowrap;
+        }
+    </style>
+</head>
+
+<body>
+    <h3>Shetlanninlammaskoirien luonteenpiirteet</h3>
+    <div class="controls">
+        <label><input type="radio" name="sex" value="females" checked> Nartut</label>
+        <label><input type="radio" name="sex" value="males"> Urokset</label>
+        <label><input type="radio" name="sex" value="both"> Molemmat</label>
+
+    </div>
+
+    <div id="box"></div>
+    <div> Taulukko 1. Skaalalla 1-5 arvioidut luonteenpiirteet. Punainen piste kuvaa keskiarvoa. <br> <br></div>
+    <div id="box2"></div>
+    <div>
+        Taulukko 2. Shelttien paino jaoteltuna sukupuolen mukaan. <br><br>
+
+    </div>
+
+    <script src="sheltie_data.js"></script>
+    <script>
+        //TODO: regenerate data to exclude puppies
+        const board = JXG.JSXGraph.initBoard('box', {
+            boundingbox: [-10, 5.5, 100, -0.75],
+            axis: true,
+            withLabel: false,
+            showNavigation: false,
+            showCopyright: false,
+            defaultAxes: {
+                x: {
+                    ticks: {
+                        ticksDistance: 250,  //hide ticks
+                        minorTicks: 0,
+                        drawLabels: false, //hide numbers along x axis
+                        majorHeight: 0 //hide vertical grid lines
+                    }
+                }
+            }
+        });
+    
+
+        const traits = [
+            "Playful_dogs",
+            "Anxious",
+            "Fearful_dogs",
+            "Impulsive",
+            "avg_aggression",
+            "Erratic",
+            "Obedient",
+            "Calm",
+            "Insecure",
+            "Prey_driven_chase",
+            "Energetic",
+            "Provocative",
+            "Active",
+            "Vocal",
+            "Willing_to_learn"
+        ];
+        const labels = [
+            "Leikkisä",
+            "Ahdistunut",
+            "Pelokas",
+            "Impulsiivinen",
+            "Aggressiivinen",
+            "Arvaamaton",
+            "Tottelevainen",
+            "Rauhallinen",
+            "Epävarma",
+            "Jahtiviettinen",
+            "Energinen",
+            "Provosoiva",
+            "Aktiivinen",
+            "Äänekäs",
+            "Oppimishaluinen"
+        ];
+
+        const bins = traits.map(trait => ({
+            trait,
+            values: []
+        }));
+
+        const data = sheltieData;
+        board.create('text', [-5, 3, 'Arvio'], { fontSize: 14, anchorX: 'middle', anchorY: 'middle', rotate: -90 });
+        board.create('text', [45, -0.5, 'Luonteenpiirre'], { anchorX: 'middle', anchorY: 'middle' });
+
+        let points = [];
+        let weights = [];
+        let femaleWeights = [];
+        let maleWeights = [];
+
+        function quantiles(arr) {
+            const sorted = arr.slice().sort((a, b) => a - b);
+            const q = p => {
+                const pos = (sorted.length - 1) * p;
+                const base = Math.floor(pos);
+                const rest = pos - base;
+                if (sorted[base + 1] !== undefined) {
+                    return sorted[base] + rest * (sorted[base + 1] - sorted[base]);
+                } else {
+                    return sorted[base];
+                }
+            };
+            return {
+                min: sorted[0],
+                q1: q(0.25),
+                median: q(0.5),
+                q3: q(0.75),
+                max: sorted[sorted.length - 1]
+            };
+        }
+
+        function plotData() {
+            board.suspendUpdate();
+
+            // reset
+            for (const obj of points) board.removeObject(obj);
+            points = [];
+            for (const bin of bins) {
+                bin.values = [];
+            }
+
+            const selectedSex = document.querySelector('input[name="sex"]:checked').value;
+
+            let filteredFemales = data.filter(dog => dog.sex === 'female');
+            for (const dog of filteredFemales) {
+                const val = dog.weight;
+                if (typeof val === 'number') {
+                    femaleWeights.push(val);
+                }
+            }
+
+            let filteredMales = data.filter(dog => dog.sex === 'male');
+                for (const dog of filteredMales) {
+                const val = dog.weight;
+                if (typeof val === 'number') {
+                    maleWeights.push(val);
+                }
+            }
+            weights = [...femaleWeights, ...maleWeights];
+            
+
+            let filteredDogs = data;
+            if (selectedSex === 'females') {
+                filteredDogs = filteredFemales;
+            } else if (selectedSex === 'males') {
+                filteredDogs = filteredMales;
+            }
+
+            for (const dog of filteredDogs) {
+                for (const bin of bins) {
+                    const val = dog[bin.trait];
+                    if (typeof val === 'number') {
+                        bin.values.push(val);
+                    }
+                }
+            }
+            console.log(weights);
+
+
+            const boxWidth = 3;
+            for (let i = 0; i < bins.length; i++) {
+                const bin = bins[i];
+                const x = i * 6 + 5; // bin center
+                if (bin.values.length < 3) continue;
+
+                const q = quantiles(bin.values);
+
+                // Mean
+                const sum = bin.values.reduce((a, b) => a + b, 0);
+                const mean = sum / bin.values.length;
+
+                // Draw box (Q1 to Q3)
+                const box = board.create('polygon', [
+                    [x - boxWidth / 2, q.q1],
+                    [x + boxWidth / 2, q.q1],
+                    [x + boxWidth / 2, q.q3],
+                    [x - boxWidth / 2, q.q3]
+                ], {
+                    fillColor: 'lightblue',
+                    strokeColor: 'blue',
+                    fillOpacity: 0.5,
+                    fixed: true,
+                    vertices: { visible: false }
+                });
+
+                // Median line
+                const median = board.create('line', [
+                    [x - boxWidth / 2, q.median],
+                    [x + boxWidth / 2, q.median]
+                ], {
+                    straightFirst: false,
+                    straightLast: false,
+                    strokeColor: 'black',
+                    fixed: true
+                });
+
+                // Whiskers
+                const whiskerLow = board.create('line', [
+                    [x, q.min],
+                    [x, q.q1]
+                ], {
+                    strokeColor: 'blue',
+                    fixed: true,
+                    straightFirst: false,
+                    straightLast: false
+                });
+
+                const whiskerHigh = board.create('line', [
+                    [x, q.q3],
+                    [x, q.max]
+                ], {
+                    strokeColor: 'blue',
+                    fixed: true,
+                    straightFirst: false,
+                    straightLast: false
+                });
+
+                // Mean dot
+                const meanDot = board.create('point', [x, mean], {
+                    size: 2,
+                    color: 'red',
+                    fixed: true,
+                    name: '',
+                    showInfobox: false
+                });
+
+                // Count label
+                const label = board.create('text', [x, -0.2, `${labels[i]}`], {
+                    anchorX: 'middle',
+                    anchorY: 'top',
+                    fixed: true,
+                    fontSize: 10,
+                    color: 'grey'
+                });
+                // Add to cleanup list
+                points.push(box, median, whiskerLow, whiskerHigh, meanDot);
+            }
+
+            board.unsuspendUpdate();
+        }
+
+
+        plotData()
+
+        document.querySelectorAll('input[name="sex"]').forEach(radio => {
+            radio.addEventListener('change', plotData);
+        });
+
+        ////////////////////////////////////////////////////
+
+        const board2 = JXG.JSXGraph.initBoard('box2', {
+            boundingbox: [-5, 22, 15, -0.75],
+            axis: true,
+            withLabel: false,
+            showNavigation: false,
+            showCopyright: false,
+            defaultAxes: {
+                x: {
+                    ticks: {
+                        ticksDistance: 250,  //hide ticks
+                        minorTicks: 0,
+                        drawLabels: false, //hide numbers along x axis
+                        majorHeight: 0 //hide vertical grid lines
+                    }
+                }
+            }
+        });
+
+
+        femaleWeights.forEach(value => {
+            const dot = board2.create('point', [5, value], {
+                size: 2,
+                color: 'red',
+                fixed: true,
+                name: '',
+                showInfobox: false
+            });
+        });
+        maleWeights.forEach(value => {
+            const dot = board2.create('point', [10, value], {
+                size: 2,
+                color: 'blue',
+                fixed: true,
+                name: '',
+                showInfobox: false
+            });
+        });
+
+         board2.create('text', [5, -0.5, 'Nartut'], { anchorX: 'middle', anchorY: 'middle' });
+         board2.create('text', [10, -0.5, 'Urokset'], { anchorX: 'middle', anchorY: 'middle' });
+         board2.create('text', [-3, 11, 'Paino (kg)'], { anchorX: 'middle', anchorY: 'middle', rotate: -90 });
+
+    </script>
+
+</body>
+
+</html>
