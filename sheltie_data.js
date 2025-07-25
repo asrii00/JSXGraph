@@ -23,7 +23,8 @@ const sheltieData = [
     "Vocal": 1.0,
     "inattention_score": -1.25211159375257,
     "impulsivity_score": -1.12348951128828,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 12.1377132
   },
   {
     "sex": "male",
@@ -49,7 +50,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -1.55045600866354,
     "impulsivity_score": -1.25921675268437,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 3.860898138
   },
   {
     "sex": "female",
@@ -75,7 +77,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -1.55045600866354,
     "impulsivity_score": -1.25921675268437,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 7.954061454
   },
   {
     "sex": "female",
@@ -101,7 +104,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -1.19091075380772,
     "impulsivity_score": -0.639894707527025,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 1.809306569
   },
   {
     "sex": "female",
@@ -127,7 +131,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": -1.25595517829606,
     "impulsivity_score": -0.294910972283048,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 5.608397992
   },
   {
     "sex": "female",
@@ -153,7 +158,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": -1.26891982866602,
     "impulsivity_score": -0.964428821524722,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 12.2996284
   },
   {
     "sex": "female",
@@ -179,7 +185,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 1.06709087894922,
     "impulsivity_score": 1.6081637100911,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 6.516084873
   },
   {
     "sex": "female",
@@ -205,7 +212,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": -0.433616253329611,
     "impulsivity_score": -0.317742943726025,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 5.540868205
   },
   {
     "sex": "male",
@@ -231,7 +239,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.171045652063471,
     "impulsivity_score": 3.41210091273843,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 7.033538672
   },
   {
     "sex": "female",
@@ -257,7 +266,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 0.0415825741168116,
     "impulsivity_score": 0.613781265512354,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 8.436901177
   },
   {
     "sex": "female",
@@ -283,7 +293,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 0.412705173301398,
     "impulsivity_score": 0.609322573864643,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 5.294485725
   },
   {
     "sex": "female",
@@ -309,7 +320,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -0.708507807068609,
     "impulsivity_score": 0.174072413669855,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 6.53798768
   },
   {
     "sex": "female",
@@ -335,7 +347,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -0.611061654079439,
     "impulsivity_score": 0.792499769002927,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 3.113362541
   },
   {
     "sex": "female",
@@ -361,7 +374,8 @@ const sheltieData = [
     "Vocal": 1.0,
     "inattention_score": -0.87554761260092,
     "impulsivity_score": -1.23728012790648,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 7.797399042
   },
   {
     "sex": "female",
@@ -387,7 +401,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -0.44998681832684,
     "impulsivity_score": 0.181117091155561,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 2.214416058
   },
   {
     "sex": "female",
@@ -413,7 +428,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 1.36889993610897,
     "impulsivity_score": 2.22152059918881,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 4.951163852
   },
   {
     "sex": "female",
@@ -439,7 +455,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": 0.161774121097744,
     "impulsivity_score": -1.20395625513588,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 2.553832117
   },
   {
     "sex": "female",
@@ -465,7 +482,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": 0.082462950403558,
     "impulsivity_score": 0.59513411829473,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 8.877327492
   },
   {
     "sex": "female",
@@ -491,7 +509,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.585480598856676,
     "impulsivity_score": -1.10595927963053,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 12.67965459
   },
   {
     "sex": "female",
@@ -517,7 +536,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.556034408562485,
     "impulsivity_score": 0.143015424674189,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 4.241511501
   },
   {
     "sex": "female",
@@ -543,7 +563,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -1.1161792093726,
     "impulsivity_score": -1.06964283248591,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 6.340862423
   },
   {
     "sex": "female",
@@ -569,7 +590,8 @@ const sheltieData = [
     "Vocal": 1.0,
     "inattention_score": -0.19142663332659,
     "impulsivity_score": -0.877312554361223,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 1.209302326
   },
   {
     "sex": "female",
@@ -595,7 +617,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.333146092404702,
     "impulsivity_score": -0.452379632520209,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 1.460273973
   },
   {
     "sex": "female",
@@ -621,7 +644,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": -0.575944510261167,
     "impulsivity_score": -1.22469016899666,
-    "Willing_to_learn": 2.0
+    "Willing_to_learn": 2.0,
+    "Personality_age": 7.603011636
   },
   {
     "sex": "male",
@@ -647,7 +671,8 @@ const sheltieData = [
     "Vocal": 3.0,
     "inattention_score": 2.423682,
     "impulsivity_score": 0.3029262,
-    "Willing_to_learn": 1.0
+    "Willing_to_learn": 1.0,
+    "Personality_age": 13.87733
   },
   {
     "sex": "male",
@@ -673,7 +698,8 @@ const sheltieData = [
     "Vocal": 3.0,
     "inattention_score": -0.3704825,
     "impulsivity_score": -0.7757075,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 4.812044
   },
   {
     "sex": "male",
@@ -699,7 +725,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 0.2039189,
     "impulsivity_score": 0.7026526,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 4.573254
   },
   {
     "sex": "female",
@@ -725,7 +752,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 0.05110257,
     "impulsivity_score": -0.6905019,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 3.258488
   },
   {
     "sex": "female",
@@ -751,7 +779,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": 0.5637014,
     "impulsivity_score": 0.1399981,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 10.54269
   },
   {
     "sex": "female",
@@ -777,7 +806,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 3.726165,
     "impulsivity_score": 0.3030151,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 4.230559
   },
   {
     "sex": "female",
@@ -803,7 +833,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -0.07039803,
     "impulsivity_score": 0.2433086,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 10.04431
   },
   {
     "sex": "male",
@@ -829,7 +860,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -0.2717393,
     "impulsivity_score": 0.7061168,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 2.516085
   },
   {
     "sex": "male",
@@ -855,7 +887,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": -1.527955,
     "impulsivity_score": -0.8126449,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 8.773611
   },
   {
     "sex": "male",
@@ -881,7 +914,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 0.1458826,
     "impulsivity_score": 0.8560499,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 3.622673
   },
   {
     "sex": "female",
@@ -907,7 +941,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.7354661,
     "impulsivity_score": 1.346185,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 6.921287
   },
   {
     "sex": "male",
@@ -933,7 +968,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.3425206,
     "impulsivity_score": -1.132615,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 2.784394
   },
   {
     "sex": "male",
@@ -959,7 +995,8 @@ const sheltieData = [
     "Vocal": 1.0,
     "inattention_score": -1.26892,
     "impulsivity_score": -0.9644288,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 7.052704
   },
   {
     "sex": "male",
@@ -985,7 +1022,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": -1.260389,
     "impulsivity_score": -1.127896,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 7.345654
   },
   {
     "sex": "female",
@@ -1011,7 +1049,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -0.7485171,
     "impulsivity_score": 2.569649,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 4.948425
   },
   {
     "sex": "female",
@@ -1037,7 +1076,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -1.25062,
     "impulsivity_score": 1.035659,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 6.110883
   },
   {
     "sex": "female",
@@ -1063,7 +1103,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": -0.3565685,
     "impulsivity_score": -0.8528253,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 10.58935
   },
   {
     "sex": "female",
@@ -1089,7 +1130,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -1.365619,
     "impulsivity_score": -0.7237735,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 3.401752
   },
   {
     "sex": "female",
@@ -1115,7 +1157,8 @@ const sheltieData = [
     "Vocal": 3.0,
     "inattention_score": -1.550456,
     "impulsivity_score": -1.259217,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 7.627652
   },
   {
     "sex": "female",
@@ -1141,7 +1184,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -0.5836495,
     "impulsivity_score": 0.04443469,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 9.638653
   },
   {
     "sex": "male",
@@ -1167,7 +1211,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -0.2920731,
     "impulsivity_score": -0.235655,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 7.665982
   },
   {
     "sex": "female",
@@ -1193,7 +1238,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -0.6375251,
     "impulsivity_score": -0.5115094,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 8.205963
   },
   {
     "sex": "female",
@@ -1219,7 +1265,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": -1.600215,
     "impulsivity_score": -1.101413,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 3.906913
   },
   {
     "sex": "male",
@@ -1245,7 +1292,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": -1.009656,
     "impulsivity_score": -0.2700312,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 6.740589
   },
   {
     "sex": "male",
@@ -1271,7 +1319,8 @@ const sheltieData = [
     "Vocal": 1.0,
     "inattention_score": -0.4662022,
     "impulsivity_score": -0.7084796,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 5.480047
   },
   {
     "sex": "female",
@@ -1297,7 +1346,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -1.057204,
     "impulsivity_score": 0.1634145,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 2.020073
   },
   {
     "sex": "female",
@@ -1323,7 +1373,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -0.2605856,
     "impulsivity_score": 0.5082699,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 3.910783
   },
   {
     "sex": "female",
@@ -1349,7 +1400,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -1.216401,
     "impulsivity_score": -1.001503,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 7.965014
   },
   {
     "sex": "female",
@@ -1375,7 +1427,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.4270172,
     "impulsivity_score": -0.3784438,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 4.622547
   },
   {
     "sex": "female",
@@ -1401,7 +1454,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 0.5069505,
     "impulsivity_score": 1.503491,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 5.641628
   },
   {
     "sex": "female",
@@ -1427,7 +1481,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": 0.6187811,
     "impulsivity_score": 0.8910837,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 1.864051
   },
   {
     "sex": "female",
@@ -1453,7 +1508,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.3848471,
     "impulsivity_score": 0.51411,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 9.25336
   },
   {
     "sex": "male",
@@ -1479,7 +1535,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.3330713,
     "impulsivity_score": -0.8426442,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 6.433949
   },
   {
     "sex": "female",
@@ -1505,7 +1562,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -0.442742,
     "impulsivity_score": -1.064476,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 1.852055
   },
   {
     "sex": "female",
@@ -1531,33 +1589,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": 1.199084,
     "impulsivity_score": -0.1097706,
-    "Willing_to_learn": 5.0
-  },
-  {
-    "sex": "male",
-    "weight": 6.2,
-    "Socialization_dogs": 4.0,
-    "daily_exercise": "1-2_hours",
-    "hobby_frequency_home": "active",
-    "hobby_frequency_out": "active",
-    "alone_time": "1-3_hours",
-    "Playful_dogs": 5.0,
-    "Anxious": 1.0,
-    "Fearful_dogs": 1.0,
-    "Impulsive": 1.0,
-    "avg_aggression": 1.0,
-    "Erratic": 1.0,
-    "Obedient": 5.0,
-    "Calm": 4.0,
-    "Insecure": 1.0,
-    "Prey_driven_chase": 4.0,
-    "Energetic": 5.0,
-    "Provocative": 4.0,
-    "Active": 4.0,
-    "Vocal": 2.0,
-    "inattention_score": -0.2043961,
-    "impulsivity_score": -0.8996818,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 8.53453
   },
   {
     "sex": "male",
@@ -1583,7 +1616,8 @@ const sheltieData = [
     "Vocal": 1.0,
     "inattention_score": 0.4092763,
     "impulsivity_score": 0.03888233,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 1.789041
   },
   {
     "sex": "male",
@@ -1609,7 +1643,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -0.3256307,
     "impulsivity_score": 0.04601234,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 9.841673
   },
   {
     "sex": "male",
@@ -1635,7 +1670,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 0.1935447,
     "impulsivity_score": -0.8879989,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 2.529197
   },
   {
     "sex": "male",
@@ -1661,7 +1697,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.2412652,
     "impulsivity_score": 0.3179043,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 1.59726
   },
   {
     "sex": "male",
@@ -1687,7 +1724,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.04902819,
     "impulsivity_score": 0.06871017,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 3.206023
   },
   {
     "sex": "male",
@@ -1713,7 +1751,8 @@ const sheltieData = [
     "Vocal": 3.0,
     "inattention_score": -0.3597085,
     "impulsivity_score": 0.2232212,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 0.890411
   },
   {
     "sex": "female",
@@ -1739,7 +1778,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": -0.1125035,
     "impulsivity_score": -0.8793625,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 3.841731
   },
   {
     "sex": "male",
@@ -1765,7 +1805,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 0.2127512,
     "impulsivity_score": 0.2322387,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 6.178725
   },
   {
     "sex": "female",
@@ -1791,33 +1832,8 @@ const sheltieData = [
     "Vocal": 1.0,
     "inattention_score": -0.1780518,
     "impulsivity_score": -1.177473,
-    "Willing_to_learn": 5.0
-  },
-  {
-    "sex": "male",
-    "weight": 4.7,
-    "Socialization_dogs": 4.0,
-    "daily_exercise": "2-3_hours",
-    "hobby_frequency_home": "never_no_hobby",
-    "hobby_frequency_out": "never_no_hobby",
-    "alone_time": "1-3_hours",
-    "Playful_dogs": 5.0,
-    "Anxious": 2.0,
-    "Fearful_dogs": 4.0,
-    "Impulsive": 2.0,
-    "avg_aggression": 1.0,
-    "Erratic": 2.0,
-    "Obedient": 5.0,
-    "Calm": 1.0,
-    "Insecure": 5.0,
-    "Prey_driven_chase": 4.0,
-    "Energetic": 5.0,
-    "Provocative": 3.0,
-    "Active": 4.0,
-    "Vocal": 1.0,
-    "inattention_score": -0.7090225,
-    "impulsivity_score": 0.3329011,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 0.9232877
   },
   {
     "sex": "male",
@@ -1843,7 +1859,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -0.327359,
     "impulsivity_score": -0.9311592,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 1.435616
   },
   {
     "sex": "female",
@@ -1869,7 +1886,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -1.00423,
     "impulsivity_score": -1.077427,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 1.227397
   },
   {
     "sex": "male",
@@ -1895,7 +1913,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 0.572909,
     "impulsivity_score": 0.8319236,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 6.644114
   },
   {
     "sex": "female",
@@ -1921,7 +1940,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -1.049301,
     "impulsivity_score": -0.2545114,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 1.049315
   },
   {
     "sex": "female",
@@ -1947,7 +1967,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -0.3099496,
     "impulsivity_score": 0.06541748,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 2.633812
   },
   {
     "sex": "female",
@@ -1973,7 +1994,8 @@ const sheltieData = [
     "Vocal": 1.0,
     "inattention_score": 0.4243169,
     "impulsivity_score": -0.3759284,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 7.241615
   },
   {
     "sex": "female",
@@ -1999,7 +2021,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 1.314571,
     "impulsivity_score": 1.264269,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 5.31812
   },
   {
     "sex": "male",
@@ -2025,7 +2048,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": -1.236271,
     "impulsivity_score": -0.656225,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 2.146475
   },
   {
     "sex": "male",
@@ -2051,7 +2075,8 @@ const sheltieData = [
     "Vocal": 3.0,
     "inattention_score": -1.285766,
     "impulsivity_score": -1.372214,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 12.81987
   },
   {
     "sex": "female",
@@ -2077,7 +2102,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": 0.232056,
     "impulsivity_score": 1.0677,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 4.786855
   },
   {
     "sex": "male",
@@ -2103,7 +2129,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 1.340897,
     "impulsivity_score": 1.083976,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 4.354176
   },
   {
     "sex": "female",
@@ -2129,7 +2156,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.1327027,
     "impulsivity_score": -0.3592198,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 4.148878
   },
   {
     "sex": "female",
@@ -2155,7 +2183,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -0.9323684,
     "impulsivity_score": 0.415777,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 1.569863
   },
   {
     "sex": "female",
@@ -2181,7 +2210,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -0.04588466,
     "impulsivity_score": -0.2077002,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 7.896562
   },
   {
     "sex": "male",
@@ -2207,7 +2237,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 0.3894649,
     "impulsivity_score": 2.382996,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 4.896394
   },
   {
     "sex": "male",
@@ -2233,7 +2264,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": 0.7767554,
     "impulsivity_score": 2.019679,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 1.545205
   },
   {
     "sex": "male",
@@ -2259,7 +2291,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.5807629,
     "impulsivity_score": -0.2137509,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 6.825462
   },
   {
     "sex": "female",
@@ -2285,7 +2318,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -1.516802,
     "impulsivity_score": -1.010492,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 1.578082
   },
   {
     "sex": "female",
@@ -2311,7 +2345,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": 0.2311393,
     "impulsivity_score": -0.8332452,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 6.726899
   },
   {
     "sex": "female",
@@ -2337,7 +2372,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -0.561437,
     "impulsivity_score": -0.2440238,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 1.635616
   },
   {
     "sex": "female",
@@ -2363,7 +2399,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": 2.093372,
     "impulsivity_score": -0.1765661,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 12.03075
   },
   {
     "sex": "male",
@@ -2389,7 +2426,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -0.08528941,
     "impulsivity_score": 0.9357023,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 7.417402
   },
   {
     "sex": "female",
@@ -2415,7 +2453,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": -0.800123,
     "impulsivity_score": 0.4957215,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 3.809524
   },
   {
     "sex": "male",
@@ -2441,7 +2480,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.05406233,
     "impulsivity_score": 0.2907445,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 11.04723
   },
   {
     "sex": "female",
@@ -2467,7 +2507,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 1.507135,
     "impulsivity_score": 1.795297,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 1.464416
   },
   {
     "sex": "female",
@@ -2493,7 +2534,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -1.216401,
     "impulsivity_score": -1.001503,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 8.945783
   },
   {
     "sex": "female",
@@ -2519,7 +2561,8 @@ const sheltieData = [
     "Vocal": 3.0,
     "inattention_score": 0.1881033,
     "impulsivity_score": -0.778667,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 4.170698
   },
   {
     "sex": "male",
@@ -2545,7 +2588,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 0.3756221,
     "impulsivity_score": -0.2098426,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 4.376084
   },
   {
     "sex": "male",
@@ -2571,7 +2615,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -0.6815613,
     "impulsivity_score": 0.4790238,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 4.463715
   },
   {
     "sex": "male",
@@ -2597,7 +2642,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -0.8530471,
     "impulsivity_score": -0.7907082,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 1.79726
   },
   {
     "sex": "male",
@@ -2623,7 +2669,8 @@ const sheltieData = [
     "Vocal": 3.0,
     "inattention_score": 0.3179814,
     "impulsivity_score": -0.1718837,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 4.496577
   },
   {
     "sex": "male",
@@ -2649,7 +2696,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.6366359,
     "impulsivity_score": 0.07995808,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 5.877152
   },
   {
     "sex": "female",
@@ -2675,7 +2723,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": 2.130776,
     "impulsivity_score": -0.03647173,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 4.313099
   },
   {
     "sex": "female",
@@ -2701,7 +2750,8 @@ const sheltieData = [
     "Vocal": 1.0,
     "inattention_score": -1.192282,
     "impulsivity_score": -0.5298325,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 6.921287
   },
   {
     "sex": "female",
@@ -2727,7 +2777,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": -0.7948155,
     "impulsivity_score": -0.9162978,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 0.9232877
   },
   {
     "sex": "male",
@@ -2753,7 +2804,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -0.4689038,
     "impulsivity_score": 2.668672,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 3.384447
   },
   {
     "sex": "female",
@@ -2779,7 +2831,8 @@ const sheltieData = [
     "Vocal": 1.0,
     "inattention_score": -1.165938,
     "impulsivity_score": -0.9118391,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 1.463014
   },
   {
     "sex": "female",
@@ -2805,7 +2858,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 0.2830929,
     "impulsivity_score": 1.415567,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 4.458238
   },
   {
     "sex": "female",
@@ -2831,7 +2885,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": -1.245214,
     "impulsivity_score": -0.5047597,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 7.439306
   },
   {
     "sex": "male",
@@ -2857,7 +2912,8 @@ const sheltieData = [
     "Vocal": 1.0,
     "inattention_score": -1.218533,
     "impulsivity_score": -0.8677738,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 10.65298
   },
   {
     "sex": "female",
@@ -2883,7 +2939,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.1149641,
     "impulsivity_score": 0.4624927,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 3.587076
   },
   {
     "sex": "male",
@@ -2909,7 +2966,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": -0.7749844,
     "impulsivity_score": 0.2048327,
-    "Willing_to_learn": 1.0
+    "Willing_to_learn": 1.0,
+    "Personality_age": 0.8273973
   },
   {
     "sex": "female",
@@ -2935,7 +2993,8 @@ const sheltieData = [
     "Vocal": 1.0,
     "inattention_score": -1.157422,
     "impulsivity_score": -0.2680103,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 11.77612
   },
   {
     "sex": "female",
@@ -2961,7 +3020,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": 1.468159,
     "impulsivity_score": 0.4865234,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 0.9561644
   },
   {
     "sex": "female",
@@ -2987,7 +3047,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -0.6653631,
     "impulsivity_score": -0.5432377,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 9.41175
   },
   {
     "sex": "female",
@@ -3013,7 +3074,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": 0.03277573,
     "impulsivity_score": 1.047317,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 6.579055
   },
   {
     "sex": "female",
@@ -3039,7 +3101,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": 0.3022352,
     "impulsivity_score": -0.4243601,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 1.136986
   },
   {
     "sex": "female",
@@ -3065,7 +3128,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": 0.3366954,
     "impulsivity_score": 0.429185,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 1.213699
   },
   {
     "sex": "female",
@@ -3091,7 +3155,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": 0.05470033,
     "impulsivity_score": 0.9803825,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 1.616438
   },
   {
     "sex": "male",
@@ -3117,7 +3182,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": 0.5015597,
     "impulsivity_score": 0.5909119,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 4.669101
   },
   {
     "sex": "male",
@@ -3143,7 +3209,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": 0.6343363,
     "impulsivity_score": 0.3174443,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 4.636239
   },
   {
     "sex": "female",
@@ -3169,7 +3236,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": 1.385419,
     "impulsivity_score": 0.4159732,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 3.093771
   },
   {
     "sex": "female",
@@ -3195,7 +3263,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.9890542,
     "impulsivity_score": -0.4542903,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 9.329599
   },
   {
     "sex": "female",
@@ -3221,7 +3290,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -1.380581,
     "impulsivity_score": 0.6898416,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 1.609489
   },
   {
     "sex": "female",
@@ -3247,33 +3317,8 @@ const sheltieData = [
     "Vocal": 3.0,
     "inattention_score": -0.5602945,
     "impulsivity_score": -0.1483937,
-    "Willing_to_learn": 5.0
-  },
-  {
-    "sex": "female",
-    "weight": 8.0,
-    "Socialization_dogs": 4.0,
-    "daily_exercise": "2-3_hours",
-    "hobby_frequency_home": "never_no_hobby",
-    "hobby_frequency_out": "never_no_hobby",
-    "alone_time": "1-3_hours",
-    "Playful_dogs": 5.0,
-    "Anxious": 5.0,
-    "Fearful_dogs": 4.0,
-    "Impulsive": 4.0,
-    "avg_aggression": 1.5,
-    "Erratic": 4.0,
-    "Obedient": 4.0,
-    "Calm": 2.0,
-    "Insecure": 5.0,
-    "Prey_driven_chase": 5.0,
-    "Energetic": 4.0,
-    "Provocative": 2.0,
-    "Active": 4.0,
-    "Vocal": 5.0,
-    "inattention_score": 0.6068495,
-    "impulsivity_score": 0.4996058,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 12.13753
   },
   {
     "sex": "male",
@@ -3299,7 +3344,8 @@ const sheltieData = [
     "Vocal": 1.0,
     "inattention_score": -0.798703,
     "impulsivity_score": -0.8585611,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 1.326027
   },
   {
     "sex": "male",
@@ -3325,7 +3371,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.1672196,
     "impulsivity_score": -0.3742259,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 3.504929
   },
   {
     "sex": "male",
@@ -3351,7 +3398,8 @@ const sheltieData = [
     "Vocal": 1.0,
     "inattention_score": -0.5864772,
     "impulsivity_score": -0.6695685,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 4.304884
   },
   {
     "sex": "male",
@@ -3377,7 +3425,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": 1.605693,
     "impulsivity_score": 0.9589696,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 2.959617
   },
   {
     "sex": "male",
@@ -3403,7 +3452,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 1.135529,
     "impulsivity_score": 2.253672,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 6.088028
   },
   {
     "sex": "male",
@@ -3429,7 +3479,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 0.4603316,
     "impulsivity_score": 0.5852485,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 3.770537
   },
   {
     "sex": "male",
@@ -3455,7 +3506,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": 0.2479476,
     "impulsivity_score": -0.9923059,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 6.268779
   },
   {
     "sex": "female",
@@ -3481,7 +3533,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 0.2739676,
     "impulsivity_score": 0.7157789,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 1.535584
   },
   {
     "sex": "male",
@@ -3507,7 +3560,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": -1.143073,
     "impulsivity_score": -0.854747,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 2.642026
   },
   {
     "sex": "male",
@@ -3533,7 +3587,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -1.280074,
     "impulsivity_score": -0.7665819,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 5.005933
   },
   {
     "sex": "female",
@@ -3559,7 +3614,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -1.550456,
     "impulsivity_score": -1.259217,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 4.94021
   },
   {
     "sex": "male",
@@ -3585,7 +3641,8 @@ const sheltieData = [
     "Vocal": 1.0,
     "inattention_score": 0.7491127,
     "impulsivity_score": -0.3655563,
-    "Willing_to_learn": 3.0
+    "Willing_to_learn": 3.0,
+    "Personality_age": 2.454795
   },
   {
     "sex": "male",
@@ -3611,7 +3668,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.00170454,
     "impulsivity_score": -0.4112809,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 2.465753
   },
   {
     "sex": "male",
@@ -3637,7 +3695,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -1.491541,
     "impulsivity_score": -0.4431908,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 3.773275
   },
   {
     "sex": "female",
@@ -3663,7 +3722,8 @@ const sheltieData = [
     "Vocal": 1.0,
     "inattention_score": -1.516802,
     "impulsivity_score": -1.010492,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 1.084932
   },
   {
     "sex": "male",
@@ -3689,7 +3749,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -1.266559,
     "impulsivity_score": -0.2519768,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 7.039014
   },
   {
     "sex": "female",
@@ -3715,7 +3776,8 @@ const sheltieData = [
     "Vocal": 1.0,
     "inattention_score": -0.4522781,
     "impulsivity_score": -0.9457448,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 2.443836
   },
   {
     "sex": "male",
@@ -3741,7 +3803,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.02397702,
     "impulsivity_score": -0.01167121,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 2.479452
   },
   {
     "sex": "male",
@@ -3767,7 +3830,8 @@ const sheltieData = [
     "Vocal": 1.0,
     "inattention_score": 0.09295849,
     "impulsivity_score": -0.4303798,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 5.323597
   },
   {
     "sex": "male",
@@ -3793,7 +3857,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 1.151966,
     "impulsivity_score": 0.1339637,
-    "Willing_to_learn": 3.0
+    "Willing_to_learn": 3.0,
+    "Personality_age": 10.80082
   },
   {
     "sex": "male",
@@ -3819,7 +3884,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": 0.6309074,
     "impulsivity_score": -0.252996,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 10.79535
   },
   {
     "sex": "male",
@@ -3845,7 +3911,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": -0.3474208,
     "impulsivity_score": -0.2559076,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 3.383984
   },
   {
     "sex": "male",
@@ -3871,7 +3938,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -1.527955,
     "impulsivity_score": -0.8126449,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 5.238704
   },
   {
     "sex": "male",
@@ -3897,7 +3965,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -1.485827,
     "impulsivity_score": 0.01262679,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 12.34028
   },
   {
     "sex": "female",
@@ -3923,7 +3992,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.9285413,
     "impulsivity_score": -0.2182181,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 7.779197
   },
   {
     "sex": "female",
@@ -3949,7 +4019,8 @@ const sheltieData = [
     "Vocal": 3.0,
     "inattention_score": 0.4935861,
     "impulsivity_score": 1.425696,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 5.06618
   },
   {
     "sex": "male",
@@ -3975,7 +4046,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -1.202732,
     "impulsivity_score": -0.08451759,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 9.660941
   },
   {
     "sex": "female",
@@ -4001,7 +4073,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.101085,
     "impulsivity_score": 0.05943542,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 9.475112
   },
   {
     "sex": "female",
@@ -4027,7 +4100,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": 0.03492217,
     "impulsivity_score": -0.2769825,
-    "Willing_to_learn": 1.0
+    "Willing_to_learn": 1.0,
+    "Personality_age": 7.26078
   },
   {
     "sex": "male",
@@ -4053,7 +4127,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -1.600215,
     "impulsivity_score": -1.101413,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 9.173056
   },
   {
     "sex": "male",
@@ -4079,33 +4154,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -1.183146,
     "impulsivity_score": -0.1610556,
-    "Willing_to_learn": 5.0
-  },
-  {
-    "sex": "female",
-    "weight": 5.5,
-    "Socialization_dogs": 4.0,
-    "daily_exercise": "1-2_hours",
-    "hobby_frequency_home": "active",
-    "hobby_frequency_out": "active",
-    "alone_time": "6-8_hours",
-    "Playful_dogs": 5.0,
-    "Anxious": 1.0,
-    "Fearful_dogs": 1.0,
-    "Impulsive": 2.0,
-    "avg_aggression": 1.0,
-    "Erratic": 1.0,
-    "Obedient": 5.0,
-    "Calm": 1.0,
-    "Insecure": 3.0,
-    "Prey_driven_chase": 5.0,
-    "Energetic": 5.0,
-    "Provocative": 4.0,
-    "Active": 4.0,
-    "Vocal": 4.0,
-    "inattention_score": -0.8204602,
-    "impulsivity_score": 0.1894613,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 8.603102
   },
   {
     "sex": "female",
@@ -4131,7 +4181,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": 0.5654985,
     "impulsivity_score": 0.263659,
-    "Willing_to_learn": 2.0
+    "Willing_to_learn": 2.0,
+    "Personality_age": 10.54269
   },
   {
     "sex": "female",
@@ -4157,7 +4208,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.1632865,
     "impulsivity_score": 0.4153415,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 4.620438
   },
   {
     "sex": "male",
@@ -4183,7 +4235,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -0.8983309,
     "impulsivity_score": 0.2673625,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 5.524443
   },
   {
     "sex": "male",
@@ -4209,7 +4262,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": -0.5810358,
     "impulsivity_score": -0.7789004,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 8.00365
   },
   {
     "sex": "female",
@@ -4235,7 +4289,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -1.253117,
     "impulsivity_score": -0.08683386,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 3.568692
   },
   {
     "sex": "female",
@@ -4261,7 +4316,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.381991,
     "impulsivity_score": -0.62116,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 6.78987
   },
   {
     "sex": "female",
@@ -4287,7 +4343,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -1.067053,
     "impulsivity_score": 0.4651664,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 1.948905
   },
   {
     "sex": "male",
@@ -4313,7 +4370,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": 0.0862989,
     "impulsivity_score": -0.4096872,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 6.98152
   },
   {
     "sex": "male",
@@ -4339,7 +4397,8 @@ const sheltieData = [
     "Vocal": 3.0,
     "inattention_score": -0.03450551,
     "impulsivity_score": 0.3462957,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 7.118412
   },
   {
     "sex": "female",
@@ -4365,7 +4424,8 @@ const sheltieData = [
     "Vocal": 1.0,
     "inattention_score": -0.434495,
     "impulsivity_score": -1.287166,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 11.0089
   },
   {
     "sex": "female",
@@ -4391,7 +4451,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": 0.1981887,
     "impulsivity_score": -0.8345022,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 1.513686
   },
   {
     "sex": "female",
@@ -4417,7 +4478,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 0.6057688,
     "impulsivity_score": 3.676443,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 7.751825
   },
   {
     "sex": "female",
@@ -4443,7 +4505,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -0.4750339,
     "impulsivity_score": 1.868376,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 10.42574
   },
   {
     "sex": "female",
@@ -4469,7 +4532,8 @@ const sheltieData = [
     "Vocal": 3.0,
     "inattention_score": -0.2943944,
     "impulsivity_score": -0.5082219,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 10.31075
   },
   {
     "sex": "male",
@@ -4495,7 +4559,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 1.587135,
     "impulsivity_score": 1.372994,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 3.820471
   },
   {
     "sex": "male",
@@ -4521,7 +4586,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": -1.009656,
     "impulsivity_score": -0.2700312,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 10.24504
   },
   {
     "sex": "female",
@@ -4547,7 +4613,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -1.223974,
     "impulsivity_score": -0.7584418,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 7.271732
   },
   {
     "sex": "female",
@@ -4573,7 +4640,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 2.196968,
     "impulsivity_score": 1.951425,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 5.321168
   },
   {
     "sex": "female",
@@ -4599,7 +4667,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.6094437,
     "impulsivity_score": 0.4955752,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 1.20383
   },
   {
     "sex": "male",
@@ -4625,7 +4694,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -1.430628,
     "impulsivity_score": -0.7988414,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 3.672687
   },
   {
     "sex": "male",
@@ -4651,7 +4721,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": 0.263123,
     "impulsivity_score": -0.3691697,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 7.842153
   },
   {
     "sex": "male",
@@ -4677,7 +4748,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -0.5108051,
     "impulsivity_score": 2.642638,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 5.080292
   },
   {
     "sex": "male",
@@ -4703,7 +4775,8 @@ const sheltieData = [
     "Vocal": 3.0,
     "inattention_score": -0.3582016,
     "impulsivity_score": -1.15202,
-    "Willing_to_learn": 3.0
+    "Willing_to_learn": 3.0,
+    "Personality_age": 2.685832
   },
   {
     "sex": "female",
@@ -4729,7 +4802,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -0.6613546,
     "impulsivity_score": 0.6633065,
-    "Willing_to_learn": 1.0
+    "Willing_to_learn": 1.0,
+    "Personality_age": 9.836486
   },
   {
     "sex": "male",
@@ -4755,7 +4829,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": -0.2037228,
     "impulsivity_score": -0.7750957,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 10.40383
   },
   {
     "sex": "male",
@@ -4781,7 +4856,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 0.2482364,
     "impulsivity_score": 0.6541809,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 9.091158
   },
   {
     "sex": "female",
@@ -4807,7 +4883,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 1.607051,
     "impulsivity_score": 0.2283099,
-    "Willing_to_learn": 2.0
+    "Willing_to_learn": 2.0,
+    "Personality_age": 4.259124
   },
   {
     "sex": "female",
@@ -4833,7 +4910,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": 0.3734896,
     "impulsivity_score": -0.07611298,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 10.38193
   },
   {
     "sex": "female",
@@ -4859,7 +4937,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": -0.3195158,
     "impulsivity_score": -0.260757,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 10.50513
   },
   {
     "sex": "female",
@@ -4885,7 +4964,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -0.7718561,
     "impulsivity_score": 0.6315032,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 7.554745
   },
   {
     "sex": "female",
@@ -4911,7 +4991,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -1.182746,
     "impulsivity_score": -0.7527784,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 11.42505
   },
   {
     "sex": "male",
@@ -4937,7 +5018,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": 0.05735193,
     "impulsivity_score": 0.4646432,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 4.760036
   },
   {
     "sex": "male",
@@ -4963,7 +5045,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": -0.9263336,
     "impulsivity_score": -0.8701826,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 7.842153
   },
   {
     "sex": "male",
@@ -4989,7 +5072,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": 0.5722812,
     "impulsivity_score": 0.5774648,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 11.71889
   },
   {
     "sex": "female",
@@ -5015,7 +5099,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": 0.4254593,
     "impulsivity_score": -0.2802983,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 9.546292
   },
   {
     "sex": "female",
@@ -5041,7 +5126,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": 0.2545922,
     "impulsivity_score": -0.2057026,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 6.841889
   },
   {
     "sex": "male",
@@ -5067,7 +5153,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 0.8905042,
     "impulsivity_score": 3.082777,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 2.239051
   },
   {
     "sex": "male",
@@ -5093,7 +5180,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -0.4202414,
     "impulsivity_score": -0.6179038,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 6.899384
   },
   {
     "sex": "female",
@@ -5119,7 +5207,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -1.037884,
     "impulsivity_score": -1.326151,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 9.497013
   },
   {
     "sex": "male",
@@ -5145,7 +5234,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 0.9384513,
     "impulsivity_score": 0.1689753,
-    "Willing_to_learn": 2.0
+    "Willing_to_learn": 2.0,
+    "Personality_age": 8.173358
   },
   {
     "sex": "female",
@@ -5171,7 +5261,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.6991852,
     "impulsivity_score": -1.174168,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 10.31348
   },
   {
     "sex": "female",
@@ -5197,7 +5288,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.8739803,
     "impulsivity_score": 0.786907,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 11.75721
   },
   {
     "sex": "female",
@@ -5223,7 +5315,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": 0.8172873,
     "impulsivity_score": 0.6978109,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 8.156934
   },
   {
     "sex": "female",
@@ -5249,7 +5342,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.7430833,
     "impulsivity_score": 0.778715,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 8.379414
   },
   {
     "sex": "female",
@@ -5275,7 +5369,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -1.577714,
     "impulsivity_score": -0.6548412,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 4.083196
   },
   {
     "sex": "male",
@@ -5301,7 +5396,8 @@ const sheltieData = [
     "Vocal": 1.0,
     "inattention_score": -0.8323573,
     "impulsivity_score": -1.107286,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 7.077344
   },
   {
     "sex": "female",
@@ -5327,7 +5423,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 1.074327,
     "impulsivity_score": 0.9628358,
-    "Willing_to_learn": 2.0
+    "Willing_to_learn": 2.0,
+    "Personality_age": 11.7928
   },
   {
     "sex": "female",
@@ -5353,33 +5450,8 @@ const sheltieData = [
     "Vocal": 1.0,
     "inattention_score": -1.173188,
     "impulsivity_score": -1.125539,
-    "Willing_to_learn": 5.0
-  },
-  {
-    "sex": "female",
-    "weight": 7.0,
-    "Socialization_dogs": 4.0,
-    "daily_exercise": "over_3_hours",
-    "hobby_frequency_home": "active",
-    "hobby_frequency_out": "infrequent",
-    "alone_time": "1-3_hours",
-    "Playful_dogs": 5.0,
-    "Anxious": 2.0,
-    "Fearful_dogs": 2.0,
-    "Impulsive": 4.0,
-    "avg_aggression": 1.0,
-    "Erratic": 4.0,
-    "Obedient": 4.0,
-    "Calm": 1.0,
-    "Insecure": 4.0,
-    "Prey_driven_chase": 5.0,
-    "Energetic": 5.0,
-    "Provocative": 2.0,
-    "Active": 5.0,
-    "Vocal": 5.0,
-    "inattention_score": 0.3779235,
-    "impulsivity_score": 0.4348484,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 9.290994
   },
   {
     "sex": "female",
@@ -5405,7 +5477,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": -0.4117106,
     "impulsivity_score": -0.7813709,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 9.129483
   },
   {
     "sex": "female",
@@ -5431,7 +5504,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": -0.7040922,
     "impulsivity_score": -0.194645,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 10.01717
   },
   {
     "sex": "male",
@@ -5457,7 +5531,8 @@ const sheltieData = [
     "Vocal": 1.0,
     "inattention_score": -1.600215,
     "impulsivity_score": -1.101413,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 5.956981
   },
   {
     "sex": "female",
@@ -5483,7 +5558,8 @@ const sheltieData = [
     "Vocal": 3.0,
     "inattention_score": -0.7236833,
     "impulsivity_score": -0.4490638,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 1.212038
   },
   {
     "sex": "male",
@@ -5509,33 +5585,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 0.3243993,
     "impulsivity_score": 0.5314018,
-    "Willing_to_learn": 5.0
-  },
-  {
-    "sex": "male",
-    "weight": 12.0,
-    "Socialization_dogs": 4.0,
-    "daily_exercise": "2-3_hours",
-    "hobby_frequency_home": "active",
-    "hobby_frequency_out": "active",
-    "alone_time": "3-6_hours",
-    "Playful_dogs": 4.0,
-    "Anxious": 1.0,
-    "Fearful_dogs": 1.0,
-    "Impulsive": 4.0,
-    "avg_aggression": 1.0,
-    "Erratic": 2.0,
-    "Obedient": 5.0,
-    "Calm": 2.0,
-    "Insecure": 2.0,
-    "Prey_driven_chase": 4.0,
-    "Energetic": 5.0,
-    "Provocative": 2.0,
-    "Active": 5.0,
-    "Vocal": 5.0,
-    "inattention_score": -0.8166325,
-    "impulsivity_score": -0.4212542,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 1.058824
   },
   {
     "sex": "female",
@@ -5561,7 +5612,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": -0.7790981,
     "impulsivity_score": -0.182462,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 0.942623
   },
   {
     "sex": "male",
@@ -5587,7 +5639,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": 1.28023,
     "impulsivity_score": 0.8873777,
-    "Willing_to_learn": 2.0
+    "Willing_to_learn": 2.0,
+    "Personality_age": 1.132695
   },
   {
     "sex": "male",
@@ -5613,7 +5666,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": 0.04950876,
     "impulsivity_score": -0.205759,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 4.0,
+    "Personality_age": 5.154197
   },
   {
     "sex": "male",
@@ -5639,7 +5693,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.3217871,
     "impulsivity_score": -0.7825662,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 11.01985
   },
   {
     "sex": "female",
@@ -5665,59 +5720,8 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 0.1430062,
     "impulsivity_score": 1.058303,
-    "Willing_to_learn": 5.0
-  },
-  {
-    "sex": "male",
-    "weight": 5.0,
-    "Socialization_dogs": 3.0,
-    "daily_exercise": "1-2_hours",
-    "hobby_frequency_home": "active",
-    "hobby_frequency_out": "active",
-    "alone_time": "6-8_hours",
-    "Playful_dogs": 5.0,
-    "Anxious": 2.0,
-    "Fearful_dogs": 1.0,
-    "Impulsive": 2.0,
-    "avg_aggression": 1.0,
-    "Erratic": 1.0,
-    "Obedient": 5.0,
-    "Calm": 2.0,
-    "Insecure": 2.0,
-    "Prey_driven_chase": 5.0,
-    "Energetic": 5.0,
-    "Provocative": 1.0,
-    "Active": 4.0,
-    "Vocal": 2.0,
-    "inattention_score": -0.4202414,
-    "impulsivity_score": -0.6179038,
-    "Willing_to_learn": 5.0
-  },
-  {
-    "sex": "male",
-    "weight": 10.7,
-    "Socialization_dogs": 4.0,
-    "daily_exercise": "1-2_hours",
-    "hobby_frequency_home": "active",
-    "hobby_frequency_out": "infrequent",
-    "alone_time": "1-3_hours",
-    "Playful_dogs": 4.0,
-    "Anxious": 1.0,
-    "Fearful_dogs": 1.0,
-    "Impulsive": 1.0,
-    "avg_aggression": 1.0,
-    "Erratic": 1.0,
-    "Obedient": 4.0,
-    "Calm": 4.0,
-    "Insecure": 2.0,
-    "Prey_driven_chase": 4.0,
-    "Energetic": 2.0,
-    "Provocative": 2.0,
-    "Active": 1.0,
-    "Vocal": 4.0,
-    "inattention_score": 0.05370891,
-    "impulsivity_score": -0.5302984,
-    "Willing_to_learn": 4.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 7.345654
   },
   {
     "sex": "female",
@@ -5743,7 +5747,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.03131251,
     "impulsivity_score": 0.5428489,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 1.781934
   },
   {
     "sex": "male",
@@ -5769,7 +5774,8 @@ const sheltieData = [
     "Vocal": 2.0,
     "inattention_score": -0.00115506,
     "impulsivity_score": -0.2441702,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 1.636115
   },
   {
     "sex": "female",
@@ -5795,7 +5801,8 @@ const sheltieData = [
     "Vocal": 4.0,
     "inattention_score": -0.843511,
     "impulsivity_score": -0.9094391,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 5.507299
   },
   {
     "sex": "female",
@@ -5821,6 +5828,7 @@ const sheltieData = [
     "Vocal": 5.0,
     "inattention_score": 0.6451103,
     "impulsivity_score": 1.316373,
-    "Willing_to_learn": 5.0
+    "Willing_to_learn": 5.0,
+    "Personality_age": 1.367989
   }
 ];

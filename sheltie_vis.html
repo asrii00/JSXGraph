@@ -46,7 +46,7 @@
 </head>
 
 <body>
-    <h3>Shetlanninlammaskoirien luonteenpiirteet</h3>
+    <h3>Shetlanninlammaskoirien luonteenpiirteet (n=216)</h3>
     <div class="controls">
         <label><input type="radio" name="sex" value="females" checked> Nartut</label>
         <label><input type="radio" name="sex" value="males"> Urokset</label>
@@ -79,7 +79,10 @@
         5. Pekka haluaa rauhallisen, hiljaisen ja tottelevaisen koiran, joka ei ole pelokas eikä epävarma. Kannattaako hänen ottaa shetlanninlammaskoira? Miksi/miksi ei?<br>
         6. Maija haluaa tottelevaisen, oppimishaluisen ja ei-aggressiivisen koiran. Kannattaako hänen ottaa shetlanninlammaskoira? Miksi/miksi ei? <br>
         7. Jos Maija ottaa shetlanninlammaskoiran, 
-        suosittelisitko hänelle narttu- vai urospentua, vai onko sukupuolella väliä?<br>
+        suosittelisitko hänelle narttu- vai urospentua, vai onko sukupuolella väliä?<br><br>
+
+        <a href="https://figshare.com/articles/dataset/Salonen_et_al_Reliability_and_Validity_of_a_Dog_Personality_and_Unwanted_Behavior_Survey/14479152/1?file=27715521">Datan lähde</a>
+        
 
     </div>
 
@@ -228,7 +231,7 @@
             } else if (selectedSex === 'males') {
                 filteredDogs = filteredMales;
             }
-
+    
             for (const dog of filteredDogs) {
                 for (const bin of bins) {
                     const val = dog[bin.trait];

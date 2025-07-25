@@ -4,12 +4,14 @@ import json
 # BY CHATGPT
 
 # === Load and trim data ===
-df = pd.read_excel("data-for-publication_sheltie.xlsx")
+df = pd.read_excel("data-for-publication_shelties_new.xlsx")
 df.columns = df.columns.str.strip()
 
 
 # === Filter to only German Shepherd dogs ===
 df = df[df["breed_group"] == "Shetland_Sheepdog"]
+
+df = df[df["Personality_age"] >= 0.75] #only over 9mo
 
 # === Columns to keep ===
 columns_to_keep = [
@@ -17,7 +19,7 @@ columns_to_keep = [
     "hobby_frequency_out", "alone_time", "Playful_dogs", "Anxious", "Fearful_dogs",
     "Impulsive", "Aggressive_dogs_samegender", "Aggressive_dogs_oppositegender", "Erratic",
     "Obedient", "Willing_to_learn", "Calm", "Insecure", "Prey_driven_chase", "Energetic", "Provocative",
-    "Active", "Vocal", "inattention_score", "impulsivity_score"
+    "Active", "Vocal", "inattention_score", "impulsivity_score", "Personality_age"
 ]
 
 # Drop rows with any missing values in the selected columns
@@ -52,7 +54,8 @@ def row_to_js_dict(row):
         "Vocal": row["Vocal"],
         "inattention_score": row["inattention_score"],
         "impulsivity_score": row["impulsivity_score"],
-        "Willing_to_learn": row["Willing_to_learn"]
+        "Willing_to_learn": row["Willing_to_learn"], 
+        "Personality_age": row["Personality_age"]
     }
 
 # Convert all valid rows to JS dicts
