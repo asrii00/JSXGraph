@@ -5,8 +5,7 @@ import json
 
 # === Load and clean data ===
 df = pd.read_excel("data-for-publication_edited_random.xlsx")
-df = df.head(5000)
-df = df.tail(2000)
+
 df.columns = df.columns.str.strip()
 
 # === Columns to keep ===

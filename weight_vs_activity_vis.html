@@ -38,102 +38,205 @@
     </div>
 
     <div id="box"></div>
-    <div> Huom. data latautuu melko hitaasti. <br><br>
-        Kuvaajan data on kerätty kyselyn avulla. Koiranomistajalle annettiin sanallinen kuvaus esimerkiksi
+    <div>
+        Kuvaajan data on kerätty kyselyn avulla (n = 11340). Koiranomistajalle annettiin sanallinen kuvaus esimerkiksi
         rauhallisesta koirasta,
-        ja omistaja vastasi, kuinka vahvasti hän on samaa mieltä siitä, että kuvaus vastaa hänen koiraansa: <br>
+        ja omistaja vastasi, kuinka hyvin kuvaus vastaa hänen koiraansa: <br>
         1. Vahvasti eri mieltä<br>
         2. Jokseenkin eri mieltä <br>
         3. Ei samaa eikä eri mieltä <br>
         4. Jokseenkin samaa mieltä <br>
-        5. Vahvasti samaa mieltä <br> <br>
+        5. Vahvasti samaa mieltä <br>
+        Lisäksi kerättiin tieto koiran painosta kiloina.<br><br>
 
-        X-akselilla on koiran paino kiloina ja y-akselilla arvio valitun luonteenpiirteen vahvuudesta. n = 1576. <br> <br>
+        Punainen piste kuvaa painoryhmän keskiarvoa valitun luonteenpiirteen osalta. Pystyviivan päät kuvaavat ryhmän
+        sisältämiä minimi- ja maksimiarvoja, ja poikkiviiva mediaania. Laatikon alareuna vastaa alaneljännestä ja yläreuna yläneljännestä. <br> <br>
 
         1. Tutki dataa eri luonteenpiirteiden osalta. Vaikuttaako siltä, että koiran painon/koon ja luonteenpiirteiden
         välillä on yhteyksiä? Minkä luonteenpiirteiden osalta näin on? <br>
-        2. Tukeeko kuvaajan data seuraavia väitteitä? Arvioi silmämääräisesti kuvaajasta. <br>
-        a) Suuret koirat (40kg+) ovat yleensä laiskoja. <br>
-        b) Pienet ja keskikokoiset koirat ovat useammin arvaamattomia kuin suuret koirat.<br>
-        c) Suuret koirat ovat usein aggressiivisia.<br><br>
 
-        //Vaihtoehtoinen:
-        3.
-        a) Ovatko hyvin suuret koirat (esim. 50kg+) selvästi laiskempia kuin pienet ja keskikokoiset koirat(<30kg)?<br>
-            b) Ovatko pienet ja keskisuuret koirat useammin arvaamattomampia kuin hyvin suuret koirat?<br>
-            c) Ovatko suuret koirat yleisesti ottaen vähemmän aggressiivisia kuin pienet ja keskisuuret koirat?<br>
+        2. Arvioi kuvaajan perusteella: <br>
+        a) Ovatko hyvin suuret koirat (40kg+) rauhallisempia ja laiskempia kuin pienemmät koirat? <br>
+        b) Ovatko pienet ja keskisuuret koirat arvaamattomampia kuin hyvin suuret koirat?<br>
+        c) Ovatko suuret koirat vähemmän aggressiivisia kuin pienet ja keskisuuret koirat?<br>
 
     </div>
 
     <script src="all_breeds_temperament_data.js"></script>
     <script>
-        //TODO: Plot in a different way
-
         const board = JXG.JSXGraph.initBoard('box', {
-            boundingbox: [-10, 5.5, 100, -0.5],
+            boundingbox: [-10, 5.5, 85, -0.75],
             axis: true,
             withLabel: false,
-            showNavigation: false,
-            showCopyright: false
-        });
-        board.defaultAxes.y.defaultTicks.setAttribute({
-            drawLabels: false
+            showNavigation: true,
+            showCopyright: false,
+            defaultAxes: {
+                x: {
+                    ticks: {
+                        ticksDistance: 250,  //hide ticks
+                        minorTicks: 0,
+                        drawLabels: false, //hide numbers along x axis
+                        majorHeight: 0 //hide vertical grid lines
+                    }
+                }
+            }
         });
 
-        board.create('text', [45, -0.25, 'Paino (kg)'], { anchorX: 'middle', anchorY: 'top' });
-        board.create('text', [-7.5, 3.5, 'Arvio'], { anchorX: 'left', anchorY: 'middle', rotate: -90 });
-
-        for (let i = 1; i <= 5; i += 0.5) {
-            board.create('text', [-2, i, i.toString()], {
-                anchorX: 'right',
-                anchorY: 'middle',
-                fixed: true,
-                fontSize: 12
-            });
-        }
+        board.create('text', [45, -0.5, 'Paino (kg)'], { anchorX: 'middle', anchorY: 'middle' });
+        board.create('text', [-7.5, 3, 'Arvio'], { anchorX: 'middle', anchorY: 'middle', rotate: -90 });
 
         let points = [];
 
-        function jitter(val, amount = 0.1) {
-            return val + (Math.random() - 0.5) * amount;
+        function quantiles(arr) {
+            const sorted = arr.slice().sort((a, b) => a - b);
+            const q = p => {
+                const pos = (sorted.length - 1) * p;
+                const base = Math.floor(pos);
+                const rest = pos - base;
+                if (sorted[base + 1] !== undefined) {
+                    return sorted[base] + rest * (sorted[base + 1] - sorted[base]);
+                } else {
+                    return sorted[base];
+                }
+            };
+            return {
+                min: sorted[0],
+                q1: q(0.25),
+                median: q(0.5),
+                q3: q(0.75),
+                max: sorted[sorted.length - 1]
+            };
         }
 
         function plotData(trait) {
             board.suspendUpdate();
 
-            for (const pt of points) {
-                board.removeObject(pt);
-            }
+            // Remove previous plots
+            for (const obj of points) board.removeObject(obj);
             points = [];
 
-            for (const dog of allBreedsTemperamentData) {
-                if (typeof dog[trait] !== "number") continue;
-
-                const x = jitter(dog.weight, 0.3);
-                const y = jitter(dog[trait], 0.1);
-
-                const p = board.create('point', [x, y], {
-                    size: 2,
-                    opacity: 0.3,
-                    color: 'blue',
-                    fixed: true,
-                    showInfobox: false,
-                    name: ''
+            // Define weight bins: [0,10), [10,20), ..., [70,100]
+            const bins = [];
+            for (let start = 0; start <= 70; start += 10) {
+                bins.push({
+                    range: [start, start + 10],
+                    values: []
                 });
-                points.push(p);
+            }
+
+            // Group values by bin
+            for (const dog of allBreedsTemperamentData) {
+                const w = dog.weight;
+                const val = dog[trait];
+                if (typeof w !== 'number' || typeof val !== 'number') continue;
+
+                const bin = bins.find(b => w >= b.range[0] && w < b.range[1]);
+                if (bin) bin.values.push(val);
+            }
+
+            // Plot boxplots
+            const boxWidth = 3;
+            for (let i = 0; i < bins.length; i++) {
+                const bin = bins[i];
+                const x = bin.range[0] + 5; // bin center
+                if (bin.values.length < 3) continue;
+
+                const q = quantiles(bin.values);
+
+                // Mean
+                const sum = bin.values.reduce((a, b) => a + b, 0);
+                const mean = sum / bin.values.length;
+
+                // Draw box (Q1 to Q3)
+                const box = board.create('polygon', [
+                    [x - boxWidth / 2, q.q1],
+                    [x + boxWidth / 2, q.q1],
+                    [x + boxWidth / 2, q.q3],
+                    [x - boxWidth / 2, q.q3]
+                ], {
+                    fillColor: 'lightblue',
+                    strokeColor: 'blue',
+                    fillOpacity: 0.5,
+                    fixed: true,
+                    vertices: { visible: false }
+                });
+
+                // Median line
+                const median = board.create('line', [
+                    [x - boxWidth / 2, q.median],
+                    [x + boxWidth / 2, q.median]
+                ], {
+                    straightFirst: false,
+                    straightLast: false,
+                    strokeColor: 'black',
+                    fixed: true
+                });
+
+                // Whiskers
+                const whiskerLow = board.create('line', [
+                    [x, q.min],
+                    [x, q.q1]
+                ], {
+                    strokeColor: 'blue',
+                    fixed: true,
+                    straightFirst: false,
+                    straightLast: false
+                });
+
+                const whiskerHigh = board.create('line', [
+                    [x, q.q3],
+                    [x, q.max]
+                ], {
+                    strokeColor: 'blue',
+                    fixed: true,
+                    straightFirst: false,
+                    straightLast: false
+                });
+
+                // Mean dot
+                const meanDot = board.create('point', [x, mean], {
+                    size: 2,
+                    color: 'red',
+                    fixed: true,
+                    name: '',
+                    showInfobox: false
+                });
+
+                // Bin label (range)
+                const label = board.create('text', [x, -0.05, `${bin.range[0]}–${bin.range[1]} kg`], {
+                    anchorX: 'middle',
+                    anchorY: 'top',
+                    fixed: true,
+                    fontSize: 12
+                });
+
+                // Count label
+                const countLabel = board.create('text', [x, -0.2, `n = ${bin.values.length}`], {
+                    anchorX: 'middle',
+                    anchorY: 'top',
+                    fixed: true,
+                    fontSize: 10,
+                    color: 'grey'
+                });
+
+                // Add to cleanup list
+                points.push(box, median, whiskerLow, whiskerHigh, meanDot, label, countLabel);
             }
 
             board.unsuspendUpdate();
         }
 
-        plotData('Calm');
 
+        plotData("Calm")
+
+        // Attach radio button listeners
         document.querySelectorAll('input[name="trait"]').forEach(input => {
             input.addEventListener('change', () => {
                 plotData(input.value);
             });
         });
     </script>
+
 </body>
 
 </html>
