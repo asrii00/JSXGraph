@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <title>Rotudataa</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+    <style>
+        #tabs button {
+            margin: 5px;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .tab-active {
+            font-weight: bold;
+            background-color: #e0e0e0;
+        }
+
+        #box, #box2, #box3 {
+            border: 1px solid #ccc;
+            margin-top: 10px;
+        }
+
+        #box { width: 1200px; height: 500px; }
+        #box2 { width: 300px; height: 400px; }
+        #box3 { width: 800px; height: 400px; }
+
+        #flex {
+            display: flex;
+            width: 1800px;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            width: 600px;
+            margin: 0px;
+        }
+
+        .controls label {
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="tabs">
+        <button id="tab-sighthound" class="tab-active">Vinttikoirat</button>
+        <button id="tab-whiteshep">Valkoinenpaimenkoira</button>
+        <button id="tab-sheltie">Shetlanninlammaskoira</button>
+    </div>
+
+    <h3 id="title"></h3>
+
+    <div class="controls">
+        <label><input type="radio" name="sex" value="females" checked> Nartut</label>
+        <label><input type="radio" name="sex" value="males"> Urokset</label>
+        <label><input type="radio" name="sex" value="both"> Molemmat</label>
+    </div>
+
+    <div id="box"></div>
+    <div id="box1-caption"></div>
+
+    <div id='flex'>
+        <div id="box2" style="margin-right: 50px;"></div>
+        <div id="box3"></div>
+    </div>
+
+    <div id="flex">
+        <div style="width: 300px;margin-right: 50px;" id="box2-caption"></div>
+        <div style="width: 800px;" id="box3-caption"></div>
+    </div>
+
+    <div id="task"></div>
+
+    <script src="sighthounds_data.js"></script>
+    <script src="white_shep_data.js"></script>
+    <script src="sheltie_data.js"></script>
+    <script src="combined_breed_vis.js"></script>
+
+    <script></script>
+
+</body>
+</html>

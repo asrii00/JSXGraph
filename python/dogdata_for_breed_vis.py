@@ -8,7 +8,7 @@ df = pd.read_excel("data-for-publication_full.xlsx")
 df.columns = df.columns.str.strip()
 
 # === Filter to only selected breed ===
-df = df[df["breed_group"] == "White_Swiss_Shepherd_Dog"]
+df = df[df["breed_group"] == "European_sighthounds"]
 
 df = df[df["Personality_age"] >= 0.75] #only over 9mo
 
@@ -61,7 +61,7 @@ def row_to_js_dict(row):
 dog_data = [row_to_js_dict(row) for _, row in df.iterrows()]
 
 # === Output as JavaScript ===
-with open("white_shep_data.js", "w", encoding="utf-8") as f:
-    f.write(f"const whiteShepsData = {json.dumps(dog_data, indent=2)};\n")
+with open("sighthounds_data.js", "w", encoding="utf-8") as f:
+    f.write(f"const sighthoundsData = {json.dumps(dog_data, indent=2)};\n")
 
 print(f"{len(dog_data)} entries saved")
