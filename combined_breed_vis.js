@@ -1,4 +1,4 @@
-//TODO: don't reload all data every time
+//TODO: fix.
 const board = JXG.JSXGraph.initBoard('box', {
     boundingbox: [-10, 5.5, 100, -0.75],
     axis: true,
@@ -145,19 +145,24 @@ const breeds = {
         box2_caption: "Taulukko 2. Paino jaoteltuna sukupuolen mukaan. <br><br>",
         box3_caption: "Taulukko 3. Shetlanninlammaskoirien elämäntyyli. <br><br>",
         task: `Tehtäviä:<br>
-               1. Kuvaile tyypillistä valkoistapaimenkoiraa. Mainitse ainakin 6 luonteenpiirrettä, jotka ovat tässä rodussa erityisen yleisiä (//vahvoja) tai harvinaisia (//heikkoja).<br>
-               <a href="https://figshare.com/articles/dataset/Salonen_et_al_Reliability_and_Validity_of_a_Dog_Personality_and_Unwanted_Behavior_Survey/14479152/1?file=27715521">Datan lähde</a>`,
+        1. Kuvaile tyypillistä shetlanninlammaskoiraa. Mainitse ainakin 6 luonteenpiirrettä, jotka ovat tässä rodussa erityisen yleisiä (//vahvoja) tai harvinaisia (//heikkoja).<br>
+        2. Onko shelttien luonteenpiirteissä paljon vaihtelua? Minkä luonteenpiirteen suhteen shetlanninlammaskoirat vaikuttavat erityisen yhtenäisiltä?<br>
+        3. Onko narttujen ja urosten välillä eroa? <br>
+        4. Millainen on tyypillisen sheltin "elämäntapa" ulkoilun, harrastusten ja yksinolon määrän osalta?<br>
+        5. Pekka haluaa rauhallisen, hiljaisen ja tottelevaisen koiran, joka ei ole pelokas eikä epävarma. Kannattaako hänen ottaa shetlanninlammaskoira? Miksi/miksi ei?<br>
+        6. Maija haluaa tottelevaisen, oppimishaluisen ja ei-aggressiivisen koiran. Kannattaako hänen ottaa shetlanninlammaskoira? Miksi/miksi ei? <br>
+        7. Jos Maija ottaa shetlanninlammaskoiran, 
+        suosittelisitko hänelle narttu- vai urospentua, vai onko sukupuolella väliä?<br><br>
+
+        <a href="https://figshare.com/articles/dataset/Salonen_et_al_Reliability_and_Validity_of_a_Dog_Personality_and_Unwanted_Behavior_Survey/14479152/1?file=27715521">Datan lähde</a>
+        
+`,
         data: sheltieData,
         weightLabels: { femaleY: -0.5, maleY: -0.5, axisY: 11 }
     }
 };
 
 let currentBreedKey = "whiteshep";
-
-const bins = traits.map(trait => ({
-    trait,
-    values: []
-}));
 
 const boxWidth = 3;
 
@@ -170,6 +175,8 @@ let categoricalCounts = {};
 const weightObjs = [];
 const pieObjs = [];
 
+
+let currentBreedData;
 function quantiles(arr) {
     const sorted = arr.slice().sort((a, b) => a - b);
     const q = p => {
@@ -191,80 +198,12 @@ function quantiles(arr) {
     };
 }
 
-function plotData(data, weightLabelPos) {
-    board.suspendUpdate();
-
-    // reset
-    for (const obj of points) board.removeObject(obj);
-    points = [];
-    for (const bin of bins) {
-        bin.values = [];
-    }
-    femaleWeights = [];
-    maleWeights = [];
-    weights = [];
-    categoricalCounts = {};
-
-    const selectedSex = document.querySelector('input[name="sex"]:checked').value;
-
-    let filteredFemales = data.filter(dog => dog.sex === 'female');
-    for (const dog of filteredFemales) {
-        const val = dog.weight;
-        if (typeof val === 'number') {
-            femaleWeights.push(val);
-        }
-    }
-
-    let filteredMales = data.filter(dog => dog.sex === 'male');
-    for (const dog of filteredMales) {
-        const val = dog.weight;
-        if (typeof val === 'number') {
-            maleWeights.push(val);
-        }
-    }
-
-    weights = [...femaleWeights, ...maleWeights];
-
-    let filteredDogs = data;
-    if (selectedSex === 'females') {
-        filteredDogs = filteredFemales;
-    } else if (selectedSex === 'males') {
-        filteredDogs = filteredMales;
-    }
-
-    for (const dog of filteredDogs) {
-        for (const bin of bins) {
-            const val = dog[bin.trait];
-            if (typeof val === 'number') {
-                bin.values.push(val);
-            }
-        }
-    }
-
-    for (const field of categoricalFields) {
-        categoricalCounts[field] = {};
-    }
-
-    for (const dog of filteredDogs) {
-        for (const field of categoricalFields) {
-            const value = dog[field];
-            if (!value) continue;
-
-            if (!categoricalCounts[field][value]) {
-                categoricalCounts[field][value] = 0;
-            }
-            categoricalCounts[field][value]++;
-        }
-    }
-
-    for (let i = 0; i < bins.length; i++) {
-        const bin = bins[i];
-        const x = i * 6 + 5; // bin center
-        if (bin.values.length < 3) continue;
-
-        const q = quantiles(bin.values);
-        const sum = bin.values.reduce((a, b) => a + b, 0);
-        const mean = sum / bin.values.length;
+function drawBoxes(binnedData) {
+    binnedData.forEach((bin, i) => {
+        const { values } = bin;
+        const q = quantiles(values);
+        const mean = values.reduce((a, b) => a + b, 0) / values.length;
+        const x = i * 6 + 5;
 
         const box = board.create('polygon', [
             [x - boxWidth / 2, q.q1],
@@ -289,20 +228,14 @@ function plotData(data, weightLabelPos) {
             fixed: true
         });
 
-        const whiskerLow = board.create('line', [
-            [x, q.min],
-            [x, q.q1]
-        ], {
+        const whiskerLow = board.create('line', [[x, q.min], [x, q.q1]], {
             strokeColor: 'blue',
             fixed: true,
             straightFirst: false,
             straightLast: false
         });
 
-        const whiskerHigh = board.create('line', [
-            [x, q.q3],
-            [x, q.max]
-        ], {
+        const whiskerHigh = board.create('line', [[x, q.q3], [x, q.max]], {
             strokeColor: 'blue',
             fixed: true,
             straightFirst: false,
@@ -324,16 +257,98 @@ function plotData(data, weightLabelPos) {
             fontSize: 10,
             color: 'grey'
         });
-        points.push(box, median, whiskerLow, whiskerHigh, meanDot);
+
+        points.push(box, median, whiskerLow, whiskerHigh, meanDot, label);
+    });
+
+}
+
+function preProcessBreed(breedData) {
+    let processedData = {};
+    const objFemale = preFilterDogs(breedData, "female");
+    processedData.females = objFemale.binned;
+    const objMale = preFilterDogs(breedData, "male");
+    processedData.males = objMale.binned;
+    const objBoth = preFilterDogs(breedData, "both");
+    processedData.both = objBoth.binned;
+    processedData.weights = objBoth.weights;
+    processedData.categorical = objBoth.categorical;
+    return processedData;
+}
+
+function preFilterDogs(data, selectedSex) {
+    //could be more efficient 
+    let newBins = traits.map(trait => ({
+        trait,
+        values: []
+    }));
+
+    const categoricalCounts = Object.fromEntries(categoricalFields.map(f => [f, {}]));
+    const  filteredDogs = [];
+    data.forEach(dog => {
+        const isFemale = dog.sex === 'female';
+        const isMale = dog.sex === 'male';
+        if (isFemale && typeof dog.weight === 'number') femaleWeights.push(dog.weight);
+        if (isMale && typeof dog.weight === 'number') maleWeights.push(dog.weight);
+        if (selectedSex === "female" && isFemale) filteredDogs.push(dog)
+        else if (selectedSex === "male" && isMale) filteredDogs.push(dog)
+        else if (selectedSex === "both") filteredDogs.push(dog)
+    });
+
+    const weights = { females: femaleWeights, males: maleWeights }
+
+    filteredDogs.forEach(dog => {
+        newBins.forEach(bin => {
+        
+            const val = dog[bin.trait];
+            
+            if (typeof val === 'number') bin["values"].push(val);
+        });
+
+        categoricalFields.forEach(field => {
+            const value = dog[field];
+            if (value) {
+                categoricalCounts[field][value] = (categoricalCounts[field][value] || 0) + 1;
+            }
+        });
+    });
+    return { binned: newBins, categorical: categoricalCounts, weights: weights };
+
+}
+
+function getRightData(selectedSex) {
+
+}
+
+function plotData(data, weightLabelPos) {
+    console.log("plotting data")
+    board.suspendUpdate();
+
+    // reset
+    points.forEach(obj => board.removeObject(obj));
+    points = [];
+
+    const selectedSex = document.querySelector('input[name="sex"]:checked').value;
+
+    let boxData;
+    if (selectedSex === "females"){
+        boxData=data.females;
+    }
+    if (selectedSex === "males"){
+        boxData=data.males;
+    }
+    if (selectedSex === "both"){
+        boxData=data.both;
     }
 
-    plotWeights(weightLabelPos, femaleWeights, maleWeights);
-    drawPies(categoricalCounts);
+    drawBoxes(boxData);
+    //plotWeights(weightLabelPos, data.weights.females, data.weights.males);
+    //drawPies(data.categorical);
+
     board.unsuspendUpdate();
 }
 
-
-////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////
 
 function plotWeights(weightLabelPos, femaleWeights, maleWeights) {
     weightObjs.forEach(obj => board2.removeObject(obj));
@@ -372,7 +387,7 @@ function plotWeights(weightLabelPos, femaleWeights, maleWeights) {
 
 function drawPies(categoricalCounts) {
 
-    pieObjs.forEach(obj => {obj.remove();});
+    pieObjs.forEach(obj => { obj.remove(); });
     pieObjs.length = 0;
 
     const exerciseValues = Object.values(categoricalCounts.daily_exercise);
@@ -409,7 +424,7 @@ function drawPies(categoricalCounts) {
             radius: 5,
             strokeColor: '#000'
         });
-        pieObjs.push(...pie[0]["sectors"],pie[0]["midpoint"], ...pie[0]["sectors"]);
+        pieObjs.push(...pie[0]["sectors"], pie[0]["midpoint"], ...pie[0]["sectors"]);
         const text = board3.create('text', [item.x, -10, item.label], { anchorX: 'middle', fontSize: 14 });
         pieObjs.push(text);
 
@@ -436,32 +451,36 @@ function updateTabStyles(active) {
     document.getElementById(`tab-${active}`).classList.add('tab-active');
 }
 
-function loadBreedPage(breedKey) {
-    const config = breeds[breedKey];
-    currentBreedKey = breedKey;
-    updateTabStyles(breedKey);
+// function loadBreedPage(breedKey) {
+//     const config = breeds[breedKey];
+//     currentBreedKey = breedKey;
+//     updateTabStyles(breedKey);
 
-    document.getElementById("title").innerHTML = config.title;
-    document.getElementById("box1-caption").innerHTML = config.box1_caption;
-    document.getElementById("box2-caption").innerHTML = config.box2_caption;
-    document.getElementById("box3-caption").innerHTML = config.box3_caption;
-    document.getElementById("task").innerHTML = config.task;
+//     document.getElementById("title").innerHTML = config.title;
+//     document.getElementById("box1-caption").innerHTML = config.box1_caption;
+//     document.getElementById("box2-caption").innerHTML = config.box2_caption;
+//     document.getElementById("box3-caption").innerHTML = config.box3_caption;
+//     document.getElementById("task").innerHTML = config.task;
 
-    
-    plotData(config.data, config.weightLabels);
-   
-}
+//     plotData(config.data, config.weightLabels);
+
+// }
 
 document.querySelectorAll('input[name="sex"]').forEach(radio =>
     radio.addEventListener('change', () => {
-        loadBreedPage(currentBreedKey);
+        //plotData(currentBreedData);
     })
 );
 
-document.getElementById("tab-sighthound").addEventListener("click", () => loadBreedPage("sighthound"));
-document.getElementById("tab-whiteshep").addEventListener("click", () => loadBreedPage("whiteshep"));
-document.getElementById("tab-sheltie").addEventListener("click", () => loadBreedPage("sheltie"));
 
-loadBreedPage(currentBreedKey);
+const sheltiesProcessed = preProcessBreed(sheltieData);
+const whiteShepsProcessed = preProcessBreed(whiteShepsData);
+const sighthoundsProcessed = preProcessBreed(sighthoundsData);
+console.log("Done preprocessing")
+plotData(sheltiesProcessed, breeds.sheltie.weightLabels);
+
+document.getElementById("tab-sighthound").addEventListener("click", () => plotData(sighthoundsProcessed, breeds.sighthound.weightLabels));
+document.getElementById("tab-whiteshep").addEventListener("click", () => plotData(whiteShepsProcessed, breeds.whiteshep.weightLabels));
+document.getElementById("tab-sheltie").addEventListener("click", () => plotData(sheltiesProcessed, breeds.sheltie.weightLabels));
 
 
