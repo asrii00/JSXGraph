@@ -204,7 +204,7 @@ const breeds = {
         <a href="https://figshare.com/articles/dataset/Salonen_et_al_Reliability_and_Validity_of_a_Dog_Personality_and_Unwanted_Behavior_Survey/14479152/1?file=27715521">Datan lähde</a>
 `,
         data: sledDogsData,
-        weightLabels: { femaleY: 12.5, maleY: 12.5, axisY: 30 },
+        weightLabels: { femaleY: 12.5, maleY: 12.5, axisY: 35 },
         boundingBox: [-5, 57.5, 15, 10]
     },
     pointer: {
@@ -212,7 +212,7 @@ const breeds = {
         box1_caption: "Taulukko 1. Skaalalla 1-5 arvioidut luonteenpiirteet. Punainen piste kuvaa keskiarvoa. <br><br>",
         box2_caption: "Taulukko 2. Paino jaoteltuna sukupuolen mukaan. <br><br>",
         box3_caption: "Taulukko 3. Pointterien elämäntyyli. <br><br>",
-        task: `Sisällytetyt rodut:  <br>
+        task: `Sisällytetyt rodut: Picardienspanieli, Bourbonnaisinseisoja, Bretoni, Saksanseisoja, Pointteri, Englantinsetteri, Gordoninsetteri, Punavalkoinen irlanninsetteri, Punainen irlanninsetteri, Münsterinseisoja, Vanhatanskankanakoira, Pont-audemerinspanieli, Portugalinseisoja, Spinone, Stabijhoun, Unkarinvizsla, Weimarinseisoja. <br>
 
         Tehtäviä:<br>
         1. Kuvaile tyypillistä pointteria. Mainitse ainakin 6 luonteenpiirrettä, jotka ovat näissä roduissa erityisen yleisiä (//vahvoja) tai harvinaisia (//heikkoja).<br>
@@ -223,6 +223,40 @@ const breeds = {
         data: pointersData,
         weightLabels: { femaleY: 7.5, maleY: 7.5, axisY: 25 },
         boundingBox: [-5, 45, 15, 5]
+    },
+    spitz: {
+        title: "Saksalaisten pystykorvien ja läheisten rotujen luonteenpiirteet (n=220)",
+        box1_caption: "Taulukko 1. Skaalalla 1-5 arvioidut luonteenpiirteet. Punainen piste kuvaa keskiarvoa. <br><br>",
+        box2_caption: "Taulukko 2. Paino jaoteltuna sukupuolen mukaan. <br><br>",
+        box3_caption: "Taulukko 3. Elämäntyyli. <br><br>",
+        task: `Sisällytetyt rodut:  Saksanpystykorvat (kaikki koot), Eurasier, Japaninpystykorva, Italianpystykorva.<br>
+
+        Tehtäviä:<br>
+        1. Kuvaile tyypillistä tämän roturyhmän edustajaa. Mainitse ainakin 6 luonteenpiirrettä, jotka ovat näissä roduissa erityisen yleisiä (//vahvoja) tai harvinaisia (//heikkoja).<br>
+        <br><br>
+
+        <a href="https://figshare.com/articles/dataset/Salonen_et_al_Reliability_and_Validity_of_a_Dog_Personality_and_Unwanted_Behavior_Survey/14479152/1?file=27715521">Datan lähde</a>
+`,
+        data: spitzData,
+        weightLabels: { femaleY: -1, maleY: -1, axisY: 20 },
+        boundingBox: [-5, 42.5, 15, -2]
+    },
+    asian: {
+        title: "Aasialaisten alkuperäisrotujen luonteenpiirteet (n=126)",
+        box1_caption: "Taulukko 1. Skaalalla 1-5 arvioidut luonteenpiirteet. Punainen piste kuvaa keskiarvoa. <br><br>",
+        box2_caption: "Taulukko 2. Paino jaoteltuna sukupuolen mukaan. <br><br>",
+        box3_caption: "Taulukko 3. Elämäntyyli. <br><br>",
+        task: `Sisällytetyt rodut:  Akita, Amerikanakita, Chow Chow, Hokkaidonkoira, Kainkoira, Kishunkoira, Koreanjindonkoira, Shar Pei, Shiba, Shikokunkoira, Tosa <br>
+
+        Tehtäviä:<br>
+        1. Kuvaile tyypillistä tämän roturyhmän edustajaa. Mainitse ainakin 6 luonteenpiirrettä, jotka ovat näissä roduissa erityisen yleisiä (//vahvoja) tai harvinaisia (//heikkoja).<br>
+        <br><br>
+
+        <a href="https://figshare.com/articles/dataset/Salonen_et_al_Reliability_and_Validity_of_a_Dog_Personality_and_Unwanted_Behavior_Survey/14479152/1?file=27715521">Datan lähde</a>
+`,
+        data: asianPrimitivesData,
+        weightLabels: { femaleY: 2.5, maleY: 2.5, axisY: 30 },
+        boundingBox: [-5, 67.5, 15, -2 ]
     },
 };
 
@@ -538,6 +572,8 @@ const whiteShepsProcessed = preProcessBreed(whiteShepsData);
 const sighthoundsProcessed = preProcessBreed(sighthoundsData);
 const sledDogsProcessed = preProcessBreed(sledDogsData);
 const pointersProcessed = preProcessBreed(pointersData);
+const spitzesProcessed = preProcessBreed(spitzData);
+const asianProcessed = preProcessBreed(asianPrimitivesData);
 console.log("Done preprocessing")
 plotData(sheltiesProcessed, "sheltie", true);
 
@@ -546,5 +582,7 @@ document.getElementById("tab-whiteshep").addEventListener("click", () => plotDat
 document.getElementById("tab-sheltie").addEventListener("click", () => plotData(sheltiesProcessed, "sheltie", true));
 document.getElementById("tab-sledDog").addEventListener("click", () => plotData(sledDogsProcessed, "sledDog", true));
 document.getElementById("tab-pointer").addEventListener("click", () => plotData(pointersProcessed, "pointer", true));
+document.getElementById("tab-spitz").addEventListener("click", () => plotData(spitzesProcessed, "spitz", true));
+document.getElementById("tab-asian").addEventListener("click", () => plotData(asianProcessed, "asian", true));
 
 
