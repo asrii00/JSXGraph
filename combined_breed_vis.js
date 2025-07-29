@@ -1,4 +1,3 @@
-//TODO: fix.
 const board = JXG.JSXGraph.initBoard('box', {
     boundingbox: [-10, 5.5, 100, -0.75],
     axis: true,
@@ -90,38 +89,57 @@ const labels = [
     "Oppimishaluinen"
 ];
 
-const exerciseLabels = {
-    "under_1_hour": "Alle tunti",
-    "1-2_hours": "1–2 tuntia",
-    "2-3_hours": "2–3 tuntia",
-    "over_3_hours": "Yli 3 tuntia"
-};
-
-const hobbyHomeLabels = {
-    "never_no_hobby": "Ei koskaan",
-    "infrequent": "Harvoin",
-    "active": "Säännöllisesti"
-};
-
-const hobbyOutLabels = {
-    "never_no_hobby": "Ei koskaan",
-    "infrequent": "Harvoin",
-    "active": "Säännöllisesti"
-};
-
-const aloneTimeLabels = {
-    "under_1_hour": "Alle tunti",
-    "1-3_hours": "1–3 tuntia",
-    "3-6_hours": "3–6 tuntia",
-    "6-8_hours": "6–8 tuntia",
-    "over_8_hours": "Yli 8 tuntia"
-};
-
 const categoricalFields = [
     "daily_exercise",
     "hobby_frequency_home",
     "hobby_frequency_out",
     "alone_time"
+];
+
+const categories = [
+    {
+        key: 'daily_exercise',
+        x: -22.5,
+        label: 'Liikunta (tuntia päivässä)',
+        labelsMap: {
+            "under_1_hour": "Alle tunti",
+            "1-2_hours": "1–2 tuntia",
+            "2-3_hours": "2–3 tuntia",
+            "over_3_hours": "Yli 3 tuntia"
+        }
+    },
+    {
+        key: 'hobby_frequency_home',
+        x: -7.5,
+        label: 'Harrastaminen kotona',
+        labelsMap: {
+            "never_no_hobby": "Ei koskaan",
+            "infrequent": "Harvoin",
+            "active": "Säännöllisesti"
+        }
+    },
+    {
+        key: 'hobby_frequency_out',
+        x: 7.5,
+        label: 'Harrastaminen muualla',
+        labelsMap: {
+            "never_no_hobby": "Ei koskaan",
+            "infrequent": "Harvoin",
+            "active": "Säännöllisesti"
+        }
+    },
+    {
+        key: 'alone_time',
+        x: 22.5,
+        label: 'Yksinolo (tuntia päivässä)',
+        labelsMap: {
+            "under_1_hour": "Alle tunti",
+            "1-3_hours": "1–3 tuntia",
+            "3-6_hours": "3–6 tuntia",
+            "6-8_hours": "6–8 tuntia",
+            "over_8_hours": "Yli 8 tuntia"
+        }
+    }
 ];
 
 const breeds = {
@@ -131,10 +149,10 @@ const breeds = {
         box2_caption: "Taulukko 2. Paino jaoteltuna sukupuolen mukaan. <br><br>",
         box3_caption: "Taulukko 3. Vinttikoirien elämäntyyli. <br><br>",
         task: `Tehtäviä:<br>
-               1. Kuvaile tyypillistä eurooppalaista vinttikoiraa. Mainitse ainakin 6 luonteenpiirrettä, jotka ovat tässä rodussa erityisen yleisiä (//vahvoja) tai harvinaisia (//heikkoja).<br>
+               1. Kuvaile tyypillistä eurooppalaista vinttikoiraa. Mainitse ainakin 6 luonteenpiirrettä, jotka ovat tässä rodussa erityisen yleisiä (//vahvoja) tai harvinaisia (//heikkoja).<br> <br>
                <a href="https://figshare.com/articles/dataset/Salonen_et_al_Reliability_and_Validity_of_a_Dog_Personality_and_Unwanted_Behavior_Survey/14479152/1?file=27715521">Datan lähde</a>`,
         data: sighthoundsData,
-        weightLabels: { femaleY: -1, maleY: -1, axisY: 25 }, 
+        weightLabels: { femaleY: -1, maleY: -1, axisY: 25 },
         boundingBox: [-5, 50, 15, -2],
     },
     whiteshep: {
@@ -143,11 +161,12 @@ const breeds = {
         box2_caption: "Taulukko 2. Paino jaoteltuna sukupuolen mukaan. <br><br>",
         box3_caption: "Taulukko 3. Valkoistenpaimenkoirien elämäntyyli. <br><br>",
         task: `Tehtäviä:<br>
-               1. Kuvaile tyypillistä valkoistapaimenkoiraa. Mainitse ainakin 6 luonteenpiirrettä, jotka ovat tässä rodussa erityisen yleisiä (//vahvoja) tai harvinaisia (//heikkoja).<br>
+               1. Kuvaile tyypillistä valkoistapaimenkoiraa. Mainitse ainakin 6 luonteenpiirrettä, jotka ovat tässä rodussa erityisen yleisiä (//vahvoja) tai harvinaisia (//heikkoja). <br>
+               2. Mikä on valkoistenpaimenkoirien painon vaihteluväli a) narttujen suhteen, b) urosten suhteen? <br> <br>
                <a href="https://figshare.com/articles/dataset/Salonen_et_al_Reliability_and_Validity_of_a_Dog_Personality_and_Unwanted_Behavior_Survey/14479152/1?file=27715521">Datan lähde</a>`,
         data: whiteShepsData,
-        weightLabels: { femaleY: 17.5, maleY: 17.5, axisY: 30 }, 
-        boundingBox:  [-5, 50, 15, 15]
+        weightLabels: { femaleY: 17.5, maleY: 17.5, axisY: 30 },
+        boundingBox: [-5, 50, 15, 15]
     },
     sheltie: {
         title: "Shetlanninlammaskoirien luonteenpiirteet (n=216)",
@@ -167,26 +186,26 @@ const breeds = {
         <a href="https://figshare.com/articles/dataset/Salonen_et_al_Reliability_and_Validity_of_a_Dog_Personality_and_Unwanted_Behavior_Survey/14479152/1?file=27715521">Datan lähde</a>
 `,
         data: sheltieData,
-        weightLabels: { femaleY: -0.5, maleY: -0.5, axisY: 11 }, 
-        boundingBox: [-5, 22, 15, -0.75]
+        weightLabels: { femaleY: -0.5, maleY: -0.5, axisY: 11 },
+        boundingBox: [-5, 22, 15, -1]
     }
 };
 
-
 const boxWidth = 3;
 
-let boxPlotObjs = [];
+//pies
+const radius = 5;
+const labelDistance = 6;
+const pieColors = ['#ff9999', '#66b3ff', '#99ff99', '#ffcc99', '#cc99ff', '#ffb366'];
+
+const boxPlotObjs = [];
 const malePoints = [], femalePoints = [];
 const weightObjs = [];
 const pieObjs = [];
 
-let categoricalCounts = {};
-
-
 let currentBreed = "sheltie";
-
-
 let currentBreedData;
+
 function quantiles(arr) {
     const sorted = arr.slice().sort((a, b) => a - b);
     const q = p => {
@@ -329,16 +348,14 @@ function preFilterDogs(data, selectedSex) {
 }
 
 
-function plotData(data=currentBreedData, chosen=currentBreed, shouldUpdateTab = false) {
-    currentBreed=chosen;
-    currentBreedData=data;
-    console.log("chosen:", chosen)
+function plotData(data = currentBreedData, chosen = currentBreed, shouldUpdateTab = false) {
+    currentBreed = chosen; //stores last selection here; if no breed is given to this function, it's restored from here
+    currentBreedData = data;
 
     board.suspendUpdate();
-
     // reset
     boxPlotObjs.forEach(obj => board.removeObject(obj));
-    boxPlotObjs = [];
+    boxPlotObjs.length = 0;
 
     const selectedSex = document.querySelector('input[name="sex"]:checked').value;
 
@@ -355,17 +372,16 @@ function plotData(data=currentBreedData, chosen=currentBreed, shouldUpdateTab = 
 
     drawBoxes(boxData);
     plotWeights(breeds[chosen].weightLabels, data.weights.females, data.weights.males, breeds[chosen].boundingBox);
-    //drawPies(data.categorical);
+    if (shouldUpdateTab) drawPies(data.categorical);
 
-    if (shouldUpdateTab){
+    if (shouldUpdateTab) {
         updateTab(currentBreed);
     }
 
     board.unsuspendUpdate();
 }
 
-// ////////////////////////////////////////////////////
-
+//////////////////////////////////////////////////////
 
 function plotWeights(weightLabelPos, femaleWeights, maleWeights, boundingBox) {
     let sets = [[femaleWeights, femalePoints, 5], [maleWeights, malePoints, 10]]
@@ -394,8 +410,7 @@ function plotWeights(weightLabelPos, femaleWeights, maleWeights, boundingBox) {
         equalize(...set);
     });
 
-
-    //move
+    //move dots 
     femalePoints.forEach((dot, i) => {
         dot.moveTo([5, femaleWeights[i]]);
     });
@@ -404,7 +419,7 @@ function plotWeights(weightLabelPos, femaleWeights, maleWeights, boundingBox) {
         dot.setAttribute({ color: 'blue', })
     });
 
-    //move
+    //move labels
     femaleWeightLabel.moveTo([5, weightLabelPos.femaleY])
     maleWeightLabel.moveTo([10, weightLabelPos.maleY])
     weightAxisLabel.moveTo([-3, weightLabelPos.axisY])
@@ -416,65 +431,50 @@ function plotWeights(weightLabelPos, femaleWeights, maleWeights, boundingBox) {
 ///////////////////////////////////////////////////////
 
 function drawPies(categoricalCounts) {
-
-    pieObjs.forEach(obj => { obj.remove(); });
+    pieObjs.forEach(obj => obj.remove());
     pieObjs.length = 0;
 
-    const exerciseValues = Object.values(categoricalCounts.daily_exercise);
-    const exerciseKeys = Object.keys(categoricalCounts.daily_exercise);
+    for (const cat of categories) {
+        const values = Object.values(categoricalCounts[cat.key]);
+        const keys = Object.keys(categoricalCounts[cat.key]);
+        const translatedLabels = keys.map(k => cat.labelsMap[k] ?? k);
+        const total = values.reduce((a, b) => a + b, 0);
 
-    const hobbyInValues = Object.values(categoricalCounts.hobby_frequency_home);
-    const hobbyInKeys = Object.keys(categoricalCounts.hobby_frequency_home);
-
-    const hobbyOutValues = Object.values(categoricalCounts.hobby_frequency_out);
-    const hobbyOutKeys = Object.keys(categoricalCounts.hobby_frequency_out);
-
-    const aloneValues = Object.values(categoricalCounts.alone_time);
-    const aloneKeys = Object.keys(categoricalCounts.alone_time);
-
-    // translate
-    const exerciseTranslatedLabels = exerciseKeys.map(k => exerciseLabels[k] ?? k);
-    const hobbyInTranslatedLabels = hobbyInKeys.map(k => hobbyHomeLabels[k] ?? k);
-    const hobbyOutTranslatedLabels = hobbyOutKeys.map(k => hobbyOutLabels[k] ?? k);
-    const aloneTranslatedLabels = aloneKeys.map(k => aloneTimeLabels[k] ?? k);
-
-
-    const xPositions = [
-        { x: -22.5, array: exerciseValues, label: 'Liikunta (tuntia päivässä)', labels: exerciseTranslatedLabels },
-        { x: -7.5, array: hobbyInValues, label: 'Harrastaminen kotona', labels: hobbyInTranslatedLabels },
-        { x: 7.5, array: hobbyOutValues, label: 'Harrastaminen muualla', labels: hobbyOutTranslatedLabels },
-        { x: 22.5, array: aloneValues, label: 'Yksinolo (tuntia päivässä)', labels: aloneTranslatedLabels }
-    ];
-
-    for (const item of xPositions) {
-        const pie = board3.create('chart', [item.array], {
+        const pie = board3.create('chart', [values], {
             chartStyle: 'pie',
-            colors: ['#ff9999', '#66b3ff', '#99ff99', '#ffcc99', '#cc99ff', '#ffb366'],
-            center: [item.x, 0],
-            radius: 5,
+            center: [cat.x, 0],
+            radius: radius,
+            colors: pieColors,
             strokeColor: '#000'
         });
-        pieObjs.push(...pie[0]["sectors"], pie[0]["midpoint"], ...pie[0]["sectors"]);
-        const text = board3.create('text', [item.x, -10, item.label], { anchorX: 'middle', fontSize: 14 });
-        pieObjs.push(text);
+
+        pieObjs.push(...pie[0].sectors, pie[0].midpoint, ...pie[0].points);
+
+        const titleText = board3.create('text', [cat.x, -10, cat.label], {
+            anchorX: 'middle',
+            fontSize: 14
+        });
+        pieObjs.push(titleText);
 
         let angle = 0;
-        const total = item.array.reduce((a, b) => a + b, 0);
+        for (let i = 0; i < values.length; i++) {
+            const portion = values[i] / total;
+            const midAngle = angle + portion * Math.PI;
+            const labelX = cat.x + labelDistance * Math.cos(midAngle);
+            const labelY = labelDistance * Math.sin(midAngle);
 
-        item.array.forEach((value, i) => {
-            const midAngle = angle + (value / total) * Math.PI;
-            const labelX = item.x + 6 * Math.cos(midAngle);
-            const labelY = 6 * Math.sin(midAngle);
-            const text = board3.create('text', [labelX, labelY, item.labels[i]], {
+            const label = board3.create('text', [labelX, labelY, translatedLabels[i]], {
                 anchorX: 'middle',
                 anchorY: 'middle',
                 fontSize: 12
             });
-            pieObjs.push(text);
-            angle += (value / total) * 2 * Math.PI;
-        });
+
+            pieObjs.push(label);
+            angle += portion * 2 * Math.PI;
+        }
     }
 }
+
 
 function updateTabStyles(active) {
     document.querySelectorAll('#tabs button').forEach(btn => btn.classList.remove('tab-active'));
@@ -490,7 +490,6 @@ function updateTab(breedKey) {
     document.getElementById("box2-caption").innerHTML = config.box2_caption;
     document.getElementById("box3-caption").innerHTML = config.box3_caption;
     document.getElementById("task").innerHTML = config.task;
-
 }
 
 document.querySelectorAll('input[name="sex"]').forEach(radio =>
@@ -499,13 +498,11 @@ document.querySelectorAll('input[name="sex"]').forEach(radio =>
     })
 );
 
-
 const sheltiesProcessed = preProcessBreed(sheltieData);
 const whiteShepsProcessed = preProcessBreed(whiteShepsData);
 const sighthoundsProcessed = preProcessBreed(sighthoundsData);
 console.log("Done preprocessing")
 plotData(sheltiesProcessed, "sheltie", true);
-currentBreedData=sheltiesProcessed;
 
 document.getElementById("tab-sighthound").addEventListener("click", () => plotData(sighthoundsProcessed, "sighthound", true));
 document.getElementById("tab-whiteshep").addEventListener("click", () => plotData(whiteShepsProcessed, "whiteshep", true));
