@@ -21,7 +21,7 @@ board.create('text', [-5, 3, 'Arvio'], { fontSize: 14, anchorX: 'middle', anchor
 board.create('text', [45, -0.5, 'Luonteenpiirre'], { anchorX: 'middle', anchorY: 'middle' });
 
 const board2 = JXG.JSXGraph.initBoard('box2', {
-    boundingbox: [-5, 50, 15, 15],
+    boundingbox: [-5, 50, 15, -5],
     axis: true,
     withLabel: false,
     showNavigation: false,
@@ -36,6 +36,14 @@ const board2 = JXG.JSXGraph.initBoard('box2', {
             }
         }
     }
+});
+
+const femaleWeightLabel = board2.create('text', [5, 0, 'Nartut'], { anchorX: 'middle', anchorY: 'middle' });
+const maleWeightLabel = board2.create('text', [10, 0, 'Urokset'], { anchorX: 'middle', anchorY: 'middle' });
+const weightAxisLabel = board2.create('text', [-3, 25, 'Paino (kg)'], {
+    anchorX: 'middle',
+    anchorY: 'middle',
+    cssStyle: 'transform: rotate(-90deg); transform-origin: center center;',
 });
 
 const board3 = JXG.JSXGraph.initBoard('box3', {
@@ -126,7 +134,8 @@ const breeds = {
                1. Kuvaile tyypillistä eurooppalaista vinttikoiraa. Mainitse ainakin 6 luonteenpiirrettä, jotka ovat tässä rodussa erityisen yleisiä (//vahvoja) tai harvinaisia (//heikkoja).<br>
                <a href="https://figshare.com/articles/dataset/Salonen_et_al_Reliability_and_Validity_of_a_Dog_Personality_and_Unwanted_Behavior_Survey/14479152/1?file=27715521">Datan lähde</a>`,
         data: sighthoundsData,
-        weightLabels: { femaleY: -1, maleY: -1, axisY: 25 }
+        weightLabels: { femaleY: -1, maleY: -1, axisY: 25 }, 
+        boundingBox: [-5, 50, 15, -2],
     },
     whiteshep: {
         title: "Valkoistenpaimenkoirien luonteenpiirteet (n=97)",
@@ -137,7 +146,8 @@ const breeds = {
                1. Kuvaile tyypillistä valkoistapaimenkoiraa. Mainitse ainakin 6 luonteenpiirrettä, jotka ovat tässä rodussa erityisen yleisiä (//vahvoja) tai harvinaisia (//heikkoja).<br>
                <a href="https://figshare.com/articles/dataset/Salonen_et_al_Reliability_and_Validity_of_a_Dog_Personality_and_Unwanted_Behavior_Survey/14479152/1?file=27715521">Datan lähde</a>`,
         data: whiteShepsData,
-        weightLabels: { femaleY: 17.5, maleY: 17.5, axisY: 30 }
+        weightLabels: { femaleY: 17.5, maleY: 17.5, axisY: 30 }, 
+        boundingBox:  [-5, 50, 15, 15]
     },
     sheltie: {
         title: "Shetlanninlammaskoirien luonteenpiirteet (n=216)",
@@ -155,10 +165,10 @@ const breeds = {
         suosittelisitko hänelle narttu- vai urospentua, vai onko sukupuolella väliä?<br><br>
 
         <a href="https://figshare.com/articles/dataset/Salonen_et_al_Reliability_and_Validity_of_a_Dog_Personality_and_Unwanted_Behavior_Survey/14479152/1?file=27715521">Datan lähde</a>
-        
 `,
         data: sheltieData,
-        weightLabels: { femaleY: -0.5, maleY: -0.5, axisY: 11 }
+        weightLabels: { femaleY: -0.5, maleY: -0.5, axisY: 11 }, 
+        boundingBox: [-5, 22, 15, -0.75]
     }
 };
 
@@ -168,8 +178,7 @@ const boxWidth = 3;
 
 let points = [];
 let weights = [];
-let femaleWeights = [];
-let maleWeights = [];
+
 let categoricalCounts = {};
 
 const weightObjs = [];
@@ -282,9 +291,11 @@ function preFilterDogs(data, selectedSex) {
         trait,
         values: []
     }));
+    let femaleWeights = [];
+    let maleWeights = [];
 
     const categoricalCounts = Object.fromEntries(categoricalFields.map(f => [f, {}]));
-    const  filteredDogs = [];
+    const filteredDogs = [];
     data.forEach(dog => {
         const isFemale = dog.sex === 'female';
         const isMale = dog.sex === 'male';
@@ -299,9 +310,9 @@ function preFilterDogs(data, selectedSex) {
 
     filteredDogs.forEach(dog => {
         newBins.forEach(bin => {
-        
+
             const val = dog[bin.trait];
-            
+
             if (typeof val === 'number') bin["values"].push(val);
         });
 
@@ -320,8 +331,12 @@ function getRightData(selectedSex) {
 
 }
 
-function plotData(data, weightLabelPos) {
-    console.log("plotting data")
+let currentBreed = "sheltie";
+function plotData(data=currentBreedData, chosen=currentBreed) {
+    currentBreed=chosen;
+    currentBreedData=data;
+    console.log("chosen:", chosen)
+
     board.suspendUpdate();
 
     // reset
@@ -331,55 +346,70 @@ function plotData(data, weightLabelPos) {
     const selectedSex = document.querySelector('input[name="sex"]:checked').value;
 
     let boxData;
-    if (selectedSex === "females"){
-        boxData=data.females;
+    if (selectedSex === "females") {
+        boxData = data.females;
     }
-    if (selectedSex === "males"){
-        boxData=data.males;
+    if (selectedSex === "males") {
+        boxData = data.males;
     }
-    if (selectedSex === "both"){
-        boxData=data.both;
+    if (selectedSex === "both") {
+        boxData = data.both;
     }
 
     drawBoxes(boxData);
-    //plotWeights(weightLabelPos, data.weights.females, data.weights.males);
+    plotWeights(breeds[chosen].weightLabels, data.weights.females, data.weights.males, breeds[chosen].boundingBox);
     //drawPies(data.categorical);
 
     board.unsuspendUpdate();
 }
 
 // ////////////////////////////////////////////////////
+const malePoints = [], femalePoints = [];
 
-function plotWeights(weightLabelPos, femaleWeights, maleWeights) {
-    weightObjs.forEach(obj => board2.removeObject(obj));
+function plotWeights(weightLabelPos, femaleWeights, maleWeights, boundingBox) {
+    console.log("Plot weights")
+    let sets = [[femaleWeights, femalePoints, 5], [maleWeights, malePoints, 10]]
 
-    femaleWeights.forEach(value => {
-        const dot = board2.create('point', [5, value], {
-            size: 2,
-            color: 'red',
-            fixed: true,
-            name: '',
-            showInfobox: false,
-            opacity: 0.3
-        });
-        weightObjs.push(dot);
+    function equalize(weights, points, x) {
+        const difference = weights.length - points.length;
+        if (difference > 0) { // not enough points
+            for (let i = 0; i < difference; i++) {
+                const dot = board2.create('point', [x, 10], {
+                    size: 2,
+                    color: 'red',
+                    fixed: true,
+                    name: '',
+                    showInfobox: false,
+                    opacity: 0.3
+                });
+                points.push(dot);
+            }
+        } else if (difference < 0) {
+            for (let i = 0; i > difference; i--) {
+                board2.removeObject(points.pop());
+            }
+        }
+    }
+    sets.forEach(set => {
+        equalize(...set);
     });
-    maleWeights.forEach(value => {
-        const dot = board2.create('point', [10, value], {
-            size: 2,
-            color: 'blue',
-            fixed: true,
-            name: '',
-            showInfobox: false,
-            opacity: 0.3
-        });
-        weightObjs.push(dot);
+
+
+    //move
+    femalePoints.forEach((dot, i) => {
+        dot.moveTo([5, femaleWeights[i]]);
+    });
+    malePoints.forEach((dot, i) => {
+        dot.moveTo([10, maleWeights[i]]);
+        dot.setAttribute({ color: 'blue', })
     });
 
-    weightObjs.push(board2.create('text', [5, weightLabelPos.femaleY, 'Nartut'], { anchorX: 'middle', anchorY: 'middle' }));
-    weightObjs.push(board2.create('text', [10, weightLabelPos.maleY, 'Urokset'], { anchorX: 'middle', anchorY: 'middle' }));
-    weightObjs.push(board2.create('text', [-3, weightLabelPos.axisY, 'Paino (kg)'], { anchorX: 'middle', anchorY: 'middle', rotate: -90 }));
+    //move
+    femaleWeightLabel.moveTo([5, weightLabelPos.femaleY])
+    maleWeightLabel.moveTo([10, weightLabelPos.maleY])
+    weightAxisLabel.moveTo([-3, weightLabelPos.axisY])
 
+    board2.setBoundingBox(boundingBox);
 }
 
 
@@ -468,7 +498,7 @@ function updateTabStyles(active) {
 
 document.querySelectorAll('input[name="sex"]').forEach(radio =>
     radio.addEventListener('change', () => {
-        //plotData(currentBreedData);
+        plotData();
     })
 );
 
@@ -477,10 +507,11 @@ const sheltiesProcessed = preProcessBreed(sheltieData);
 const whiteShepsProcessed = preProcessBreed(whiteShepsData);
 const sighthoundsProcessed = preProcessBreed(sighthoundsData);
 console.log("Done preprocessing")
-plotData(sheltiesProcessed, breeds.sheltie.weightLabels);
+plotData(sheltiesProcessed, "sheltie");
+currentBreedData=sheltiesProcessed;
 
-document.getElementById("tab-sighthound").addEventListener("click", () => plotData(sighthoundsProcessed, breeds.sighthound.weightLabels));
-document.getElementById("tab-whiteshep").addEventListener("click", () => plotData(whiteShepsProcessed, breeds.whiteshep.weightLabels));
-document.getElementById("tab-sheltie").addEventListener("click", () => plotData(sheltiesProcessed, breeds.sheltie.weightLabels));
+document.getElementById("tab-sighthound").addEventListener("click", () => plotData(sighthoundsProcessed, "sighthound"));
+document.getElementById("tab-whiteshep").addEventListener("click", () => plotData(whiteShepsProcessed, "whiteshep"));
+document.getElementById("tab-sheltie").addEventListener("click", () => plotData(sheltiesProcessed, "sheltie"));
 
 
