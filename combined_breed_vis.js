@@ -172,17 +172,18 @@ const breeds = {
     }
 };
 
-let currentBreedKey = "whiteshep";
 
 const boxWidth = 3;
 
-let points = [];
-let weights = [];
+let boxPlotObjs = [];
+const malePoints = [], femalePoints = [];
+const weightObjs = [];
+const pieObjs = [];
 
 let categoricalCounts = {};
 
-const weightObjs = [];
-const pieObjs = [];
+
+let currentBreed = "sheltie";
 
 
 let currentBreedData;
@@ -267,7 +268,7 @@ function drawBoxes(binnedData) {
             color: 'grey'
         });
 
-        points.push(box, median, whiskerLow, whiskerHigh, meanDot, label);
+        boxPlotObjs.push(box, median, whiskerLow, whiskerHigh, meanDot, label);
     });
 
 }
@@ -327,12 +328,8 @@ function preFilterDogs(data, selectedSex) {
 
 }
 
-function getRightData(selectedSex) {
 
-}
-
-let currentBreed = "sheltie";
-function plotData(data=currentBreedData, chosen=currentBreed) {
+function plotData(data=currentBreedData, chosen=currentBreed, shouldUpdateTab = false) {
     currentBreed=chosen;
     currentBreedData=data;
     console.log("chosen:", chosen)
@@ -340,8 +337,8 @@ function plotData(data=currentBreedData, chosen=currentBreed) {
     board.suspendUpdate();
 
     // reset
-    points.forEach(obj => board.removeObject(obj));
-    points = [];
+    boxPlotObjs.forEach(obj => board.removeObject(obj));
+    boxPlotObjs = [];
 
     const selectedSex = document.querySelector('input[name="sex"]:checked').value;
 
@@ -360,19 +357,22 @@ function plotData(data=currentBreedData, chosen=currentBreed) {
     plotWeights(breeds[chosen].weightLabels, data.weights.females, data.weights.males, breeds[chosen].boundingBox);
     //drawPies(data.categorical);
 
+    if (shouldUpdateTab){
+        updateTab(currentBreed);
+    }
+
     board.unsuspendUpdate();
 }
 
 // ////////////////////////////////////////////////////
-const malePoints = [], femalePoints = [];
+
 
 function plotWeights(weightLabelPos, femaleWeights, maleWeights, boundingBox) {
-    console.log("Plot weights")
     let sets = [[femaleWeights, femalePoints, 5], [maleWeights, malePoints, 10]]
 
-    function equalize(weights, points, x) {
-        const difference = weights.length - points.length;
-        if (difference > 0) { // not enough points
+    function equalize(weights, boxPlotObjs, x) {
+        const difference = weights.length - boxPlotObjs.length;
+        if (difference > 0) { // not enough boxPlotObjs
             for (let i = 0; i < difference; i++) {
                 const dot = board2.create('point', [x, 10], {
                     size: 2,
@@ -382,11 +382,11 @@ function plotWeights(weightLabelPos, femaleWeights, maleWeights, boundingBox) {
                     showInfobox: false,
                     opacity: 0.3
                 });
-                points.push(dot);
+                boxPlotObjs.push(dot);
             }
         } else if (difference < 0) {
             for (let i = 0; i > difference; i--) {
-                board2.removeObject(points.pop());
+                board2.removeObject(boxPlotObjs.pop());
             }
         }
     }
@@ -481,20 +481,17 @@ function updateTabStyles(active) {
     document.getElementById(`tab-${active}`).classList.add('tab-active');
 }
 
-// function loadBreedPage(breedKey) {
-//     const config = breeds[breedKey];
-//     currentBreedKey = breedKey;
-//     updateTabStyles(breedKey);
+function updateTab(breedKey) {
+    const config = breeds[breedKey];
+    updateTabStyles(breedKey);
 
-//     document.getElementById("title").innerHTML = config.title;
-//     document.getElementById("box1-caption").innerHTML = config.box1_caption;
-//     document.getElementById("box2-caption").innerHTML = config.box2_caption;
-//     document.getElementById("box3-caption").innerHTML = config.box3_caption;
-//     document.getElementById("task").innerHTML = config.task;
+    document.getElementById("title").innerHTML = config.title;
+    document.getElementById("box1-caption").innerHTML = config.box1_caption;
+    document.getElementById("box2-caption").innerHTML = config.box2_caption;
+    document.getElementById("box3-caption").innerHTML = config.box3_caption;
+    document.getElementById("task").innerHTML = config.task;
 
-//     plotData(config.data, config.weightLabels);
-
-// }
+}
 
 document.querySelectorAll('input[name="sex"]').forEach(radio =>
     radio.addEventListener('change', () => {
@@ -507,11 +504,11 @@ const sheltiesProcessed = preProcessBreed(sheltieData);
 const whiteShepsProcessed = preProcessBreed(whiteShepsData);
 const sighthoundsProcessed = preProcessBreed(sighthoundsData);
 console.log("Done preprocessing")
-plotData(sheltiesProcessed, "sheltie");
+plotData(sheltiesProcessed, "sheltie", true);
 currentBreedData=sheltiesProcessed;
 
-document.getElementById("tab-sighthound").addEventListener("click", () => plotData(sighthoundsProcessed, "sighthound"));
-document.getElementById("tab-whiteshep").addEventListener("click", () => plotData(whiteShepsProcessed, "whiteshep"));
-document.getElementById("tab-sheltie").addEventListener("click", () => plotData(sheltiesProcessed, "sheltie"));
+document.getElementById("tab-sighthound").addEventListener("click", () => plotData(sighthoundsProcessed, "sighthound", true));
+document.getElementById("tab-whiteshep").addEventListener("click", () => plotData(whiteShepsProcessed, "whiteshep", true));
+document.getElementById("tab-sheltie").addEventListener("click", () => plotData(sheltiesProcessed, "sheltie", true));
 
 
