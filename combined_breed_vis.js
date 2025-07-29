@@ -148,12 +148,13 @@ const breeds = {
         box1_caption: "Taulukko 1. Skaalalla 1-5 arvioidut luonteenpiirteet. Punainen piste kuvaa keskiarvoa. <br><br>",
         box2_caption: "Taulukko 2. Paino jaoteltuna sukupuolen mukaan. <br><br>",
         box3_caption: "Taulukko 3. Vinttikoirien elämäntyyli. <br><br>",
-        task: `Tehtäviä:<br>
-               1. Kuvaile tyypillistä eurooppalaista vinttikoiraa. Mainitse ainakin 6 luonteenpiirrettä, jotka ovat tässä rodussa erityisen yleisiä (//vahvoja) tai harvinaisia (//heikkoja).<br> <br>
+        task: `Sisällytetyt rodut: Venäjänvinttikoira, Englanninvinttikoira, Unkarinvinttikoira, Irlanninsusikoira, Skotlanninhirvikoira, Italianvinttikoira, Puolanvinttikoira, Silkkivinttikoira, Espanjanvinttikoira.<br>
+        Tehtäviä:<br>
+               1. Kuvaile tyypillistä eurooppalaista vinttikoiraa. Mainitse ainakin 6 luonteenpiirrettä, jotka ovat näissä roduissa erityisen yleisiä (//vahvoja) tai harvinaisia (//heikkoja).<br> <br>
                <a href="https://figshare.com/articles/dataset/Salonen_et_al_Reliability_and_Validity_of_a_Dog_Personality_and_Unwanted_Behavior_Survey/14479152/1?file=27715521">Datan lähde</a>`,
         data: sighthoundsData,
-        weightLabels: { femaleY: -1, maleY: -1, axisY: 25 },
-        boundingBox: [-5, 50, 15, -2],
+        weightLabels: { femaleY: -2.5, maleY: -2.5, axisY: 25 },
+        boundingBox: [-5, 50, 15, -5],
     },
     whiteshep: {
         title: "Valkoistenpaimenkoirien luonteenpiirteet (n=97)",
@@ -186,9 +187,43 @@ const breeds = {
         <a href="https://figshare.com/articles/dataset/Salonen_et_al_Reliability_and_Validity_of_a_Dog_Personality_and_Unwanted_Behavior_Survey/14479152/1?file=27715521">Datan lähde</a>
 `,
         data: sheltieData,
-        weightLabels: { femaleY: -0.5, maleY: -0.5, axisY: 11 },
-        boundingBox: [-5, 22, 15, -1]
-    }
+        weightLabels: { femaleY: -1, maleY: -1, axisY: 11 },
+        boundingBox: [-5, 22, 15, -2]
+    },
+    sledDog: {
+        title: "Rekikoirarotujen luonteenpiirteet (n=75)",
+        box1_caption: "Taulukko 1. Skaalalla 1-5 arvioidut luonteenpiirteet. Punainen piste kuvaa keskiarvoa. <br><br>",
+        box2_caption: "Taulukko 2. Paino jaoteltuna sukupuolen mukaan. <br><br>",
+        box3_caption: "Taulukko 3. Rekikoirien elämäntyyli. <br><br>",
+        task: `Sisällytetyt rodut: Alaskanhusky, Alaskanmalamuutti, Gröönlanninkoira, Samojedi, Siperianhusky, Jakutianlaika, Tšukotkanrekikoira. <br>
+
+        Tehtäviä:<br>
+        1. Kuvaile tyypillistä rekikoiraa. Mainitse ainakin 6 luonteenpiirrettä, jotka ovat näissä roduissa erityisen yleisiä (//vahvoja) tai harvinaisia (//heikkoja).<br>
+        <br><br>
+
+        <a href="https://figshare.com/articles/dataset/Salonen_et_al_Reliability_and_Validity_of_a_Dog_Personality_and_Unwanted_Behavior_Survey/14479152/1?file=27715521">Datan lähde</a>
+`,
+        data: sledDogsData,
+        weightLabels: { femaleY: 12.5, maleY: 12.5, axisY: 30 },
+        boundingBox: [-5, 57.5, 15, 10]
+    },
+    pointer: {
+        title: "Pointterirotujen luonteenpiirteet (n=178)",
+        box1_caption: "Taulukko 1. Skaalalla 1-5 arvioidut luonteenpiirteet. Punainen piste kuvaa keskiarvoa. <br><br>",
+        box2_caption: "Taulukko 2. Paino jaoteltuna sukupuolen mukaan. <br><br>",
+        box3_caption: "Taulukko 3. Pointterien elämäntyyli. <br><br>",
+        task: `Sisällytetyt rodut:  <br>
+
+        Tehtäviä:<br>
+        1. Kuvaile tyypillistä pointteria. Mainitse ainakin 6 luonteenpiirrettä, jotka ovat näissä roduissa erityisen yleisiä (//vahvoja) tai harvinaisia (//heikkoja).<br>
+        <br><br>
+
+        <a href="https://figshare.com/articles/dataset/Salonen_et_al_Reliability_and_Validity_of_a_Dog_Personality_and_Unwanted_Behavior_Survey/14479152/1?file=27715521">Datan lähde</a>
+`,
+        data: pointersData,
+        weightLabels: { femaleY: 7.5, maleY: 7.5, axisY: 25 },
+        boundingBox: [-5, 45, 15, 5]
+    },
 };
 
 const boxWidth = 3;
@@ -501,11 +536,15 @@ document.querySelectorAll('input[name="sex"]').forEach(radio =>
 const sheltiesProcessed = preProcessBreed(sheltieData);
 const whiteShepsProcessed = preProcessBreed(whiteShepsData);
 const sighthoundsProcessed = preProcessBreed(sighthoundsData);
+const sledDogsProcessed = preProcessBreed(sledDogsData);
+const pointersProcessed = preProcessBreed(pointersData);
 console.log("Done preprocessing")
 plotData(sheltiesProcessed, "sheltie", true);
 
 document.getElementById("tab-sighthound").addEventListener("click", () => plotData(sighthoundsProcessed, "sighthound", true));
 document.getElementById("tab-whiteshep").addEventListener("click", () => plotData(whiteShepsProcessed, "whiteshep", true));
 document.getElementById("tab-sheltie").addEventListener("click", () => plotData(sheltiesProcessed, "sheltie", true));
+document.getElementById("tab-sledDog").addEventListener("click", () => plotData(sledDogsProcessed, "sledDog", true));
+document.getElementById("tab-pointer").addEventListener("click", () => plotData(pointersProcessed, "pointer", true));
 
 
