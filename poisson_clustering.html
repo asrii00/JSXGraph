@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>JSXGraph Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+    <style>
+        #box {
+            width: 600px;
+            height: 600px;
+        }
+
+        div {
+            margin: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="box" class="jxgbox"></div>
+    <!-- <button onclick="logCoordsAsArray()"> log</button> -->
+    <div><button onclick="moveToArrayPos(fake1)"> A </button>
+        <button onclick="moveToArrayPos(random1)"> B </button>
+        <button onclick="moveToArrayPos(fake2)"> C </button>
+        <button onclick="moveToArrayPos(fake3)"> D </button>
+        <button onclick="moveToArrayPos(random2)"> E </button>
+        <button onclick="moveToArrayPos(random3)"> F </button>
+        <button onclick="moveToArrayPos(random4)"> G </button>
+        <button onclick="randomizePos()"> Random </button>
+    </div>
+    <div id="text"></div>
+
+    <script>
+        const board = JXG.JSXGraph.initBoard('box', {
+            boundingbox: [-11, 11, 11, -11],
+            axis: true,
+            showNavigation: false,
+            showCopyright: false
+        });
+
+        const fake1 = [[0.9, -0.548], [-1.447, 1.447], [-1.095, 4.38], [-1.916, 9.621], [-7.94, -0.274], [-4.028, -8.996], [-9.387, -3.012], [7.001, 0.352], [9.113, -2.66], [6.571, 1.995], [7.822, -6.219], [8.096, 9.582], [1.564, -8.996], [-1.956, -2.034], [-8.057, -6.18], [-4.341, 1.76], [-7.979, 5.632], [-3.129, 5.397], [2.699, 5.593], [2.112, 2.073]];
+        const fake2 = [[0.665, 1.721], [-5.71, -3.129], [7.118, -3.833], [-0.9, -0.86], [6.923, -1.956], [-8.683, 2.66], [-9.426, 9.23], [-7.04, -2.581], [9.426, -8.096], [4.772, -9.269], [-3.95, -8.096], [-3.403, -2.503], [0.743, 1.173], [-3.833, 1.447], [8.252, 7.548], [6.766, 0], [7.04, 1.369], [6.101, 4.028], [-4.498, 5.358], [-3.989, 6.649]];
+        const fake3 = [[2.151, -9.817], [-7.666, -9.308], [-7.196, 5.084], [-3.559, -2.503], [4.107, -6.14], [7.118, -7.9], [6.688, -2.503], [8.096, 1.76], [7.94, 7.431], [-8.565, -2.542], [-6.336, 8.604], [-4.302, 1.799], [-5.554, -6.297], [1.643, 7.666], [3.168, -3.989], [-0.352, -3.364], [-4.028, 2.112], [0.078, -0.978], [-4.732, 3.207], [4.732, 4.576]];
+        const random1 = [[2.748, -2.136], [-1.121, 6.393], [-5.187, 6.916], [4.113, -6.164], [-0.126, -7.302], [-3.019, 6.27], [-1.917, 3.73], [4.334, -1.829], [-0.392, -0.528], [0.336, -3.857], [0.415, 6.165], [5.372, -5.553], [-4.449, -1.263], [0.175, -0.796], [-4.471, 7.921], [3.975, -7.77], [-3.397, 5.159], [-0.289, 8.29], [0.896, 5.914], [-0.004, 7.477]];
+        const random2 = [[5.52, -6.407], [2.842, -7.725], [-0.785, -4.693], [6.802, -3.448], [2.644, -1.818], [4.569, 8.25], [2.233, 9.93], [-1.289, -7.325], [4.702, -6.361], [-0.96, 3.034], [4.655, -3.689], [-5.289, 6.571], [9.663, 5.25], [8.683, 0.094], [4.303, 1.632], [-0.865, -7.427], [2.591, -3.434], [-3.612, -2.023], [8.928, -2.31], [-7.823, -4.632]];
+        const random3 = [[-1.507, 8.829], [-5.989, -6.596], [5.608, 5.853], [1.948, -9.851], [-0.895, 7.602], [-2.43, -4.136], [-1.22, 4.074], [9.366, -8.155], [-8.939, -7.616], [5.577, 3.931], [0.39, -1.22], [-4.945, 0.836], [5.836, 6.265], [3.115, -4.609], [1.094, -3.45], [-5.339, -5.055], [1.95, -3.051], [-7.742, -6.676], [6.364, -5.585], [-0.286, 0.767]];
+        const random4 = [[0.962, -5.205], [1.364, -1.653], [-9.856, -5.75], [8.349, 5.772], [-6.103, 9.113], [-5.868, 0.617], [-0.849, 9.189], [1.719, 5.058], [7.459, -2.24], [2.299, -3.338], [3.147, 4.74], [9.767, -8.395], [-0.094, 2.093], [-6.019, 5.375], [1.331, -8.293], [5.374, -4.854], [6.281, 1.503], [-1.48, 4.018], [7.245, 0.243], [-9.519, -0.193]];
+
+
+        const NUMPOINTS = 20;
+        const points = [];
+
+        board.create("polygon", [[-10, 10], [10, 10], [10, -10], [-10, -10]], { vertices: { visible: false }, fillColor: "white", layer: 1 })
+
+        for (let i = 0; i < NUMPOINTS; i++) {
+            points.push(board.create("point", [0, 0]));
+        }
+
+        function randomNumBetween(min, max) {
+            return Number(Math.random() * (max - min)) + min;
+        }
+        function randomizePos() {
+            points.forEach(p => {
+                const x = randomNumBetween(-10, 10);
+                const y = randomNumBetween(-10, 10);
+                p.moveTo([x, y]);
+            })
+        }
+
+        function moveToArrayPos(arr) {
+            arr.forEach((pair, index) => { //could add safety check
+                points[index].moveTo([pair[0], pair[1]]);
+            })
+        }
+
+        //randomizePos();
+
+        function logCoordsAsArray() {
+            const coords = points.map(p => {
+                const [x, y] = p.coords.usrCoords.slice(1);
+                return [Number(x.toFixed(3)), Number(y.toFixed(3))];
+            });
+            console.log(JSON.stringify(coords));
+        }
+
+    </script>
+
+</body>
+
+</html>
