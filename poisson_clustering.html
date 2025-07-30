@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>JSXGraph Example</title>
+    <title>Satunnaispisteet</title>
     <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
     <style>
@@ -13,6 +13,7 @@
 
         div {
             margin: 8px;
+            width: 1000px;
         }
 
         button {
@@ -39,8 +40,9 @@
 
 <body>
 
+    <h3> Aito satunnaisuus pisteiden sijainnissa vs. ihmisen tekemä jakauma</h3>
     <div id="box" class="jxgbox"></div>
-    <!-- <button onclick="logCoordsAsArray()"> log</button> -->
+  <!-- <button onclick="logCoordsAsArray()"> log</button>  -->
     <div>
         <button onclick="moveToArrayPos(fake1, this)">A</button>
         <button onclick="moveToArrayPos(random1, this)">B</button>
@@ -51,7 +53,8 @@
         <button onclick="moveToArrayPos(random4, this)">G</button>
         <button onclick="randomizePos(this)">Random</button>
     </div>
-    <div id="CRStest"></div>
+    <div id="CRStest"> Havaittu keskimääräinen etäisyys lähimpään naapuriin: <br>
+Odotettu keskimääräinen etäisyys lähimpään naapuriin, jos satunnainen: 1.41</div>
     <div id="text"></div>
     <button id="revealbtn" onclick="reveal()"> Näytä vastaukset </button>
 
@@ -67,28 +70,46 @@
             showCopyright: false
         });
 
-        const text1 = 'Tehtävä: Pystytkö arvaamaan, mitkä pistejakaumista A-G ovat satunnaisgeneroituja (aidosti satunnaisia) ja mitkä ihmisen sijoittelemia? Kiinnitä huomiota esimerkiksi näihin asioihin: <br> - pisteiden jakautuminen koordinaatiston eri neljänneksiin <br> - pisteiden ryhmittyminen ryppäiksi <br> - useampien pisteiden muodostamat linjat ja kaaret. <br>'
-        const answerText = 'A: Ihmisen tekemä, B: satunnainen, C: ihmisen tekemä, D: ihmisen tekemä, E-G: satunnainen. '
-        const hintText = ''
+        const text1 = `<br> Tehtävä: Pystytkö arvaamaan, mitkä pistejakaumista A-G ovat satunnaisgeneroituja (aidosti satunnaisia) ja mitkä ihmisen sijoittelemia? 
+        Kiinnitä huomiota esimerkiksi näihin asioihin: 
+        <br> - pisteiden jakautuminen koordinaatiston eri neljänneksiin 
+        <br> - pisteiden ryhmittyminen ryppäiksi 
+        <br> - pisteiden keskimääräinen etäisyys lähimpään naapuriin 
+        <br> - useampien pisteiden muodostamat linjat ja kaaret. <br>
+        a) Kirjoita arvauksesi kunkin jakauman suhteen (Ihmisen tekemä/satunnainen). <br>
+        b) Mistä pistejakauman ominaisuuksista voit päätellä, onko jakauma todennäköisesti aidosti satunnainen tai todennäköisesti ihmisen tekemä? `
+        const answerText = `A: Ihmisen tekemä, B: satunnainen, C: ihmisen tekemä, D: ihmisen tekemä, E-G: satunnainen. <br>
+        Ihmiset ovat yleensä huonoja luomaan aitoa satunnaisuutta ilman minkäänlaista rakenteellisuutta. Tyypillisiä ominaisuuksia ihmisen tekemässä muka satunnaisessa jakaumassa ovat esimerkiksi:<br>
+        - vain pieni määrä toisiaan huomattavan lähellä olevia pistepareja tai -ryppäitä<br>
+        - säännölliset etäisyydet pisteiden välillä <br>
+        - vähän tyhjiä tiloja ilman pisteitä <br>
+        - pisteiden luonnottoman tasainen jakautuminen neljännesten tai puoliskojen välillä <br>
+        - keskuspainotteisuus ja koordinaattialueen reunojen välttäminen. <br>
+        Sen sijaan aidosti satunnainen jakauma sisältää usein ryppäitä, tyhjiä tiloja, epätasaisuutta eri alueiden välillä ja aivan reunoilla olevia pisteitä.<br> <br>
+        Ihmisillä voi olla taipumusta muodostaa pisteiden sijoittelussa kaaria ja kuvioita. Toisaalta ihmisillä on tapana nähdä kuvioita, rantuja, ryppäitä tai muuta "logiikkaa" 
+        myös täysin satunnaisessa datassa ja luulla niiden olevan ei-satunnaisia tai jotenkin merkityksellisiä, vaikka pelkkä aito satunnaisuus tuottaa usein näitä piirteitä.`
+        
 
-        const fake1 = [[0.9, -0.548], [-1.447, 1.447], [-1.095, 4.38], [-1.916, 9.621], [-7.94, -0.274], [-4.028, -8.996], [-9.387, -3.012], [7.001, 0.352], [9.113, -2.66], [6.571, 1.995], [7.822, -6.219], [8.096, 9.582], [1.564, -8.996], [-1.956, -2.034], [-8.057, -6.18], [-4.341, 1.76], [-7.979, 5.632], [-3.129, 5.397], [2.699, 5.593], [2.112, 2.073]];
-        const fake2 = [[0.665, 1.721], [-5.71, -3.129], [7.118, -3.833], [-0.9, -0.86], [6.923, -1.956], [-8.683, 2.66], [-9.426, 9.23], [-7.04, -2.581], [9.426, -8.096], [4.772, -9.269], [-3.95, -8.096], [-3.403, -2.503], [0.743, 1.173], [-3.833, 1.447], [8.252, 7.548], [6.766, 0], [7.04, 1.369], [6.101, 4.028], [-4.498, 5.358], [-3.989, 6.649]];
-        const fake3 = [[2.151, -9.817], [-7.666, -9.308], [-7.196, 5.084], [-3.559, -2.503], [4.107, -6.14], [7.118, -7.9], [6.688, -2.503], [8.096, 1.76], [7.94, 7.431], [-8.565, -2.542], [-6.336, 8.604], [-4.302, 1.799], [-5.554, -6.297], [1.643, 7.666], [3.168, -3.989], [-0.352, -3.364], [-4.028, 2.112], [0.078, -0.978], [-4.732, 3.207], [4.732, 4.576]];
-        const random1 = [[2.748, -2.136], [-1.121, 6.393], [-5.187, 6.916], [4.113, -6.164], [-0.126, -7.302], [-3.019, 6.27], [-1.917, 3.73], [4.334, -1.829], [-0.392, -0.528], [0.336, -3.857], [0.415, 6.165], [5.372, -5.553], [-4.449, -1.263], [0.175, -0.796], [-4.471, 7.921], [3.975, -7.77], [-3.397, 5.159], [-0.289, 8.29], [0.896, 5.914], [-0.004, 7.477]];
-        const random2 = [[5.52, -6.407], [2.842, -7.725], [-0.785, -4.693], [6.802, -3.448], [2.644, -1.818], [4.569, 8.25], [2.233, 9.93], [-1.289, -7.325], [4.702, -6.361], [-0.96, 3.034], [4.655, -3.689], [-5.289, 6.571], [9.663, 5.25], [8.683, 0.094], [4.303, 1.632], [-0.865, -7.427], [2.591, -3.434], [-3.612, -2.023], [8.928, -2.31], [-7.823, -4.632]];
-        const random3 = [[-1.507, 8.829], [-5.989, -6.596], [5.608, 5.853], [1.948, -9.851], [-0.895, 7.602], [-2.43, -4.136], [-1.22, 4.074], [9.366, -8.155], [-8.939, -7.616], [5.577, 3.931], [0.39, -1.22], [-4.945, 0.836], [5.836, 6.265], [3.115, -4.609], [1.094, -3.45], [-5.339, -5.055], [1.95, -3.051], [-7.742, -6.676], [6.364, -5.585], [-0.286, 0.767]];
-        const random4 = [[0.962, -5.205], [1.364, -1.653], [-9.856, -5.75], [8.349, 5.772], [-6.103, 9.113], [-5.868, 0.617], [-0.849, 9.189], [1.719, 5.058], [7.459, -2.24], [2.299, -3.338], [3.147, 4.74], [9.767, -8.395], [-0.094, 2.093], [-6.019, 5.375], [1.331, -8.293], [5.374, -4.854], [6.281, 1.503], [-1.48, 4.018], [7.245, 0.243], [-9.519, -0.193]];
+        const fake1 = [[-8.008,6.424],[9.387,9.68],[7.216,0.557],[-4.664,2.464],[3.52,-9.709],[-2.053,-8.301],[-5.984,-5.808],[3.549,2.024],[5.661,-5.456],[5.485,4.429],[0.44,-3.901],[-7.069,7.216],[0.704,-4.928],[8.565,-4.869],[-7.157,-2.141],[-5.661,5.925],[7.069,-8.683],[-4.312,-7.04],[8.067,8.331],[0.059,8.624],[-0.147,2.728],[2.141,-0.352],[1.877,-2.963],[5.133,-2.816],[-4.723,6.013],[-2.64,7.187],[2.552,6.776],[6.131,2.963],[3.491,-5.603],[8.008,-1.32],[-8.624,-7.861],[-8.976,-9.885],[-9.621,4.899],[5.896,-9.533],[8.419,-7.275],[-2.787,-6.336],[7.187,6.365],[3.197,7.832],[8.448,4.048],[-6.453,8.829],[-1.496,-1.027],[2.787,-6.395],[-2.493,-5.075],[-7.099,-4.048],[-2.611,1.701],[-7.069,1.232],[2.112,3.285],[6.013,7.891],[-2.933,5.192],[-4.488,5.163]];
+        const random2 = [[5.236,-6.263],[4.612,-7.334],[2.285,6.804],[4.404,-0.433],[-9.202,-2.74],[-7.738,-0.952],[-5.507,3.055],[8.747,-0.388],[-6.114,-4.052],[-6.974,-3.601],[8.062,-2.837],[0.787,6.65],[-5.14,-4.015],[4.485,-0.759],[-6.811,-3.122],[-9.467,-3.861],[-0.004,9.772],[4.398,5.463],[8.087,9.777],[-0.816,0.651],[-3.889,7.648],[-4.159,-8.252],[1.425,6.561],[-3.586,-2.695],[-4.381,8.372],[9.125,9.785],[-2.369,-2.746],[-4.29,-8.161],[-4.148,4.375],[2.299,-9.645],[-9.463,-0.985],[-7.279,-9.159],[-7.85,-2.381],[-6.516,9.732],[4.619,5.133],[4.529,3.606],[-8.163,-3.972],[9.615,6.595],[-6.323,4.405],[8.296,6.255],[4.287,5.246],[-2.923,5.344],[-2.855,-4.302],[-9.499,-5.854],[-8.634,5.506],[0.368,-2.44],[1.166,4.092],[3.64,-5.605],[-0.948,-8.422],[3.044,7.695]];
+        const random3 = [[3.888,-9.263],[-4.883,9.03],[-0.019,-7.222],[-8.597,-4.489],[1.679,2.517],[-8.627,-0.578],[8.395,7.927],[2.82,-3.479],[7.514,4.336],[-4.352,-9.271],[-6.358,2.894],[8.861,4.188],[5.502,-4.741],[5.827,-3.484],[-1.729,-4.739],[2.566,2.75],[5.474,-6.774],[-6.814,-0.361],[2.89,8.394],[-2.829,9.503],[8.586,4.691],[-2.637,5.212],[1.122,-1.24],[8.804,0.12],[3.649,-7.751],[-4.484,2.998],[8.969,-2.689],[-5.797,4.016],[8.112,9.707],[-7.279,7.678],[3.789,-3.586],[-0.218,3.033],[-6.439,-9.548],[-6.691,-4.075],[-3.104,5.516],[8.41,8.483],[0.864,-5.082],[-9.036,6.443],[-2.873,9.662],[1.22,2.721],[-3.084,-1.626],[1.442,-4.361],[0.575,3.511],[-7.692,4.358],[-8.579,9.144],[-3.599,-0.344],[-1.724,-4.764],[5.908,-1.159],[-4.31,9.903],[-2.494,-5.324]];
+        const random1 = [[9.364,-6.158],[-6.334,5.21],[-3.172,-4.6],[-6.626,-5.665],[-7.88,-8.794],[-1.576,-0.932],[-9.66,-8.001],[5.078,-3.051],[9.464,-9.879],[-9.904,8.645],[-0.667,-6.088],[9.205,1.487],[5.494,0.715],[-0.473,7.114],[1.088,-8.682],[6.276,9.611],[-6.808,7.831],[-5.538,-8.698],[-0.177,9.655],[0.198,1.517],[-2.62,9.607],[-3.241,-4.813],[8.812,-5.865],[-2.726,-2.143],[-2.528,-4.597],[9.393,-1.814],[-6.302,-5.316],[-7.154,-5.612],[7.061,-6.128],[-7.53,-1.497],[-8.812,1.327],[-4.325,-4.486],[-2.426,-9.096],[2.519,-1.748],[8.199,-0.36],[8.074,2.872],[1.627,-9.79],[5.497,-5.948],[-0.328,-3.183],[-8.112,-9.649],[-2.504,-7.109],[5.372,-9.666],[1.034,-5.809],[-6.638,-5.151],[2.777,-2.944],[-8.377,-8.72],[-1.542,7.533],[3.657,-3.607],[-1.936,4.93],[-6.689,-7.752]];
+        const fake2 = [[-9.592,1.995],[-9.651,3.315],[-1.085,4.429],[1.291,-8.536],[-2.581,-7.803],[-4.077,-1.173],[4.371,-6.835],[-6.101,4.019],[7.392,5.837],[0.733,7.715],[7.539,3.285],[2.787,5.691],[4.987,4.019],[0.176,5.427],[-7.861,2.464],[2.845,-2.787],[4.312,-1.115],[0.117,-0.557],[-2.2,0.323],[4.459,5.368],[-8.595,9.181],[-7.685,-6.365],[-1.907,-9.035],[7.685,9.152],[5.456,8.771],[-3.813,5.573],[7.656,-4.253],[7.891,1.437],[5.309,-8.888],[-8.301,-2.64],[-5.339,8.947],[1.643,6.16],[-2.376,3.843],[1.613,0.704],[-2.64,-0.909],[4.811,9.211],[9.035,-8.8],[7.069,-4.723],[4.576,-3.197],[1.731,-4.811],[-3.373,-9.68],[-7.803,-5.72],[-5.133,-4.4],[-0.997,0.939],[-6.219,3.931],[-7.539,6.219],[-3.051,6.923],[6.659,4.664],[3.373,3.491],[5.133,2.405]];
+        const fake3 = [[-9.299,9.739],[-4.869,-7.069],[3.872,-2.963],[4.019,-0.88],[2.669,4.253],[-0.469,1.672],[0.323,0.235],[3.256,1.819],[-4.048,0.499],[-2.112,-9.152],[5.368,-9.856],[5.133,9.035],[7.275,-2.552],[-2.435,-1.643],[3.197,0.88],[-5.456,8.301],[-5.485,3.461],[6.101,2.699],[4.869,-6.747],[-2.64,-6.629],[-5.339,6.277],[4.253,5.368],[-1.995,8.712],[-0.616,-2.317],[4.664,3.608],[3.491,-4.869],[-3.139,-5.075],[2.112,-8.301],[-7.392,-8.331],[-8.331,-3.285],[-1.848,-7.451],[4.576,-7.04],[7.803,-5.075],[-2.845,6.893],[-5.368,-6.131],[8.771,4.283],[-7.011,3.579],[8.712,-9.24],[4.429,0],[8.712,8.477],[8.155,7.304],[-7.773,7.099],[-5.984,-4.048],[-2.464,0.675],[-5.691,-0.029],[1.613,7.304],[0.235,2.757],[-0.352,5.397],[-0.763,-3.109],[0.909,-3.901]];
+        const random4 = [[-0.086,7.356],[-5.951,2.218],[7.817,6.973],[9.672,-8.62],[-8.658,4.26],[1.459,6.019],[-0.718,9.096],[0.765,-3.338],[5.123,-7.869],[-3.761,-3.781],[-3.12,-1.324],[8.018,-7.022],[7.428,3.148],[8.924,-9.35],[8.77,-6.87],[-9.415,7.917],[0.539,4.334],[3.323,3.803],[-6.037,3.598],[1.84,6.41],[-5.454,4.62],[-4.903,-7.922],[-8.6,1.263],[-8.296,-9.376],[8.231,-4.215],[5.297,4.563],[-1.079,2.131],[-4.033,9.844],[2.147,0.957],[-8.722,3.492],[-5.403,-5.596],[-6.061,-4.729],[-2.418,1.926],[2.353,-7.315],[-8.014,-9.596],[-0.584,2.707],[-5.498,-2.551],[-3.659,-2.347],[6.927,-2.999],[-6.878,1.983],[-4.595,1.682],[5.006,2.892],[-9.337,-3.148],[-2.2,4.577],[9.011,-3.691],[9.513,-4.029],[5.062,6.577],[-6.542,-8.568],[3.204,-9.83],[0.44,4.61]];
 
-        const NUMPOINTS = 20;
+        const NUMPOINTS = 50;
         const points = [];
         const lines = [];
+
+        let isRevealed = false;
 
         document.getElementById("text").innerHTML = text1;
 
         board.create("polygon", [[-10, 10], [10, 10], [10, -10], [-10, -10]], { vertices: { visible: false }, fillColor: "white", layer: 1 })
 
         for (let i = 0; i < NUMPOINTS; i++) {
-            points.push(board.create("point", [0, 0]));
+            points.push(board.create("point", [0, 0], {name: '', fixed: true}));
         }
 
         function randomNumBetween(min, max) {
@@ -122,8 +143,6 @@
             highlightButton(btn);
         }
 
-        let isRevealed = false;
-
         function reveal() {
             const answerDiv = document.getElementById("answers");
             const btn = document.getElementById("revealbtn");
@@ -142,11 +161,9 @@
             const observed = meanNearestNeighborDistance(lines);
             const expected = expectedCSRDistance(400, points.length);
 
-            const str = "Observed mean distance: " + observed.toFixed(2)+", Expected under CSR: "+ expected.toFixed(2);
+            const str = "Havaittu keskimääräinen etäisyys lähimpään naapuriin: " + observed.toFixed(2)+" <br> Odotettu keskimääräinen etäisyys lähimpään naapuriin, jos satunnainen: "+ expected.toFixed(2);
             document.getElementById("CRStest").innerHTML = str;
         }
-
-        moveToArrayPos(random1);
 
         function meanNearestNeighborDistance(lines) {
             let total = 0;
