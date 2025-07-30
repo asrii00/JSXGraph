@@ -14,6 +14,26 @@
         div {
             margin: 8px;
         }
+
+        button {
+            padding: 5px 10px;
+            margin-right: 5px;
+            cursor: pointer;
+            border: 1px solid #999;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #ddd;
+        }
+
+        button.active {
+            background-color: #aac;
+            color: white;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -21,24 +41,35 @@
 
     <div id="box" class="jxgbox"></div>
     <!-- <button onclick="logCoordsAsArray()"> log</button> -->
-    <div><button onclick="moveToArrayPos(fake1)"> A </button>
-        <button onclick="moveToArrayPos(random1)"> B </button>
-        <button onclick="moveToArrayPos(fake2)"> C </button>
-        <button onclick="moveToArrayPos(fake3)"> D </button>
-        <button onclick="moveToArrayPos(random2)"> E </button>
-        <button onclick="moveToArrayPos(random3)"> F </button>
-        <button onclick="moveToArrayPos(random4)"> G </button>
-        <button onclick="randomizePos()"> Random </button>
+    <div>
+        <button onclick="moveToArrayPos(fake1, this)">A</button>
+        <button onclick="moveToArrayPos(random1, this)">B</button>
+        <button onclick="moveToArrayPos(fake2, this)">C</button>
+        <button onclick="moveToArrayPos(fake3, this)">D</button>
+        <button onclick="moveToArrayPos(random2, this)">E</button>
+        <button onclick="moveToArrayPos(random3, this)">F</button>
+        <button onclick="moveToArrayPos(random4, this)">G</button>
+        <button onclick="randomizePos(this)">Random</button>
     </div>
+    <div id="CRStest"></div>
     <div id="text"></div>
+    <button id="revealbtn" onclick="reveal()"> Näytä vastaukset </button>
+
+    <div id="answers"> <br>
+    </div>
 
     <script>
+        //TODO: add more points and regenerate position arrays
         const board = JXG.JSXGraph.initBoard('box', {
             boundingbox: [-11, 11, 11, -11],
             axis: true,
             showNavigation: false,
             showCopyright: false
         });
+
+        const text1 = 'Tehtävä: Pystytkö arvaamaan, mitkä pistejakaumista A-G ovat satunnaisgeneroituja (aidosti satunnaisia) ja mitkä ihmisen sijoittelemia? Kiinnitä huomiota esimerkiksi näihin asioihin: <br> - pisteiden jakautuminen koordinaatiston eri neljänneksiin <br> - pisteiden ryhmittyminen ryppäiksi <br> - useampien pisteiden muodostamat linjat ja kaaret. <br>'
+        const answerText = 'A: Ihmisen tekemä, B: satunnainen, C: ihmisen tekemä, D: ihmisen tekemä, E-G: satunnainen. '
+        const hintText = ''
 
         const fake1 = [[0.9, -0.548], [-1.447, 1.447], [-1.095, 4.38], [-1.916, 9.621], [-7.94, -0.274], [-4.028, -8.996], [-9.387, -3.012], [7.001, 0.352], [9.113, -2.66], [6.571, 1.995], [7.822, -6.219], [8.096, 9.582], [1.564, -8.996], [-1.956, -2.034], [-8.057, -6.18], [-4.341, 1.76], [-7.979, 5.632], [-3.129, 5.397], [2.699, 5.593], [2.112, 2.073]];
         const fake2 = [[0.665, 1.721], [-5.71, -3.129], [7.118, -3.833], [-0.9, -0.86], [6.923, -1.956], [-8.683, 2.66], [-9.426, 9.23], [-7.04, -2.581], [9.426, -8.096], [4.772, -9.269], [-3.95, -8.096], [-3.403, -2.503], [0.743, 1.173], [-3.833, 1.447], [8.252, 7.548], [6.766, 0], [7.04, 1.369], [6.101, 4.028], [-4.498, 5.358], [-3.989, 6.649]];
@@ -48,9 +79,11 @@
         const random3 = [[-1.507, 8.829], [-5.989, -6.596], [5.608, 5.853], [1.948, -9.851], [-0.895, 7.602], [-2.43, -4.136], [-1.22, 4.074], [9.366, -8.155], [-8.939, -7.616], [5.577, 3.931], [0.39, -1.22], [-4.945, 0.836], [5.836, 6.265], [3.115, -4.609], [1.094, -3.45], [-5.339, -5.055], [1.95, -3.051], [-7.742, -6.676], [6.364, -5.585], [-0.286, 0.767]];
         const random4 = [[0.962, -5.205], [1.364, -1.653], [-9.856, -5.75], [8.349, 5.772], [-6.103, 9.113], [-5.868, 0.617], [-0.849, 9.189], [1.719, 5.058], [7.459, -2.24], [2.299, -3.338], [3.147, 4.74], [9.767, -8.395], [-0.094, 2.093], [-6.019, 5.375], [1.331, -8.293], [5.374, -4.854], [6.281, 1.503], [-1.48, 4.018], [7.245, 0.243], [-9.519, -0.193]];
 
-
         const NUMPOINTS = 20;
         const points = [];
+        const lines = [];
+
+        document.getElementById("text").innerHTML = text1;
 
         board.create("polygon", [[-10, 10], [10, 10], [10, -10], [-10, -10]], { vertices: { visible: false }, fillColor: "white", layer: 1 })
 
@@ -61,29 +94,115 @@
         function randomNumBetween(min, max) {
             return Number(Math.random() * (max - min)) + min;
         }
-        function randomizePos() {
+
+        function highlightButton(btn) {
+            const allButtons = document.querySelectorAll('button');
+            allButtons.forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+
+        }
+        function randomizePos(btn) {
             points.forEach(p => {
                 const x = randomNumBetween(-10, 10);
                 const y = randomNumBetween(-10, 10);
                 p.moveTo([x, y]);
-            })
+            });
+            connectClosestNeighbors();
+            printResult();
+            highlightButton(btn);
+
         }
 
-        function moveToArrayPos(arr) {
+        function moveToArrayPos(arr, btn) {
             arr.forEach((pair, index) => { //could add safety check
                 points[index].moveTo([pair[0], pair[1]]);
             })
+            connectClosestNeighbors();
+            printResult();
+            highlightButton(btn);
         }
 
-        //randomizePos();
+        let isRevealed = false;
 
-        function logCoordsAsArray() {
-            const coords = points.map(p => {
-                const [x, y] = p.coords.usrCoords.slice(1);
-                return [Number(x.toFixed(3)), Number(y.toFixed(3))];
+        function reveal() {
+            const answerDiv = document.getElementById("answers");
+            const btn = document.getElementById("revealbtn");
+
+            isRevealed = !isRevealed;
+            if (isRevealed) {
+                answerDiv.innerHTML = answerText;
+                btn.innerText = "Piilota vastaukset";
+            } else {
+                answerDiv.innerHTML = "";
+                btn.innerText = "Näytä vastaukset";
+            }
+        }
+
+        function printResult() {
+            const observed = meanNearestNeighborDistance(lines);
+            const expected = expectedCSRDistance(400, points.length);
+
+            const str = "Observed mean distance: " + observed.toFixed(2)+", Expected under CSR: "+ expected.toFixed(2);
+            document.getElementById("CRStest").innerHTML = str;
+        }
+
+        moveToArrayPos(random1);
+
+        function meanNearestNeighborDistance(lines) {
+            let total = 0;
+            lines.forEach(line => {
+                const dx = line.point1.X() - line.point2.X();
+                const dy = line.point1.Y() - line.point2.Y();
+                total += Math.sqrt(dx * dx + dy * dy);
             });
-            console.log(JSON.stringify(coords));
+            return total / lines.length;
         }
+
+        function expectedCSRDistance(area, n) {
+            return 0.5 * Math.sqrt(area / n);
+        }
+   
+
+        function connectClosestNeighbors() {
+            lines.forEach(line => { board.removeObject(line) });
+            lines.length = 0;
+
+            for (let i = 0; i < points.length; i++) {
+                let minDistance = Infinity;
+                let closestIndex = -1;
+
+                for (let j = 0; j < points.length; j++) {
+                    if (i === j) continue;
+
+                    const dx = points[i].X() - points[j].X();
+                    const dy = points[i].Y() - points[j].Y();
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < minDistance) {
+                        minDistance = dist;
+                        closestIndex = j;
+                    }
+                }
+
+                if (closestIndex !== -1) {
+                    const line = board.create('line', [points[i], points[closestIndex]], {
+                        straightFirst: false,
+                        straightLast: false,
+                        strokeColor: '#888',
+                        strokeWidth: 1
+                    });
+                    lines.push(line);
+                }
+            }
+        }
+
+        // function logCoordsAsArray() {
+        //     const coords = points.map(p => {
+        //         const [x, y] = p.coords.usrCoords.slice(1);
+        //         return [Number(x.toFixed(3)), Number(y.toFixed(3))];
+        //     });
+        //     console.log(JSON.stringify(coords));
+        // }
 
     </script>
 
