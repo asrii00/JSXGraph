@@ -40,10 +40,8 @@
 
         const gridSize = 20;
         const cellSize = 0.5;
-        const baseDeathProbability = 0.05;
-        const baseOffspringProbability = 0.4;
 
-        const startX = 9.5; //square x = 10
+        const startX = 9.5; 
         const startY = 10.5;
 
         let individuals = [];
@@ -78,7 +76,6 @@
         for (let x = 0; x <= gridSize; x += cellSize) {
             const xline = board.create('line', [[0 - 0.5 * cellSize, x - 0.5 * cellSize], [gridSize - 0.5 * cellSize, x - 0.5 * cellSize]], { straightFirst: false, straightLast: false, strokeWidth: 1, color: 'grey' })
             const yline = board.create('line', [[x - 0.5 * cellSize, 0 - 0.5 * cellSize], [x - 0.5 * cellSize, gridSize - 0.5 * cellSize]], { straightFirst: false, straightLast: false, strokeWidth: 1, color: 'grey' })
-
         }
 
 
@@ -144,8 +141,6 @@
             console.log("killing ind", ind)
             board.removeObject(ind);
             individuals.splice(i)
-
-
         }
 
         function reproduce(ind) {
@@ -170,21 +165,16 @@
         function checkDeaths() {
             individuals.forEach((ind, index)=> {
                 if (ind.stepsSinceFood >= 10) {
-                    ind.setAttribute({color: 'black'});
                     kill(ind, index);
-                    board.update();
-                    
-                
                 }
                 else if (ind.stepsSinceFood >= 7) {
                     ind.setAttribute({color: 'darkgreen'});
-                
                 }
                 else if (ind.stepsSinceFood < 7){
                     ind.setAttribute({color: aliveColor});
                 }
-                
-            })
+            });
+            board.update();
         }
 
 
