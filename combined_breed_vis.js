@@ -1,3 +1,5 @@
+
+//TODO: refactor to separate files
 const board = JXG.JSXGraph.initBoard('box', {
     boundingbox: [-10, 5.5, 100, -0.75],
     axis: true,
