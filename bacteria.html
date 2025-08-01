@@ -100,8 +100,29 @@
             return rand;
         }
 
+        function valueToHexColor(value) {
+            // Clamp value between 0 and 1
+            value = Math.max(0, Math.min(1, value));
+
+            let r, g, b = 0;
+
+            if (value < 0.5) {
+                r = 255;
+                g = Math.round(510 * value);  // from 0 to 255
+            } else {
+                r = Math.round(510 * (1 - value));  // from 255 to 0
+                g = 255;
+            }
+
+            // Helper to convert to two-digit hex
+            const toHex = c => c.toString(16).padStart(2, '0');
+
+            return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+        }
+
+
+
         function createIndividual(x, y, parentMult, starter = true) {
-            console.log(parentMult)
             const key = `${x},${y}`;
             if (!occupied.has(key)) {
                 occupied.add(key);
@@ -111,12 +132,11 @@
                 individual.stepsSinceFood = 0;
                 individual.speedMult = Number(parentMult);
                 if (!starter && Math.random() < mutationChance) {
-                    console.log("Mutation")
                     individual.speedMult *= getMutatedSpeedMult();
                     individual.speedMult = Math.min(individual.speedMult, 1);
                 }
                 const str = individual.speedMult.toFixed(2);
-                individual.setAttribute({ name: str })
+                individual.setAttribute({ name: str, color: valueToHexColor(individual.speedMult) })
                 individuals.push(individual);
             }
             board.update();
@@ -196,9 +216,9 @@
                 if (ind.stepsSinceFood >= 40) {
                     toKill.push(index);
                 } else if (ind.stepsSinceFood >= 32) {
-                    ind.setAttribute({ color: 'brown', opacity: 0.4 });
+                    ind.setAttribute({ opacity: 0.4 });
                 } else {
-                    ind.setAttribute({ color: aliveColor, opacity: 1 });
+                    ind.setAttribute({ opacity: 1 });
                 }
             });
 
