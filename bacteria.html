@@ -23,6 +23,7 @@
     <div class="flex">
         <button onClick="step()"> Step </button>
         <button onClick="tenStep()"> 10 steps </button>
+        <button onClick="add50food()"> Lisää 50 ravintopistettä </button>
         <button onClick="reset()"> Reset </button>
     </div>
 
@@ -41,7 +42,7 @@
         const gridSize = 20;
         const cellSize = 0.5;
 
-        const startX = 9.5; 
+        const startX = 9.5;
         const startY = 10.5;
 
         let individuals = [];
@@ -57,7 +58,7 @@
 
         const aliveColor = "#68C93E";
         const deadFromDrought = "#6D5F3E";
-        
+
 
         //const s0 = board.create('slider', [[21, 5], [25, 5], [0, 0.33, 1]], { name: 'Altitude preference' });
 
@@ -137,10 +138,20 @@
             return posObject;
         }
 
-        function kill(ind, i) {
-            console.log("killing ind", ind)
+        function kill(ind, index) {
+            if (ind.dead) return;
+
+            ind.dead = true;
             board.removeObject(ind);
-            individuals.splice(i)
+            individuals.splice(index, 1);
+
+            // remove lines if any
+            for (let i = lines.length - 1; i >= 0; i--) {
+                if (lines[i].point1 === ind || lines[i].point2 === ind) {
+                    board.removeObject(lines[i]);
+                    lines.splice(i, 1);
+                }
+            }
         }
 
         function reproduce(ind) {
@@ -163,18 +174,22 @@
             })
         }
         function checkDeaths() {
-            individuals.forEach((ind, index)=> {
+            const toKill = [];
+
+            individuals.forEach((ind, index) => {
                 if (ind.stepsSinceFood >= 10) {
-                    kill(ind, index);
-                }
-                else if (ind.stepsSinceFood >= 7) {
-                    ind.setAttribute({color: 'darkgreen'});
-                }
-                else if (ind.stepsSinceFood < 7){
-                    ind.setAttribute({color: aliveColor});
+                    toKill.push(index);
+                } else if (ind.stepsSinceFood >= 7) {
+                    ind.setAttribute({ color: 'brown', opacity: 0.4 });
+                } else {
+                    ind.setAttribute({ color: aliveColor, opacity: 1 });
                 }
             });
-            board.update();
+
+            // remove in reverse order to avoid index issues
+            toKill.reverse().forEach(index => {
+                kill(individuals[index], index);
+            });
         }
 
 
@@ -195,7 +210,6 @@
             lines.length = 0;
 
             for (let i = 0; i < individuals.length; i++) {
-                //if (ind.dead) return;
                 let minDistance = Infinity;
                 let closestIndex = -1;
 
@@ -237,7 +251,7 @@
                     } else {
                         ind.moveTo([food.X(), food.Y()]);
                         ind.bitsEaten++;
-                        ind.stepsSinceFood=0;
+                        ind.stepsSinceFood = 0;
                         board.removeObject(food);
                         foodBits.splice(closestIndex, 1);
                     }
@@ -251,30 +265,48 @@
             return new Promise(resolve => setTimeout(resolve, ms));
         }
 
-        async function tenStep() {
-            for (let i = 0; i < 10; i++) {
-                step();
-                if (droughtActive) {
-                    await sleep(1000);
-                }
-                await sleep(100); // Delay 100ms between steps
+        function add50food() {
+            if (foodBits.length > 30) return;
+            for (let i = 0; i < 50; i++) {
+                const randX = getRandomBetween(0.5, 19.5);
+                const randY = getRandomBetween(0.5, 19.5);
+                createFood(randX, randY);
             }
+        }
 
+        let autoStepping = false;
+        async function tenStep() {
+            if (!autoStepping) {
+                autoStepping = true;
+
+                for (let i = 0; i < 10; i++) {
+                    step();
+                    await sleep(100); // Delay 100ms between steps
+                }
+                autoStepping = false;
+            }
         }
 
 
         function reset() {
             hasStarted = false;
             stepCounter = 0;
-            droughtActive = false;
+            autoStepping = false;
 
             board.suspendUpdate();
 
             individuals.forEach(obj => board.removeObject(obj));
-            occupied.clear();
+            foodBits.forEach(obj => board.removeObject(obj));
+            lines.forEach(obj => board.removeObject(obj));
+
             individuals.length = 0;
+            foodBits.length = 0;
+            lines.length = 0;
+            occupied.clear();
+            occupiedFood.clear();
 
             createIndividual(startX, startY);
+
             board.unsuspendUpdate();
         }
 
