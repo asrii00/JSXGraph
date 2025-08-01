@@ -24,6 +24,8 @@
         <button onClick="step()"> Step </button>
         <button onClick="hundredStep()"> 100 steps </button>
         <button onClick="add50food()"> Lisää 50 ravintopistettä </button>
+        <button onClick="autorun()"> Automaattinen eteneminen </button>
+        <button onClick="stopAutorun()"> Pysäytä automaattinen eteneminen </button>
         <button onClick="reset()"> Reset </button>
     </div>
 
@@ -39,10 +41,10 @@
         });
 
         const gridSize = 20;
-        const cellSize = 0.5;
+        const cellSize = 1;
 
-        const mutationChance = 0.33;
-        const maxFood = 100;
+        let mutationChance = 0.33;
+        const maxFood = 125;
 
         const startX = 9.5;
         const startY = 10.5;
@@ -56,44 +58,46 @@
 
         let hasStarted = false;
         let stepCounter = 0;
+        let speedAverage = 0.25;
+
+        let autoRunning = false;
+        let autoStepping = false;
 
         const aliveColor = "#68C93E";
-        const deadFromDrought = "#6D5F3E";
 
-
-        //const s0 = board.create('slider', [[21, 5], [25, 5], [0, 0.33, 1]], { name: 'Altitude preference' });
+        const s1 = board.create('slider', [[21, 16], [25, 16], [0, 0.33, 1]], { name: 'Mutaation todennäköisyys' });
 
         const stepLabel = board.create('text', [21, 19.5, function () {
             return 'Current timestep: ' + stepCounter;
         }], {
             anchorX: 'left',
             anchorY: 'top',
-            fontSize: 20,
+            fontSize: 16,
+            fixed: true,
+            highlight: false,
+            cssStyle: `background-color: rgba(111, 163, 230, 0.3); padding: 4px; border-radius: 4px;`
+        });
+        const averageSpeedLabel = board.create('text', [21, 18, function () {
+            return 'Keskimääräinen nopeus: ' + (isNaN(speedAverage) ? '-' : speedAverage.toFixed(2));
+        }], {
+            anchorX: 'left',
+            anchorY: 'top',
+            fontSize: 16,
             fixed: true,
             highlight: false,
             cssStyle: `background-color: rgba(111, 163, 230, 0.3); padding: 4px; border-radius: 4px;`
         });
 
-
         for (let x = 0; x <= gridSize; x += cellSize) {
-            const xline = board.create('line', [[0 - 0.5 * cellSize, x - 0.5 * cellSize], [gridSize - 0.5 * cellSize, x - 0.5 * cellSize]], { straightFirst: false, straightLast: false, strokeWidth: 1, color: 'grey' })
-            const yline = board.create('line', [[x - 0.5 * cellSize, 0 - 0.5 * cellSize], [x - 0.5 * cellSize, gridSize - 0.5 * cellSize]], { straightFirst: false, straightLast: false, strokeWidth: 1, color: 'grey' })
+            const xline = board.create('line', [[0, x * cellSize], [gridSize * cellSize, x * cellSize]], { straightFirst: false, straightLast: false, strokeWidth: 1, color: 'lightgrey' })
+            const yline = board.create('line', [[x * cellSize, 0], [x * cellSize, gridSize * cellSize]], { straightFirst: false, straightLast: false, strokeWidth: 1, color: 'lightgrey' })
         }
 
+        ///////// HELPERS: 
 
-        board.on('down', function (e) {
-            if (hasStarted || foodBits.length >= 50) return;
-            const coords = board.getUsrCoordsOfMouse(e);
-            const x = coords[0];
-            const y = coords[1];
-
-            if (x < 0 || x >= gridSize || y < 0 || y >= gridSize) {
-                console.log("click out of bounds");
-                return;
-            }
-            createFood(x, y);
-            board.unsuspendUpdate();
-        });
+        function getRandomBetween(min, max) {
+            return Math.random() * (max - min) + min;
+        }
 
         function getMutatedSpeedMult() {
             const rand = Math.random() + 0.5;
@@ -120,11 +124,11 @@
             return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
         }
 
-
+        ///////// OBJECT CREATION AND REMOVAL:
 
         function createIndividual(x, y, parentMult, starter = true) {
             const key = `${x},${y}`;
-            if (!occupied.has(key)) {
+            if (!occupied.has(key) && individuals.length < 100) {
                 occupied.add(key);
                 const individual = board.create('point', [x, y], { color: aliveColor, size: 4, fixed: true, showInfobox: false, name: '' });
                 individual.dead = false;
@@ -141,18 +145,12 @@
             }
             board.update();
         }
-        function createFood(x, y) {
-            const key = `${x},${y}`;
-            if (!occupiedFood.has(key)) {
-                occupiedFood.add(key);
-                const point = board.create('point', [x, y], { color: 'green', size: 2, fixed: true, showInfobox: false, name: '' });
 
-                foodBits.push(point);
-            }
+        function createFood(x, y) {
+            foodBits.push(board.create('point', [x, y], { color: 'green', size: 2, fixed: true, showInfobox: false, name: '' }));
         }
 
         function getOffspringPosition(oldX, oldY) {
-
             const deltaX = (Math.random() > 0.5) ? -1 : 1;
             const deltaY = (Math.random() > 0.5) ? -1 : 1;
             let newX = oldX;
@@ -190,15 +188,13 @@
             }
         }
 
+        //////////DURING STEPS:
+
         function reproduce(ind) {
             const newPos = getOffspringPosition(ind.X(), ind.Y());
             if (newPos.x > 0 && newPos.x < 20 && newPos.y > 0 && newPos.y < 20) {
                 createIndividual(newPos.x, newPos.y, ind.speedMult, false);
             }
-        }
-
-        function getRandomBetween(min, max) {
-            return Math.random() * (max - min) + min;
         }
 
         function checkReproduction() {
@@ -209,6 +205,7 @@
                 }
             })
         }
+
         function checkDeaths() {
             const toKill = [];
 
@@ -228,21 +225,7 @@
             });
         }
 
-
-        function step() {
-            //hasStarted = true;
-            if (foodBits.length > 0) {
-                board.suspendUpdate();
-                stepCounter++;
-                findNearestFood();
-                checkReproduction();
-                checkDeaths();
-                board.unsuspendUpdate();
-            }
-        }
-
         async function findNearestFood() {
-            //reset lines
             lines.forEach(line => board.removeObject(line));
             lines.length = 0;
 
@@ -287,7 +270,6 @@
                         ind.stepsSinceFood++;
                     } else {
                         ind.moveTo([food.X(), food.Y()], 50);
-
                         ind.bitsEaten++;
                         ind.stepsSinceFood = 0;
                         board.removeObject(food);
@@ -297,6 +279,16 @@
             }
         }
 
+        //////////// SPEED DISPLAY:
+        function calculateAvgSpeed() {
+            let total = 0;
+            individuals.forEach(ind => {
+                total += ind.speedMult;
+            })
+            speedAverage = total / individuals.length;
+        }
+
+        ////////////BUTTON FUNCTIONS:
 
         function sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
@@ -313,16 +305,41 @@
             }
         }
 
-        let autoStepping = false;
+        function step() {
+            //hasStarted = true;
+            if (foodBits.length > 0 && individuals.length > 0) {
+                board.suspendUpdate();
+                stepCounter++;
+                findNearestFood();
+                checkReproduction();
+                checkDeaths();
+                calculateAvgSpeed();
+                board.unsuspendUpdate();
+            }
+        }
+
         async function hundredStep() {
-            if (!autoStepping) {
+            if (!autoStepping && !autoRunning) {
                 autoStepping = true;
-                for (let i = 0; i < 100; i++) {
+                for (let i = 0; i < 100 && autoStepping && individuals.length > 0; i++) {
                     step();
-                    await sleep(50); // Delay 100ms between steps
+                    await sleep(50); // Delay 50ms between steps
                 }
                 autoStepping = false;
             }
+        }
+        async function autorun() {
+            if (autoStepping || autoRunning) return;
+            autoRunning = true;
+            while (autoRunning && individuals.length > 0) {
+                step();
+                await sleep(50); // Delay 50ms between steps
+            }
+            autoRunning = false;
+        }
+
+        function stopAutorun() {
+            autoRunning = false;
         }
 
 
@@ -330,6 +347,7 @@
             hasStarted = false;
             stepCounter = 0;
             autoStepping = false;
+            autoRunning = false;
 
             board.suspendUpdate();
 
@@ -348,7 +366,21 @@
             board.unsuspendUpdate();
         }
 
+        board.on('down', function (e) {
+            if (hasStarted || foodBits.length >= 50) return;
+            const coords = board.getUsrCoordsOfMouse(e);
+            const x = coords[0];
+            const y = coords[1];
 
+            if (x < 0 || x >= gridSize || y < 0 || y >= gridSize) {
+                console.log("click out of bounds");
+                return;
+            }
+            createFood(x, y);
+            board.unsuspendUpdate();
+        });
+
+        s1.on('drag', () => mutationChance = s1.Value());
         createIndividual(startX, startY, 0.25);
 
 
