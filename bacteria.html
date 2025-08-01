@@ -22,7 +22,7 @@
     <div id="box" class="jxgbox"></div>
     <div class="flex">
         <button onClick="step()"> Step </button>
-        <button onClick="tenStep()"> 10 steps </button>
+        <button onClick="hundredStep()"> 100 steps </button>
         <button onClick="add50food()"> Lisää 50 ravintopistettä </button>
         <button onClick="reset()"> Reset </button>
     </div>
@@ -31,7 +31,6 @@
 
     <script>
 
-        //TODO: make altitude component less strict
         const board = JXG.JSXGraph.initBoard('box', {
             boundingbox: [-1, 21, 31, -1],
             axis: true,
@@ -42,19 +41,21 @@
         const gridSize = 20;
         const cellSize = 0.5;
 
+        const mutationChance = 0.33;
+        const maxFood = 100;
+
         const startX = 9.5;
         const startY = 10.5;
 
         let individuals = [];
         const foodBits = [];
-        const rectangles = [];
+        const lines = [];
 
         const occupied = new Set(); //needs grid to work so not utilized atm
         const occupiedFood = new Set();
 
         let hasStarted = false;
         let stepCounter = 0;
-        let altitudePref = 0.33;
 
         const aliveColor = "#68C93E";
         const deadFromDrought = "#6D5F3E";
@@ -94,7 +95,13 @@
             board.unsuspendUpdate();
         });
 
-        function createIndividual(x, y) {
+        function getMutatedSpeedMult() {
+            const rand = Math.random() + 0.5;
+            return rand;
+        }
+
+        function createIndividual(x, y, parentMult, starter = true) {
+            console.log(parentMult)
             const key = `${x},${y}`;
             if (!occupied.has(key)) {
                 occupied.add(key);
@@ -102,8 +109,17 @@
                 individual.dead = false;
                 individual.bitsEaten = 0;
                 individual.stepsSinceFood = 0;
+                individual.speedMult = Number(parentMult);
+                if (!starter && Math.random() < mutationChance) {
+                    console.log("Mutation")
+                    individual.speedMult *= getMutatedSpeedMult();
+                    individual.speedMult = Math.min(individual.speedMult, 1);
+                }
+                const str = individual.speedMult.toFixed(2);
+                individual.setAttribute({ name: str })
                 individuals.push(individual);
             }
+            board.update();
         }
         function createFood(x, y) {
             const key = `${x},${y}`;
@@ -157,7 +173,7 @@
         function reproduce(ind) {
             const newPos = getOffspringPosition(ind.X(), ind.Y());
             if (newPos.x > 0 && newPos.x < 20 && newPos.y > 0 && newPos.y < 20) {
-                createIndividual(newPos.x, newPos.y);
+                createIndividual(newPos.x, newPos.y, ind.speedMult, false);
             }
         }
 
@@ -177,9 +193,9 @@
             const toKill = [];
 
             individuals.forEach((ind, index) => {
-                if (ind.stepsSinceFood >= 10) {
+                if (ind.stepsSinceFood >= 40) {
                     toKill.push(index);
-                } else if (ind.stepsSinceFood >= 7) {
+                } else if (ind.stepsSinceFood >= 32) {
                     ind.setAttribute({ color: 'brown', opacity: 0.4 });
                 } else {
                     ind.setAttribute({ color: aliveColor, opacity: 1 });
@@ -195,16 +211,17 @@
 
         function step() {
             //hasStarted = true;
-            stepCounter++;
-            findNearestFood();
-            checkReproduction();
-            checkDeaths();
-            board.update();
-
+            if (foodBits.length > 0) {
+                board.suspendUpdate();
+                stepCounter++;
+                findNearestFood();
+                checkReproduction();
+                checkDeaths();
+                board.unsuspendUpdate();
+            }
         }
 
-        const lines = [];
-        function findNearestFood() {
+        async function findNearestFood() {
             //reset lines
             lines.forEach(line => board.removeObject(line));
             lines.length = 0;
@@ -240,16 +257,17 @@
                     const dx = food.X() - ind.X();
                     const dy = food.Y() - ind.Y();
                     const dist = Math.sqrt(dx * dx + dy * dy);
-                    console.log(ind.stepsSinceFood)
 
                     if (dist > 1) {
-                        // move 1 unit toward the food
-                        const nx = ind.X() + (dx / dist);
-                        const ny = ind.Y() + (dy / dist);
-                        ind.moveTo([nx, ny]);
+                        // move toward the food
+                        const nx = ind.X() + (dx / dist) * ind.speedMult;
+                        const ny = ind.Y() + (dy / dist) * ind.speedMult;
+                        ind.moveTo([nx, ny], 50);
+
                         ind.stepsSinceFood++;
                     } else {
-                        ind.moveTo([food.X(), food.Y()]);
+                        ind.moveTo([food.X(), food.Y()], 50);
+
                         ind.bitsEaten++;
                         ind.stepsSinceFood = 0;
                         board.removeObject(food);
@@ -260,14 +278,15 @@
         }
 
 
-
         function sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
         }
 
         function add50food() {
-            if (foodBits.length > 30) return;
-            for (let i = 0; i < 50; i++) {
+            const foodToAdd = Math.min(50, maxFood - foodBits.length);
+            console.log(foodBits.length, "adding: ", foodToAdd)
+
+            for (let i = 0; i < foodToAdd; i++) {
                 const randX = getRandomBetween(0.5, 19.5);
                 const randY = getRandomBetween(0.5, 19.5);
                 createFood(randX, randY);
@@ -275,13 +294,12 @@
         }
 
         let autoStepping = false;
-        async function tenStep() {
+        async function hundredStep() {
             if (!autoStepping) {
                 autoStepping = true;
-
-                for (let i = 0; i < 10; i++) {
+                for (let i = 0; i < 100; i++) {
                     step();
-                    await sleep(100); // Delay 100ms between steps
+                    await sleep(50); // Delay 100ms between steps
                 }
                 autoStepping = false;
             }
@@ -305,13 +323,13 @@
             occupied.clear();
             occupiedFood.clear();
 
-            createIndividual(startX, startY);
+            createIndividual(startX, startY, 0.25);
 
             board.unsuspendUpdate();
         }
 
 
-        createIndividual(startX, startY);
+        createIndividual(startX, startY, 0.25);
 
 
     </script>
