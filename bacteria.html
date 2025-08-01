@@ -20,7 +20,9 @@
 </head>
 
 <body>
+    <h2> Evoluutiosimulaattori: ravinnonhankinta ja liikkumisnopeus</h2>
     <div id="box" class="jxgbox"></div>
+    
     <div class="flex">
         <button onClick="step()"> Askel </button>
         <button onClick="hundredStep()"> 100 askelta </button>
@@ -116,7 +118,7 @@
         const s1 = board.create('slider', [[21, 16], [25, 16], [0, 0.33, 1]], { name: 'Mutaation todennäköisyys' });
 
         const stepLabel = board.create('text', [21, 19.5, function () {
-            return 'Current timestep: ' + stepCounter;
+            return 'Aika-askel: ' + stepCounter;
         }], {
             anchorX: 'left',
             anchorY: 'top',
