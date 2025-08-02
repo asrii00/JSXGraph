@@ -63,22 +63,16 @@
         nopeuden keskiarvon kehittymiseen?<br>
         3. Vaikuttaako ravinnon saatavuus (eli se, paljonko lisäät ravintopisteitä verrattuna yksilöiden määrään)
         keskiarvon muuttumiseen tai muutosnopeuteen? Mitä tapahtuu, jos "ruokit" yksilöitä niukasti? Entä, jos ruokit
-        niitä koko ajan runsaasti?<br>
+        niitä koko ajan runsaasti? <br>
         4. Mitä tapahtuu, jos ravinnon saatavuus on yleisellä tasolla heikkoa, mutta ruokit tietynlaisia yksilöitä
         "manuaalisesti", esimerkiksi klikkailemalla lisää ravintopisteitä hitaiden yksilöiden viereen niin, että ne
-         saavat syödä? Voitko vaikuttaa näin keskiarvon kehittymiseen? <br>
+         saavat syödä? Voitko vaikuttaa näin keskiarvon kehittymiseen? (Huom. voit tarvittaessa säätää simulaation automaattisen etenemisen nopeutta liukusäätimellä.)  <br>
         5. Mihin tehtävistä 1-4 nämä evoluutioon liittyvät termit ja lauseet liittyvät (yhteen, useampaan tai kaikkiin)? Selitä miten/miksi. <br>
         a) Evoluutio on muutosta, joka tapahtuu populaation periytyvissä ominaisuuksissa sukupolvien edetessä. <br>
         b) Suuntaava valintapaine ajaa evoluutiota tiettyyn suuntaan tietyn ominaisuuden osalta. <br>
         c) Mutaatiot ovat evoluution "moottori" eikä evoluutiota voi tapahtua ilman niitä. <br>
         d) Ihmisen toiminta voi aiheuttaa keinotekoista valintapainetta ja vaikuttaa evoluutioon. <br>
         e) Varsinkin kun voimakasta valintapainetta ei ole, populaation ominaisuuksissa voi esiintyä satunnaista vaihtelua suuntaan tai toiseen. 
-
-
-
-
-
-
 
     </div>
 
@@ -112,10 +106,12 @@
 
         let autoRunning = false;
         let autoStepping = false;
+        let stepDelay = 100;
 
         const aliveColor = "#68C93E";
 
         const s1 = board.create('slider', [[21, 16], [25, 16], [0, 0.33, 1]], { name: 'Mutaation todennäköisyys' });
+        const s2 = board.create('slider', [[21, 14], [25, 14], [50, 300, 500]], { name: 'Automaattisten askeleiden kesto (hitaus)' });
 
         const stepLabel = board.create('text', [21, 19.5, function () {
             return 'Aika-askel: ' + stepCounter;
@@ -371,7 +367,7 @@
                 autoStepping = true;
                 for (let i = 0; i < 100 && autoStepping && individuals.length > 0; i++) {
                     step();
-                    await sleep(50); // Delay 50ms between steps
+                    await sleep(stepDelay); // Delay 50ms between steps
                 }
                 autoStepping = false;
             }
@@ -381,7 +377,7 @@
             autoRunning = true;
             while (autoRunning && individuals.length > 0) {
                 step();
-                await sleep(50); // Delay 50ms between steps
+                await sleep(stepDelay); // Delay 50ms between steps
             }
             autoRunning = false;
         }
@@ -428,6 +424,7 @@
         });
 
         s1.on('drag', () => mutationChance = s1.Value());
+        s2.on('drag', () => stepDelay = s2.Value());
         createIndividual(startX, startY, 0.25);
 
 
