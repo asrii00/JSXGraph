@@ -10,6 +10,7 @@
             width: 900px;
             height: 600px;
         }
+
         test {
             color: #f0b2b2
         }
@@ -23,7 +24,9 @@
     <script>
         const board = JXG.JSXGraph.initBoard('box', {
             boundingbox: [-15, 10, 15, -10],
-            axis: true
+            axis: false, 
+            showCopyright: false, 
+            showNavigation: false
         });
 
         let currentStep = 0;
@@ -32,57 +35,87 @@
         let lastReward = 0;
 
         const inset = 1;
+        const fontSize = 18;
         const messagePolygon = board.create('polygon', [
-            [-15 + inset, 10 - inset],   
-            [15 - inset, 10 - inset],   
-            [15 - inset, -10 + inset],   
-            [-15 + inset, -10 + inset]    
+            [-15 + inset, 10 - inset],
+            [15 - inset, 10 - inset],
+            [15 - inset, -10 + inset],
+            [-15 + inset, -10 + inset]
         ], {
             fillColor: '#cfeecf',          // light pastel green
             highlight: false,
-            fixed: true,   
+            fixed: true,
             fillOpacity: 1,
             visible: false,
-            vertices: {visible: false},               
+            vertices: { visible: false },
             borders: {
                 strokeColor: '#d4e6d4',    // faint, near-matching border
                 strokeWidth: 1
-            }, 
+            },
         });
 
-        const styling = { anchorX: 'middle',
+        const styling = {
+            anchorX: 'middle',
             anchorY: 'middle',
-            fontSize: 22,
+            fontSize: fontSize,
             fixed: true,
             highlight: false,
             visible: false,
-            cssStyle: ` padding: 4px; border-radius: 4px;`}
+            cssStyle: ` padding: 4px; border-radius: 4px;`
+        }
 
-        const messageText1 = board.create('text', [0, 0, `Voitit! `], styling)
-        const messageText2 = board.create('text', [0, -1, `Palkintosi: 5 kolikkoa `], styling)
-           
-    
+        //win/lose text
+        const messageText1 = board.create('text', [0, 0, `Voitit! `], styling);
+        const messageText2 = board.create('text', [0, -1, `Palkintosi: 5 kolikkoa `], styling);
+        const continueBtn = board.create('button', [0, -2.5, 'Jatka', () => nextScene()], {
+                    anchorX: 'middle',
+                    anchorY: 'middle',
+                    fontSize: fontSize - 2,
+                    visible: false,
+                    fixed: true,
+                    cssStyle: `background-color: rgba(255, 255, 255, 0.8); padding: 4px; border-radius: 4px;`
+                });
+        //choose your opponent text
+        const fightText = board.create('text', [0, 8, `Valitse vastustajasi!`], styling)
+
+
 
         const possibleEnemies = [
-            ["Örkki", 0.9, 50],
-            ["Mörkki", 0.5, 200],
-            ["Hörkki", 0.1, 1000],
-            ["Öttiäinen", 0.05, 5000],
-            ["Möttiäinen", 0.75, 150],
-            ["Höttiäinen", 0.2, 800],
+            ["Örkki", 0.9, 50, 'hotti.png'],
+            ["Mörkki", 0.5, 200, 'otti.png'],
+            ["Hörkki", 0.1, 1000, 'motti.png'],
+            ["Öttiäinen", 0.05, 5000, 'motti.png'],
+            ["Möttiäinen", 0.75, 150, 'otti.png'],
+            ["Höttiäinen", 0.2, 800, 'hotti.png'],
         ]
 
         function getRandomInt(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
-        function Enemy(name, defeatProb, reward, side) {
-            const fontSize = 18;
+        function Enemy(name, defeatProb, reward, filename, side ) {
+            
             this.name = name;
             this.defeatProb = defeatProb;
             this.reward = reward;
-            this.centerPos = (side === 'left') ? { y: 5, x: -5 } : { y: 5, x: 5 };
+            this.centerPos = (side === 'left') ? { y: -2, x: -6 } : { y: -2, x: 6 };
             this.visualParts = [];
+            const imgWidth = 8;   // board units
+            const imgHeight = 10;  // board units
+            const imgCenterY = 3;
+
+            // jsxgraph positions from lower left corner
+            const lowerLeftX = this.centerPos.x - imgWidth / 2;
+            const lowerLeftY = imgCenterY - imgHeight / 2;
+
+            this.visualParts.push(board.create('image', [
+                filename,
+                [lowerLeftX, lowerLeftY],
+                [imgWidth, imgHeight]
+            ], {
+                fixed: true,
+                highlight: false
+            }));
             this.draw = function () {
                 console.log(this.centerPos.y)
                 this.visualParts.push(board.create('text', [this.centerPos.x, this.centerPos.y, this.name], {
@@ -109,7 +142,7 @@
                     highlight: false,
                     cssStyle: ` background-color: rgba(182, 226, 143, 0.8); padding: 4px; border-radius: 4px;`
                 }));
-                this.visualParts.push(board.create('button', [this.centerPos.x, this.centerPos.y - 4, 'Fight', () => handleFight(this)], {
+                this.visualParts.push(board.create('button', [this.centerPos.x, this.centerPos.y - 4, 'Valitse', () => handleFight(this)], {
                     anchorX: 'middle',
                     anchorY: 'middle',
                     fontSize: fontSize - 2,
@@ -145,13 +178,14 @@
             });
         }
 
-        function showMessage(outComeMessage, rewardMessage, won = true){
-            const bgColor = won?'#cfeecf' : '#f0b2b2';
-            messagePolygon.setAttribute({visible: true, fillColor: bgColor }); 
+        function showMessage(outComeMessage, rewardMessage, won = true) {
+            const bgColor = won ? '#cfeecf' : '#f0b2b2';
+            fightText.setAttribute({visible: false})
+            messagePolygon.setAttribute({ visible: true, fillColor: bgColor });
             messageText1.setText(outComeMessage);
-            messageText1.setAttribute({visible: true});
+            messageText1.setAttribute({ visible: true });
             messageText2.setText(rewardMessage);
-            messageText2.setAttribute({visible: true});
+            messageText2.setAttribute({ visible: true });
         }
 
         function handleFight(enemy) {
@@ -162,7 +196,7 @@
                 enemy.removeAll();
             })
             activeEnemies.length = 0;
-            
+
             if (result.win) {
                 playerGold += result.reward;
                 lastReward = result.reward;
@@ -173,8 +207,14 @@
             }
         }
 
+        function fightScene(){
+            fightText.setAttribute({visible: true});
+            generateTwoEnemies();
+        }
 
-        generateTwoEnemies();
+        fightScene();
+
+        
     </script>
 
 </body>
