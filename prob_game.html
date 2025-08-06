@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>JSXGraph Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+    <style>
+        #box {
+            width: 900px;
+            height: 600px;
+        }
+        test {
+            color: #f0b2b2
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="box" class="jxgbox"></div>
+
+    <script>
+        const board = JXG.JSXGraph.initBoard('box', {
+            boundingbox: [-15, 10, 15, -10],
+            axis: true
+        });
+
+        let currentStep = 0;
+        let playerGold = 0;
+        let currentScene = 'fight';
+        let lastReward = 0;
+
+        const inset = 1;
+        const messagePolygon = board.create('polygon', [
+            [-15 + inset, 10 - inset],   
+            [15 - inset, 10 - inset],   
+            [15 - inset, -10 + inset],   
+            [-15 + inset, -10 + inset]    
+        ], {
+            fillColor: '#cfeecf',          // light pastel green
+            highlight: false,
+            fixed: true,   
+            fillOpacity: 1,
+            visible: false,
+            vertices: {visible: false},               
+            borders: {
+                strokeColor: '#d4e6d4',    // faint, near-matching border
+                strokeWidth: 1
+            }, 
+        });
+
+        const styling = { anchorX: 'middle',
+            anchorY: 'middle',
+            fontSize: 22,
+            fixed: true,
+            highlight: false,
+            visible: false,
+            cssStyle: ` padding: 4px; border-radius: 4px;`}
+
+        const messageText1 = board.create('text', [0, 0, `Voitit! `], styling)
+        const messageText2 = board.create('text', [0, -1, `Palkintosi: 5 kolikkoa `], styling)
+           
+    
+
+        const possibleEnemies = [
+            ["Örkki", 0.9, 50],
+            ["Mörkki", 0.5, 200],
+            ["Hörkki", 0.1, 1000],
+            ["Öttiäinen", 0.05, 5000],
+            ["Möttiäinen", 0.75, 150],
+            ["Höttiäinen", 0.2, 800],
+        ]
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function Enemy(name, defeatProb, reward, side) {
+            const fontSize = 18;
+            this.name = name;
+            this.defeatProb = defeatProb;
+            this.reward = reward;
+            this.centerPos = (side === 'left') ? { y: 5, x: -5 } : { y: 5, x: 5 };
+            this.visualParts = [];
+            this.draw = function () {
+                console.log(this.centerPos.y)
+                this.visualParts.push(board.create('text', [this.centerPos.x, this.centerPos.y, this.name], {
+                    anchorX: 'middle',
+                    anchorY: 'middle',
+                    fontSize: fontSize,
+                    fixed: true,
+                    highlight: false,
+                    cssStyle: `background-color: rgba(182, 226, 143, 0.8); padding: 4px; border-radius: 4px;`
+                }));
+                this.visualParts.push(board.create('text', [this.centerPos.x, this.centerPos.y - 1, `Voiton todennäköisyys: ${this.defeatProb.toFixed(2)}`], {
+                    anchorX: 'middle',
+                    anchorY: 'middle',
+                    fontSize: fontSize,
+                    fixed: true,
+                    highlight: false,
+                    cssStyle: ` background-color: rgba(182, 226, 143, 0.8); padding: 4px; border-radius: 4px;`
+                }));
+                this.visualParts.push(board.create('text', [this.centerPos.x, this.centerPos.y - 2, `Palkinto, jos voitat: ${this.reward}`], {
+                    anchorX: 'middle',
+                    anchorY: 'middle',
+                    fontSize: fontSize,
+                    fixed: true,
+                    highlight: false,
+                    cssStyle: ` background-color: rgba(182, 226, 143, 0.8); padding: 4px; border-radius: 4px;`
+                }));
+                this.visualParts.push(board.create('button', [this.centerPos.x, this.centerPos.y - 4, 'Fight', () => handleFight(this)], {
+                    anchorX: 'middle',
+                    anchorY: 'middle',
+                    fontSize: fontSize - 2,
+                    fixed: true,
+                    highlight: false,
+                    cssStyle: `background-color: rgba(182, 226, 143, 0.8); padding: 4px; border-radius: 4px;`
+                }));
+            }
+
+            this.fight = () => {
+                const win = Math.random() < this.defeatProb;
+                //just return outcome object
+                return { win, reward: win ? this.reward : -50, enemy: this };
+            };
+
+            this.removeAll = function () {
+                this.visualParts.forEach(obj => { board.removeObject(obj); })
+                this.visualParts.length = 0;
+            }
+
+        }
+
+        let activeEnemies = [];
+        function generateTwoEnemies() {
+            const firstIndex = getRandomInt(0, possibleEnemies.length - 1);
+            const secondIndex = (firstIndex + getRandomInt(1, possibleEnemies.length - 1)) % possibleEnemies.length; //modulo trick a la chatgpt
+
+            [firstIndex, secondIndex].forEach((index, i) => {
+                const side = i === 0 ? 'left' : 'right';
+                const enemy = new Enemy(...possibleEnemies[index], side);
+                enemy.draw();
+                activeEnemies.push(enemy);
+            });
+        }
+
+        function showMessage(outComeMessage, rewardMessage, won = true){
+            const bgColor = won?'#cfeecf' : '#f0b2b2';
+            messagePolygon.setAttribute({visible: true, fillColor: bgColor }); 
+            messageText1.setText(outComeMessage);
+            messageText1.setAttribute({visible: true});
+            messageText2.setText(rewardMessage);
+            messageText2.setAttribute({visible: true});
+        }
+
+        function handleFight(enemy) {
+            const result = enemy.fight();
+            console.log(result);
+
+            activeEnemies.forEach(enemy => {
+                enemy.removeAll();
+            })
+            activeEnemies.length = 0;
+            
+            if (result.win) {
+                playerGold += result.reward;
+                lastReward = result.reward;
+                showMessage(`Voitit!`, `Palkintosi:  ${result.reward} kultakolikkoa`);
+            } else {
+                playerGold += result.reward; // reward is -50 on loss
+                showMessage(`Hävisit!`, `Tappio: ${result.reward} kultakolikkoa`, false);
+            }
+        }
+
+
+        generateTwoEnemies();
+    </script>
+
+</body>
+
+</html>
