@@ -12,7 +12,7 @@
         }
 
         test {
-            color: #f0b2b2
+            color: rgba(182, 226, 143, 0.8)
         }
     </style>
 </head>
@@ -76,8 +76,9 @@
                     cssStyle: `background-color: rgba(255, 255, 255, 0.8); padding: 4px; border-radius: 4px;`
                 });
         //choose your opponent text
-        const fightText = board.create('text', [0, 8, `Valitse vastustajasi!`], styling)
-
+        const fightText = board.create('text', [0, 8, `Valitse vastustajasi!`], styling);
+        const goldText = board.create('text', [11,9.5, ()=>{return `Kultakolikkoja: ${playerGold}`}], styling);
+        goldText.setAttribute({visible: true, fontSize: fontSize-2, cssStyle: `background-color: rgba(248, 203, 112, 0.8); padding: 4px; border-radius: 4px;` });
 
 
         const possibleEnemies = [
@@ -94,7 +95,6 @@
         }
 
         function Enemy(name, defeatProb, reward, filename, side ) {
-            
             this.name = name;
             this.defeatProb = defeatProb;
             this.reward = reward;
@@ -162,8 +162,8 @@
                 this.visualParts.forEach(obj => { board.removeObject(obj); })
                 this.visualParts.length = 0;
             }
-
         }
+        
 
         let activeEnemies = [];
         function generateTwoEnemies() {
