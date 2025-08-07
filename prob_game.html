@@ -43,6 +43,7 @@
             },
 
             buyTool(tool) {
+                //add check to prevent buying the same item twice?
                 if (this.canAfford(tool.cost)) {
                     this.gold -= tool.cost;
                     tool.purchased = true;
@@ -55,7 +56,7 @@
             }
         };
 
-        const toolsForSale = [
+        let toolsForSale = [
             new Sword(),
             new Net(),
             new ReverseCard(),
@@ -93,6 +94,7 @@
             fillOpacity: 1,
             visible: false,
             vertices: { visible: false },
+            layer: 20,
             borders: {
                 strokeColor: '#d4e6d4',    // faint, near-matching border
                 strokeWidth: 1
@@ -126,7 +128,7 @@
         goldText.setAttribute({ visible: true, fontSize: fontSize - 2, cssStyle: `background-color: rgba(248, 203, 112, 0.8); padding: 4px; border-radius: 4px;` });
 
         //skip merchant btn
-        const skipMerchantBtn = board.create('button', [10, -8.5, 'Ohita =>', () => nextScene()], {
+        const skipMerchantBtn = board.create('button', [10, -8.5, 'Jatka =>', () => nextScene()], {
             anchorX: 'middle',
             anchorY: 'middle',
             fontSize: fontSize - 2,
@@ -324,6 +326,8 @@
         function buy(tool) {
             const result = Player.buyTool(tool);
             if (result.success) {
+                toolsForSale = toolsForSale.filter(t => t !== tool);
+                renderMerchantRow(toolsForSale);
                 goldText.setText(() => `Kultakolikkoja: ${Player.gold}`);
                 renderPlayerTools(Player.tools);  // re-render inventory
             } else {
@@ -339,6 +343,10 @@
         }
 
         function renderMerchantRow(tools) {
+            merchantVisualParts.forEach(obj => {
+                board.removeObject(obj);
+            })
+            merchantVisualParts.length = 0;
             const slotSize = 4; //icon size
             const numOfItems = tools.length;
             const centerX = 0;
@@ -397,6 +405,11 @@
             });
         }
         function renderPlayerTools(tools) {
+            toolRowVisualParts.forEach(obj => {
+                board.removeObject(obj);
+            })
+            toolRowVisualParts.length = 0;
+
             const slotSize = 2; //icon size
             const startX = -14;
             const padding = 1;
@@ -476,7 +489,7 @@
         };
 
 
-        SceneManager.changeScene(MerchantScene);
+        SceneManager.changeScene(BattleScene);
         renderPlayerTools(Player.tools)
 
 
