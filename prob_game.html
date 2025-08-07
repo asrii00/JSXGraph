@@ -29,12 +29,31 @@
             showNavigation: false
         });
 
-        let playerEffects = {
-            safetyNetOn: false,
+        const Player = {
+            gold: 0,
+            tools: [],
             baseStrength: 1.0,
-            antidoteOn: false,
-            reverseCardOn: false
-        }
+            activeEffects: {
+                safetyNetOn: false,
+                reverseCardOn: false
+            },
+
+            canAfford(cost) {
+                return this.gold >= cost;
+            },
+
+            buyTool(tool) {
+                if (this.canAfford(tool.cost)) {
+                    this.gold -= tool.cost;
+                    tool.purchased = true;
+                    this.tools.push(tool);
+                    tool.applyEffect(this);  // pass player object to allow tool to modify it
+                    return { success: true };
+                } else {
+                    return { success: false, message: "Ei tarpeeksi kolikoita!" };
+                }
+            }
+        };
 
         const toolsForSale = [
             new Sword(),
@@ -52,11 +71,11 @@
         ]
 
         let currentStep = 0;
-        let playerGold = 0;
         let lastReward = 0;
 
         let activeEnemies = [];
         const merchantVisualParts = [];
+        const toolRowVisualParts = [];
 
         const inset = 1;
         const fontSize = 18;
@@ -103,7 +122,7 @@
         });
         //choose your opponent text
         const fightText = board.create('text', [0, 8, `Valitse vastustajasi!`], styling);
-        const goldText = board.create('text', [11, 9.5, () => { return `Kultakolikkoja: ${playerGold}` }], styling);
+        const goldText = board.create('text', [11, 9.5, () => { return `Kultakolikkoja: ${Player.gold}` }], styling);
         goldText.setAttribute({ visible: true, fontSize: fontSize - 2, cssStyle: `background-color: rgba(248, 203, 112, 0.8); padding: 4px; border-radius: 4px;` });
 
         //skip merchant btn
@@ -122,6 +141,7 @@
 
         //////////CLASSES
 
+
         function Tool(name, cost, iconPath, description) {
             this.name = name;
             this.cost = cost;
@@ -129,12 +149,12 @@
             this.description = description;
             this.purchased = false;
 
-            this.purchase = function (playerGold) {
-                if (playerGold >= this.cost) {
+            this.purchase = function () {
+                if (Player.gold >= this.cost) {
                     this.purchased = true;
-                    return { success: true, goldLeft: playerGold - this.cost };
+                    return { success: true, goldLeft: Player.gold - this.cost };
                 }
-                return { success: false, goldLeft: playerGold };
+                return { success: false, goldLeft: Player.gold };
             };
 
             this.applyEffect = function (player) {
@@ -160,8 +180,8 @@
         }
         Sword.prototype = Object.create(Tool.prototype);
         Sword.prototype.constructor = Sword;
-        Sword.prototype.applyEffect = function (baseStrength) { //edit
-            return baseStrength * 1.05;
+        Sword.prototype.applyEffect = function (player) {
+            player.baseStrength = 1.05; //make dynamic if needed
         };
 
         function Net() {
@@ -169,17 +189,17 @@
         }
         Net.prototype = Object.create(Tool.prototype);
         Net.prototype.constructor = Net;
-        Net.prototype.applyEffect = function () {
-            playerEffects.safetyNetOn = true;
+        Net.prototype.applyEffect = function (player) {
+            player.activeEffects.safetyNetOn = true;
         };
 
         function ReverseCard() {
-            Tool.call(this, "Käänteiskortti", 800, "reversecard.png", "Jos häviät, sinulla<br> on 50% mahdollisuus<br> voittaa sittenkin.");
+            Tool.call(this, "Käänteiskortti", 800, "reversecard.png", "Jos häviät, sinulla<br> on 50% mahdollisuus<br> kääntää se voitoksi.");
         }
         ReverseCard.prototype = Object.create(Tool.prototype);
         ReverseCard.prototype.constructor = ReverseCard;
-        ReverseCard.prototype.applyEffect = function () {
-            playerEffects.reverseCardOn = true;
+        ReverseCard.prototype.applyEffect = function (player) {
+            player.activeEffects.reverseCardOn = true;
         };
 
         function Enemy(name, defeatProb, reward, filename, side) {
@@ -205,7 +225,6 @@
                 highlight: false
             }));
             this.draw = function () {
-                console.log(this.centerPos.y)
                 this.visualParts.push(board.create('text', [this.centerPos.x, this.centerPos.y, this.name], {
                     anchorX: 'middle',
                     anchorY: 'middle',
@@ -290,17 +309,28 @@
             activeEnemies.length = 0;
 
             if (result.win) {
-                playerGold += result.reward;
+                Player.gold += result.reward;
                 lastReward = result.reward;
                 showFightEndMessage(`Voitit!`, `Palkintosi:  ${result.reward} kultakolikkoa`);
             } else {
-                playerGold += result.reward; // reward is -50 on loss
+                Player.gold += result.reward; // reward is -50 on loss
                 showFightEndMessage(`Hävisit!`, `Tappio: ${result.reward} kultakolikkoa`, false);
             }
             continueBtn.setAttribute({ visible: true })
         }
 
         ///////////MERCHANT
+
+        function buy(tool) {
+            const result = Player.buyTool(tool);
+            if (result.success) {
+                goldText.setText(() => `Kultakolikkoja: ${Player.gold}`);
+                renderPlayerTools(Player.tools);  // re-render inventory
+            } else {
+                alert(result.message || "Osto epäonnistui.");
+            }
+        }
+
         function clearMerchantRow() {
             merchantVisualParts.forEach(obj => {
                 board.removeObject(obj);
@@ -366,6 +396,37 @@
                 }));
             });
         }
+        function renderPlayerTools(tools) {
+            const slotSize = 2; //icon size
+            const startX = -14;
+            const padding = 1;
+            const startY = 6;
+
+            tools.forEach((tool, index) => {
+                const lowerLeftY = startY - index * (slotSize + padding);
+                const lowerLeftX = startX;
+
+                toolRowVisualParts.push(board.create('polygon', [
+                    [lowerLeftX, lowerLeftY + slotSize],
+                    [lowerLeftX + slotSize, lowerLeftY + slotSize],
+                    [lowerLeftX + slotSize, lowerLeftY],
+                    [lowerLeftX, lowerLeftY]], {
+                    vertices: { visible: false },
+                    layer: 1,
+                    fillColor: 'lightblue'
+                }));
+
+                toolRowVisualParts.push(board.create('image', [
+                    tool.iconPath,
+                    [lowerLeftX, lowerLeftY],
+                    [slotSize, slotSize]
+                ], {
+                    fixed: true,
+                    highlight: false,
+                    layer: 5
+                }));
+            });
+        }
 
         /////////SCENE HANDLING
         const SceneManager = {
@@ -414,7 +475,9 @@
             }
         };
 
+
         SceneManager.changeScene(MerchantScene);
+        renderPlayerTools(Player.tools)
 
 
     </script>
