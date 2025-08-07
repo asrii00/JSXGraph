@@ -24,15 +24,18 @@
     <script>
         const board = JXG.JSXGraph.initBoard('box', {
             boundingbox: [-15, 10, 15, -10],
-            axis: false, 
-            showCopyright: false, 
+            axis: false,
+            showCopyright: false,
             showNavigation: false
         });
 
         let currentStep = 0;
         let playerGold = 0;
-        let currentScene = 'fight';
         let lastReward = 0;
+
+        let activeEnemies = [];
+        const merchantVisualParts = [];
+        
 
         const inset = 1;
         const fontSize = 18;
@@ -68,17 +71,17 @@
         const messageText1 = board.create('text', [0, 0, `Voitit! `], styling);
         const messageText2 = board.create('text', [0, -1, `Palkintosi: 5 kolikkoa `], styling);
         const continueBtn = board.create('button', [0, -2.5, 'Jatka', () => nextScene()], {
-                    anchorX: 'middle',
-                    anchorY: 'middle',
-                    fontSize: fontSize - 2,
-                    visible: false,
-                    fixed: true,
-                    cssStyle: `background-color: rgba(255, 255, 255, 0.8); padding: 4px; border-radius: 4px;`
-                });
+            anchorX: 'middle',
+            anchorY: 'middle',
+            fontSize: fontSize - 2,
+            visible: false,
+            fixed: true,
+            cssStyle: `background-color: rgba(255, 255, 255, 0.8); padding: 4px; border-radius: 4px;`
+        });
         //choose your opponent text
         const fightText = board.create('text', [0, 8, `Valitse vastustajasi!`], styling);
-        const goldText = board.create('text', [11,9.5, ()=>{return `Kultakolikkoja: ${playerGold}`}], styling);
-        goldText.setAttribute({visible: true, fontSize: fontSize-2, cssStyle: `background-color: rgba(248, 203, 112, 0.8); padding: 4px; border-radius: 4px;` });
+        const goldText = board.create('text', [11, 9.5, () => { return `Kultakolikkoja: ${playerGold}` }], styling);
+        goldText.setAttribute({ visible: true, fontSize: fontSize - 2, cssStyle: `background-color: rgba(248, 203, 112, 0.8); padding: 4px; border-radius: 4px;` });
 
 
         const possibleEnemies = [
@@ -94,7 +97,7 @@
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
-        function Enemy(name, defeatProb, reward, filename, side ) {
+        function Enemy(name, defeatProb, reward, filename, side) {
             this.name = name;
             this.defeatProb = defeatProb;
             this.reward = reward;
@@ -163,9 +166,54 @@
                 this.visualParts.length = 0;
             }
         }
-        
 
-        let activeEnemies = [];
+        //WIP
+        function Tool(name, cost, iconPath, description) {
+            this.name = name;
+            this.cost = cost;
+            this.iconPath = iconPath;
+            this.description = description;
+            this.purchased = false;
+
+            this.purchase = function (playerGold) {
+                if (playerGold >= this.cost) {
+                    this.purchased = true;
+                    return { success: true, goldLeft: playerGold - this.cost };
+                }
+                return { success: false, goldLeft: playerGold };
+            };
+
+            this.applyEffect = function (player) {
+                //override in subclasses
+            };
+
+            this.renderIcon = function (board, slotX, slotY, size) {
+                if (this.purchased) {
+                    board.create('image', [
+                        this.iconPath,
+                        [slotX, slotY - size], // lower-left corner
+                        [size, size]
+                    ], {
+                        fixed: true,
+                        highlight: false
+                    });
+                }
+            };
+        }
+
+        ///////test
+        function Sword() {
+            Tool.call(this, "Miekka", 500, "sword.png", "Lisää voittamisen todennäköisyyttä 5 prosentilla.");
+        }
+
+        Sword.prototype = Object.create(Tool.prototype);
+        Sword.prototype.constructor = Sword;
+
+        Sword.prototype.applyEffect = function (baseStrength) {
+            return baseStrength * 1.05;
+        };
+
+
         function generateTwoEnemies() {
             const firstIndex = getRandomInt(0, possibleEnemies.length - 1);
             const secondIndex = (firstIndex + getRandomInt(1, possibleEnemies.length - 1)) % possibleEnemies.length; //modulo trick a la chatgpt
@@ -178,17 +226,33 @@
             });
         }
 
-        function showMessage(outComeMessage, rewardMessage, won = true) {
+        function showFightEndMessage(outComeMessage, rewardMessage, won = true) {
             const bgColor = won ? '#cfeecf' : '#f0b2b2';
-            fightText.setAttribute({visible: false})
+            fightText.setAttribute({ visible: false })
             messagePolygon.setAttribute({ visible: true, fillColor: bgColor });
             messageText1.setText(outComeMessage);
             messageText1.setAttribute({ visible: true });
             messageText2.setText(rewardMessage);
             messageText2.setAttribute({ visible: true });
         }
+        function hideFightEndMessage() {
+            [fightText, messagePolygon, messageText1, messageText2].forEach(obj => {
+                obj.setAttribute({visible: false});
+            })
+        }
 
-        function handleFight(enemy) {
+        function nextScene(){
+            
+            currentStep++; 
+            if (currentStep % 5 != 0){
+                SceneManager.changeScene(BattleScene);
+            }
+            else {
+                SceneManager.changeScene(MerchantScene);
+            }
+        }
+
+        function handleFight(enemy) { //this could be a separate Scene but I'm doing it like this for now
             const result = enemy.fight();
             console.log(result);
 
@@ -200,21 +264,107 @@
             if (result.win) {
                 playerGold += result.reward;
                 lastReward = result.reward;
-                showMessage(`Voitit!`, `Palkintosi:  ${result.reward} kultakolikkoa`);
+                showFightEndMessage(`Voitit!`, `Palkintosi:  ${result.reward} kultakolikkoa`);
             } else {
                 playerGold += result.reward; // reward is -50 on loss
-                showMessage(`Hävisit!`, `Tappio: ${result.reward} kultakolikkoa`, false);
+                showFightEndMessage(`Hävisit!`, `Tappio: ${result.reward} kultakolikkoa`, false);
             }
+            continueBtn.setAttribute({visible: true})
         }
 
-        function fightScene(){
-            fightText.setAttribute({visible: true});
-            generateTwoEnemies();
+        function clearMerchantRow(){
+            merchantVisualParts.forEach(obj => {
+                board.removeObject(obj); 
+                merchantVisualParts.length = 0;
+            })
         }
 
-        fightScene();
+        function renderMerchantRow(tools) {
+            const slotSize = 4; //icon size
+            const numOfItems = tools.length;
+            const centerX = 0;
+            const padding = 2;      // space between icons
+            const startX = centerX - (numOfItems * (slotSize) + (numOfItems - 1) * padding) / 2;       // leftmost X in board coords
+            const yTop = 1;
 
-        
+            tools.forEach((tool, index) => {
+                const lowerLeftX = startX + index * (slotSize + padding);
+                const lowerLeftY = yTop - slotSize;
+
+                merchantVisualParts.push(board.create('image', [
+                    tool.iconPath,
+                    [lowerLeftX, lowerLeftY],
+                    [slotSize, slotSize]
+                ], {
+                    fixed: true,
+                    highlight: false
+                }));
+
+                merchantVisualParts.push(board.create('text', [
+                    lowerLeftX + slotSize / 2,
+                    lowerLeftY - 0.5,
+                    `${tool.cost} kolikkoa`
+                ], {
+                    anchorX: 'middle',
+                    fixed: true,
+                    fontSize: 14
+                }));
+
+                merchantVisualParts.push(board.create('button', [lowerLeftX + slotSize / 2, lowerLeftY - 1.5, 'Osta', () => buy(tool)], {
+                    anchorX: 'middle',
+                    fontSize: fontSize - 2,
+                    fixed: true,
+                    cssStyle: `background-color: rgba(182, 226, 143, 0.8); padding: 4px; border-radius: 4px;`
+                }));
+            });
+        }
+
+        const SceneManager = {
+            currentScene: null,
+            changeScene(newScene) {
+                continueBtn.setAttribute({visible: false});
+                //add some sort of flash screen or animation?
+                if (this.currentScene && this.currentScene.exit) {
+                    this.currentScene.exit();
+                }
+                this.currentScene = newScene;
+                this.currentScene.enter();
+            }
+        };
+
+        const BattleScene = {
+            enter() {
+                fightText.setAttribute({ visible: true })
+                generateTwoEnemies();
+                fightText.setAttribute({ visible: true });
+
+            },
+            exit() {
+                hideFightEndMessage();
+                
+            }
+        };
+
+        const toolsForSale = [
+            new Sword(),
+            new Sword(),
+            new Sword(),
+        ];
+
+        const MerchantScene = {
+            enter() {
+                renderMerchantRow(toolsForSale);
+
+            },
+            exit() {
+                clearMerchantRow();
+
+            }
+        };
+
+        SceneManager.changeScene(BattleScene);
+
+
     </script>
 
 </body>
