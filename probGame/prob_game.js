@@ -1,5 +1,7 @@
-import {possibleEnemies} from "./prob_game_enemyarr.js"
+import { possibleEnemies2, } from "./prob_game_enemyarr.js"
+import { sampleBinomial, sampleUniform, sampleNormal } from "./prob_game_distribs.js";
 
+const possibleEnemies = possibleEnemies2;
 const board = JXG.JSXGraph.initBoard('box', {
     boundingbox: [-15, 10, 15, -10],
     axis: false,
@@ -173,10 +175,11 @@ ReverseCard.prototype.applyEffect = function (player) {
     player.activeEffects.reverseCardOn = true;
 };
 
-function Enemy(name, defeatProb, reward, filename, side) {
+function Enemy(name, defeatProb, rewardDistribution, rewardText, filename, side) {
     this.name = name;
     this.defeatProb = defeatProb;
-    this.reward = reward;
+    this.rewardDistribution = rewardDistribution;
+    this.rewardText = rewardText;
     this.centerPos = (side === 'left') ? { y: -2, x: -6 } : { y: -2, x: 6 };
     this.visualParts = [];
     const imgWidth = 8;   // board units
@@ -196,7 +199,7 @@ function Enemy(name, defeatProb, reward, filename, side) {
         highlight: false
     }));
     this.draw = function () {
-        this.visualParts.push(board.create('text', [this.centerPos.x, this.centerPos.y, this.name], {
+        this.visualParts.push(board.create('text', [this.centerPos.x, this.centerPos.y + 0.5, this.name], {
             anchorX: 'middle',
             anchorY: 'middle',
             fontSize: fontSize,
@@ -207,18 +210,18 @@ function Enemy(name, defeatProb, reward, filename, side) {
         this.visualParts.push(board.create('text', [this.centerPos.x, this.centerPos.y - 1, `Voiton todennäköisyys: ${this.defeatProb.toFixed(2)}`], {
             anchorX: 'middle',
             anchorY: 'middle',
-            fontSize: fontSize,
+            fontSize: fontSize-2,
             fixed: true,
             highlight: false,
             cssStyle: ` background-color: rgba(182, 226, 143, 0.8); padding: 4px; border-radius: 4px;`
         }));
-        this.visualParts.push(board.create('text', [this.centerPos.x, this.centerPos.y - 2, `Palkinto, jos voitat: ${this.reward}`], {
+        this.visualParts.push(board.create('text', [this.centerPos.x, this.centerPos.y - 2.5, `Palkinto, jos voitat: ${this.rewardText}`], {
             anchorX: 'middle',
             anchorY: 'middle',
-            fontSize: fontSize,
+            fontSize: fontSize-2,
             fixed: true,
             highlight: false,
-            cssStyle: ` background-color: rgba(182, 226, 143, 0.8); padding: 4px; border-radius: 4px;`
+            cssStyle: ` background-color: rgba(182, 226, 143, 0.8); padding: 4px; border-radius: 4px; text-align: center;`
         }));
         this.visualParts.push(board.create('button', [this.centerPos.x, this.centerPos.y - 4, 'Valitse', () => handleFight(this)], {
             anchorX: 'middle',
@@ -232,8 +235,19 @@ function Enemy(name, defeatProb, reward, filename, side) {
 
     this.fight = () => {
         const win = Math.random() < this.defeatProb;
-        //just return outcome object
-        return { win, reward: win ? this.reward : -50, enemy: this };
+        let reward = 0;
+        if (this.rewardDistribution.type == 'uniform') {
+            reward = sampleUniform(this.rewardDistribution.a, this.rewardDistribution.b);
+        }
+        else if (this.rewardDistribution.type == 'normal') {
+            reward = sampleNormal(this.rewardDistribution.mean, this.rewardDistribution.stddev);
+        }
+        if (this.rewardDistribution.type == 'binomial') {
+            reward = sampleBinomial(this.rewardDistribution.n, this.rewardDistribution.p, this.rewardDistribution.multiplier);
+        }
+        reward = Math.floor(reward);
+        //just return outcome object here
+        return { win, reward: win ? reward : -50, enemy: this };
     };
 
     this.removeAll = function () {
@@ -249,7 +263,7 @@ function generateTwoEnemies() {
 
     [firstIndex, secondIndex].forEach((index, i) => {
         const side = i === 0 ? 'left' : 'right';
-        const enemy = new Enemy(...possibleEnemies[index], side);
+        const enemy = new Enemy(possibleEnemies[index].name, possibleEnemies[index].defeatProb, possibleEnemies[index].rewardDistribution, possibleEnemies[index].rewardText, possibleEnemies[index].filename, side);
         enemy.draw();
         activeEnemies.push(enemy);
     });

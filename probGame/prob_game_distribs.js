@@ -9,10 +9,10 @@ export function sampleNormal(mean, stddev) {
     return mean + stddev * z0;
 }
 
-export function sampleBinomial(n, p) {
+export function sampleBinomial(n, p, multiplier) {
     let successCount = 0;
     for (let i = 0; i < n; i++) {
         if (Math.random() < p) successCount++;
     }
-    return successCount;
+    return successCount * multiplier;
 }
