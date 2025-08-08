@@ -4,12 +4,16 @@
 <head>
   <title>JSXGraph Example</title>
   <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
-  <script src="probabilities-for-tree3.js"></script>
+  <script src="./probabilities-for-tree3.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
   <style>
     #box {
       width: 1200px;
       height: 600px;
+    }
+    div{
+      margin: 8px;
+      max-width: 1200px;
     }
 
     table {
@@ -69,6 +73,50 @@
   <div> <br><b>Below: Base probability table.</b> The probabilities of different growth directions gain a bias from the
     user-chosen skew, growth direction in the previous step, and global position.</div>
   <div id="probability-table-container"></div>
+
+  <div> 
+    <h3>Info [FI]</h3>Simulaattorin puut generoituvat suhteellisen yksinkertaisten sääntöjen ja satunnaisnumeroiden perusteella. Jokainen yhden yksikön
+    pituinen osa puusta voi osoittaa yhteen kolmesta suunnasta (oikea, ylös, vasen) tai lopettaa kasvamisen (päättyä) ja tämä valinta
+    tehdään satunnaisnumerogeneraattorin avulla, mutta todennäköisyydet kullekin suunnalle vaihtelevat hieman, alla
+    olevien sääntöjen perusteella. Lisäksi joka askeleella on tietty todennäköisyys sille, että oksa haarautuu ja oma 
+    itsenäinen todennäköisyys sille, että oksa kasvattaa lehden. <br>
+    Kasvusääntöjä:<br>
+    <li>Alussa, ennen kuin puu on kasvanut 5 yksikköä korkeaksi, se kasvaa hieman todennäköisemmin ylöspäin
+    eikä sivulle. Kun puu on kasvanut yli 25 yksikköä korkeaksi, se kasvaa todennäköisemmin sivulle kuin ylöspäin.</li>
+    <li> Puun keskiviivan oikealla puolella oksat kasvavat suuremmalla todennäköisyydellä oikealle ja vasemmalla puolella
+       ne kasvavat todennäköisemmin vasemmalle.</li>
+    <li>Edellisen askeleen kasvusuunta vaikuttaa seuraavaan siten, että seuraava askel jatkaa hieman suuremmalla
+    todennäköisyydellä samaan suuntaan kuin vaihtaa suuntaa. Näin kasvutapa on hieman vähemmän kaoottinen ja muistuttaa
+    oikeita puun oksia.</li>
+    <li>Kun ollaan saavuttamassa puun oksien maksimipituus, oksan päättymisen todennäköisyys kasvaa.</li>
+    <li>Aina kun oksa päättyy, se kasvattaa lehden.</li>
+    <li>Jos skew-asetus on asetettu oikealle tai vasemmalle kallistuvaksi, kullakin oksanpätkällä on alkuperäistä suurempi
+    todennäköisyys kasvaa valittuun suuntaan.</li>
+    <li>Jos puu on kääpiö, kunkin oksan todennäköisyys kasvaa suoraan ylöspäin on alkuperäistä pienempi ja oksien
+    päättyminen on todennäköisempää. Kääpiöpuulla on myös maksimikorkeus, jonka yli se ei voi
+    kasvaa.</li><br>
+
+    Tehtäviä. <br>
+    1) Jos puusimulaattori etenee 10 askeleen verran ja jokaisella askeleella oksa noudattaa samoja yksinkertaisia
+    todennäköisyyksiä kasvusuuntansa suhteen (huom. tällöin yllä mainitut simulaattorin monimutkaiset säännöt EIVÄT 
+    päde eikä haarautumista tarvitse ottaa huomioon), millä
+    todennäköisyydellä seuraavat ehdot toteutuvat? <br>
+    a) Vasen: 0.4,  ylös: 0.2,  oikea: 0.4. Ehto: Puu etenee 10 askeleen aikana pelkästään
+    vasemmalle tai ylös, ei lainkaan oikealle.<br>
+    b) Haarautuu per askel: 0.18, ei haaraudu: 0.82. Ehto: Puu haarautuu vähintään kolme kertaa 10 askeleen aikana.<br>
+    c) Vasen: 0.2,  ylös: 0.35,  oikea: 0.45. Ehto: Vähintään 7 askelta kymmenestä on
+    sellaisia, että puu kasvaa oikealle.<br>
+    d) Samat suuntien todennäköisyydet kuin kohdassa c, ehto: Puu ei kasva 10 askeleen aikana lainkaan oikealle. <br><br>
+    2) Oleta, että nyt oksan suunta määräytyy kahden säännön pohjalta:<br>
+    Pohjatodennäköisyydet: Vasen: 0.35, ylös: 0.3, oikea: 0.35. (Ensimmäinen askel
+    noudattaa pelkästään näitä.)<br>
+    Lisäksi: Askeleella on kaksi kertaa suurempi todennäköisyys jatkaa samaan suuntaan kuin edellisellä askeleella, ja
+    samalla muihin suuntiin etenemisen todennäköisyydet puolittuvat.<br>
+    Millä todennäköisyydellä<br>
+    a) puu kasvaa pelkästään oikealle 5 askeleen ajan? <br>
+    b) puu kasvaa vuorotellen oikealle ja vasemmalle 5 askeleen ajan? (vasen-oikea-vasen... tai oikea-vasen-oikea...)<br>
+    
+  </div>
 
 
   <script>
