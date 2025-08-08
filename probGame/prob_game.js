@@ -9,8 +9,9 @@ const board = JXG.JSXGraph.initBoard('box', {
     showNavigation: false
 });
 
+
 const Player = {
-    gold: 0,
+    gold: 1000, //testing
     tools: [],
     baseStrength: 1.0,
     activeEffects: {
@@ -36,11 +37,7 @@ const Player = {
     }
 };
 
-let toolsForSale = [
-    new Sword(),
-    new Net(),
-    new ReverseCard(),
-];
+
 
 let currentStep = 0;
 let lastReward = 0;
@@ -130,10 +127,6 @@ function Tool(name, cost, iconPath, description) {
         return { success: false, goldLeft: Player.gold };
     };
 
-    this.applyEffect = function (player) {
-        //override in subclasses
-    };
-
     this.renderIcon = function (board, slotX, slotY, size) {
         if (this.purchased) {
             board.create('image', [
@@ -154,6 +147,7 @@ function Sword() {
 Sword.prototype = Object.create(Tool.prototype);
 Sword.prototype.constructor = Sword;
 Sword.prototype.applyEffect = function (player) {
+    
     player.baseStrength = 1.05; //make dynamic if needed
 };
 
@@ -171,8 +165,8 @@ function ReverseCard() {
 }
 ReverseCard.prototype = Object.create(Tool.prototype);
 ReverseCard.prototype.constructor = ReverseCard;
-ReverseCard.prototype.applyEffect = function (player) {
-    player.activeEffects.reverseCardOn = true;
+ReverseCard.prototype.applyEffect = function () {
+    Player.activeEffects.reverseCardOn = true;
 };
 
 function Enemy(name, defeatProb, rewardDistribution, rewardText, filename, side) {
@@ -210,7 +204,7 @@ function Enemy(name, defeatProb, rewardDistribution, rewardText, filename, side)
         this.visualParts.push(board.create('text', [this.centerPos.x, this.centerPos.y - 1, `Voiton todennäköisyys: ${this.defeatProb.toFixed(2)}`], {
             anchorX: 'middle',
             anchorY: 'middle',
-            fontSize: fontSize-2,
+            fontSize: fontSize - 2,
             fixed: true,
             highlight: false,
             cssStyle: ` background-color: rgba(182, 226, 143, 0.8); padding: 4px; border-radius: 4px;`
@@ -218,7 +212,7 @@ function Enemy(name, defeatProb, rewardDistribution, rewardText, filename, side)
         this.visualParts.push(board.create('text', [this.centerPos.x, this.centerPos.y - 2.5, `Palkinto, jos voitat: ${this.rewardText}`], {
             anchorX: 'middle',
             anchorY: 'middle',
-            fontSize: fontSize-2,
+            fontSize: fontSize - 2,
             fixed: true,
             highlight: false,
             cssStyle: ` background-color: rgba(182, 226, 143, 0.8); padding: 4px; border-radius: 4px; text-align: center;`
@@ -240,14 +234,18 @@ function Enemy(name, defeatProb, rewardDistribution, rewardText, filename, side)
             reward = sampleUniform(this.rewardDistribution.a, this.rewardDistribution.b);
         }
         else if (this.rewardDistribution.type == 'normal') {
-            reward = sampleNormal(this.rewardDistribution.mean, this.rewardDistribution.stddev);
+            do { //prevent negative
+                reward = sampleNormal(this.rewardDistribution.mean, this.rewardDistribution.stddev);
+            } while (reward < 0);
         }
         if (this.rewardDistribution.type == 'binomial') {
             reward = sampleBinomial(this.rewardDistribution.n, this.rewardDistribution.p, this.rewardDistribution.multiplier);
         }
         reward = Math.floor(reward);
+        const rewardOutput = win ? reward : (Player.activeEffects.safetyNetOn ? 0 : -50);
+        console.log(rewardOutput)
         //just return outcome object here
-        return { win, reward: win ? reward : -50, enemy: this };
+        return { win, reward: rewardOutput, enemy: this };
     };
 
     this.removeAll = function () {
@@ -305,6 +303,12 @@ function handleFight(enemy) { //this could be a separate Scene but I'm doing it 
 }
 
 ///////////MERCHANT
+
+let toolsForSale = [
+    new Sword(),
+    new Net(),
+    new ReverseCard(),
+];
 
 function buy(tool) {
     const result = Player.buyTool(tool);
@@ -431,7 +435,6 @@ const SceneManager = {
         continueBtn.setAttribute({ visible: false });
         //add some sort of flash screen or animation?
         if (this.currentScene && this.currentScene.exit) {
-            console.log("exiting previous scene")
             this.currentScene.exit();
         }
         this.currentScene = newScene;
@@ -472,5 +475,5 @@ function nextScene() {
 };
 
 
-SceneManager.changeScene(BattleScene);
+SceneManager.changeScene(MerchantScene);
 renderPlayerTools(Player.tools)
