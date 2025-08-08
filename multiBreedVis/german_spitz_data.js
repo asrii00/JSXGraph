@@ -5940,3 +5940,4 @@ const spitzData = [
     "Personality_age": 1.866788
   }
 ];
+export default spitzData;

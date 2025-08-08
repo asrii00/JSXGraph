@@ -3402,3 +3402,5 @@ const asianPrimitivesData = [
     "Personality_age": 9.858387
   }
 ];
+
+export default asianPrimitivesData;

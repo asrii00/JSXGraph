@@ -4806,3 +4806,4 @@ const pointersData = [
     "Personality_age": 0.8989071
   }
 ];
+export default pointersData;

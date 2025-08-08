@@ -2025,3 +2025,5 @@ const sledDogsData = [
     "Personality_age": 1.0
   }
 ];
+
+export default sledDogsData;

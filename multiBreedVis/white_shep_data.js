@@ -2619,3 +2619,4 @@ const whiteShepsData = [
     "Personality_age": 3.028063
   }
 ];
+export default whiteShepsData;

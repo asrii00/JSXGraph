@@ -1,5 +1,11 @@
+import asianPrimitivesData from "./asian_primitives_data.js"
+import pointersData from "./pointers_data.js"
+import sheltieData from "./sheltie_data.js"
+import whiteShepsData from "./white_shep_data.js"
+import spitzData from "./german_spitz_data.js"
+import sledDogsData from "./sled_dogs_data.js"
+import sighthoundsData from "./sighthounds_data.js"
 
-//TODO: refactor to separate files
 const board = JXG.JSXGraph.initBoard('box', {
     boundingbox: [-10, 5.5, 100, -0.75],
     axis: true,
@@ -545,7 +551,6 @@ function drawPies(categoricalCounts) {
         }
     }
 }
-
 
 function updateTabStyles(active) {
     document.querySelectorAll('#tabs button').forEach(btn => btn.classList.remove('tab-active'));

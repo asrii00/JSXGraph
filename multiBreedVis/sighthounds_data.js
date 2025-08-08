@@ -3321,3 +3321,4 @@ const sighthoundsData = [
     "Personality_age": 1.702555
   }
 ];
+export default sighthoundsData;

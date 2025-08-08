@@ -5832,3 +5832,4 @@ const sheltieData = [
     "Personality_age": 1.367989
   }
 ];
+export default sheltieData;
