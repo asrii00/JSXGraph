@@ -11,7 +11,7 @@ const board = JXG.JSXGraph.initBoard('box', {
 
 
 const Player = {
-    gold: 1000, //testing
+    gold: 0, 
     tools: [],
     baseStrength: 1.0,
     activeEffects: {
@@ -36,7 +36,6 @@ const Player = {
         }
     }
 };
-
 
 
 let currentStep = 0;
@@ -147,12 +146,11 @@ function Sword() {
 Sword.prototype = Object.create(Tool.prototype);
 Sword.prototype.constructor = Sword;
 Sword.prototype.applyEffect = function (player) {
-    
     player.baseStrength = 1.05; //make dynamic if needed
 };
 
 function Net() {
-    Tool.call(this, "Turvaverkko", 350, "net.png", "Et menetä kulta-<br>kolikoita, jos häviät.");
+    Tool.call(this, "Turvaverkko", 800, "net.png", "Et menetä kulta-<br>kolikoita, jos häviät.");
 }
 Net.prototype = Object.create(Tool.prototype);
 Net.prototype.constructor = Net;
@@ -161,12 +159,12 @@ Net.prototype.applyEffect = function (player) {
 };
 
 function ReverseCard() {
-    Tool.call(this, "Käänteiskortti", 800, "reversecard.png", "Jos häviät, sinulla<br> on 50% mahdollisuus<br> kääntää se voitoksi.");
+    Tool.call(this, "Käänteiskortti", 2000, "reversecard.png", "Jos häviät, sinulla<br> on 25% mahdollisuus<br> kääntää se voitoksi.<br> Silloin voittoraha<br>kuitenkin puolittuu.");
 }
 ReverseCard.prototype = Object.create(Tool.prototype);
 ReverseCard.prototype.constructor = ReverseCard;
-ReverseCard.prototype.applyEffect = function () {
-    Player.activeEffects.reverseCardOn = true;
+ReverseCard.prototype.applyEffect = function (player) {
+    player.activeEffects.reverseCardOn = true;
 };
 
 function Enemy(name, defeatProb, rewardDistribution, rewardText, filename, side) {
@@ -228,7 +226,17 @@ function Enemy(name, defeatProb, rewardDistribution, rewardText, filename, side)
     }
 
     this.fight = () => {
-        const win = Math.random() < this.defeatProb;
+        let wasReversed = false;
+        const adjustedProb = Math.min(1.0, this.defeatProb * Player.baseStrength); //clamp
+        console.log("odds", adjustedProb);
+        let win = Math.random() < adjustedProb;
+        if (!win && Player.activeEffects.reverseCardOn) {
+            if (Math.random() < 0.25) {
+                console.log("reversed!")
+                win = true;
+                wasReversed = true;
+            }else { console.log("not reversed")}
+        }
         let reward = 0;
         if (this.rewardDistribution.type == 'uniform') {
             reward = sampleUniform(this.rewardDistribution.a, this.rewardDistribution.b);
@@ -242,7 +250,10 @@ function Enemy(name, defeatProb, rewardDistribution, rewardText, filename, side)
             reward = sampleBinomial(this.rewardDistribution.n, this.rewardDistribution.p, this.rewardDistribution.multiplier);
         }
         reward = Math.floor(reward);
-        const rewardOutput = win ? reward : (Player.activeEffects.safetyNetOn ? 0 : -50);
+        let rewardOutput = win ? reward : (Player.activeEffects.safetyNetOn ? 0 : -50);
+        if (win && wasReversed) {
+            rewardOutput *= 0.5;
+        }
         console.log(rewardOutput)
         //just return outcome object here
         return { win, reward: rewardOutput, enemy: this };
@@ -347,22 +358,23 @@ function renderMerchantRow(tools) {
 
         merchantVisualParts.push(board.create('text', [
             lowerLeftX + slotSize / 2,
-            lowerLeftY + 6.5,
+            lowerLeftY + 7.5,
             `${tool.name}`
         ], {
             anchorX: 'middle',
             fixed: true,
             fontSize: 16,
-            cssStyle: `white-space: pre-wrap; ` //not so pretty but works for now
+            cssStyle: `white-space: pre-wrap; text-align: center; ` 
         }));
         merchantVisualParts.push(board.create('text', [
             lowerLeftX + slotSize / 2,
-            lowerLeftY + 5,
+            lowerLeftY + 5.75,
             `${tool.description}`
         ], {
             anchorX: 'middle',
             fixed: true,
-            fontSize: 14
+            fontSize: 14, 
+            cssStyle: `text-align: center;`
         }));
         merchantVisualParts.push(board.create('image', [
             tool.iconPath,
@@ -475,5 +487,5 @@ function nextScene() {
 };
 
 
-SceneManager.changeScene(MerchantScene);
+SceneManager.changeScene(BattleScene);
 renderPlayerTools(Player.tools)
