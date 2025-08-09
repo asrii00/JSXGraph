@@ -1,13 +1,5 @@
-export const possibleEnemies = [
-            ["Örkki", 0.9, 120, 'hotti.png'],
-            ["Mörkki", 0.5, 200, 'otti.png'],
-            ["Hörkki", 0.1, 1000, 'motti.png'],
-            ["Öttiäinen", 0.05, 5000, 'motti.png'],
-            ["Möttiäinen", 0.75, 100, 'otti.png'],
-            ["Höttiäinen", 1, 70, 'hotti.png'],
-        ];
 
- export const possibleEnemies2 = [
+export const possibleEnemies2 = [
     {
         name: "Örkki",
         defeatProb: 0.9,

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://jsxgraph.org/distrib/jsxgraphcore.js"></script>
+    <style>
+        #box, #box2, #box3 {
+            width: 600px; 
+            height: 400px; 
+            margin-bottom: 20px; 
+            border: 1px solid #ccc;
+        }
+        input {
+            max-width: 50px;
+        }
+
+    </style>
+</head>
+<body>
+    <h3>Normaalijakauma</h3>
+    Keskiarvo: <input type="number" id="mean" value="5" step="0.1">
+    Keskihajonta: <input type="number" id="stddev" value="1" step="0.1">
+    <div id="box"></div>
+
+    <h3>Binomiaalijakauma</h3>
+    N (kokeiden määrä): <input type="number" id="n" value="10" step="1" min="1">
+    p (onnistumisen todennäköisyys): <input type="number" id="p" value="0.5" step="0.01" min="0" max="1">
+    <div id="box2"></div>
+
+    <h3>Tasajakauma</h3>
+    a (min): <input type="number" id="a" value="0" step="0.1">
+    b (max): <input type="number" id="b" value="10" step="0.1">
+    <div id="box3"></div>
+
+<script src="./distribution_vis.js">
+
+</script>
+</body>
+</html>
