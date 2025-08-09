@@ -11,7 +11,7 @@ const board = JXG.JSXGraph.initBoard('box', {
 
 
 const Player = {
-    gold: 0, 
+    gold: 4000,
     tools: [],
     baseStrength: 1.0,
     activeEffects: {
@@ -126,18 +126,6 @@ function Tool(name, cost, iconPath, description) {
         return { success: false, goldLeft: Player.gold };
     };
 
-    this.renderIcon = function (board, slotX, slotY, size) {
-        if (this.purchased) {
-            board.create('image', [
-                this.iconPath,
-                [slotX, slotY - size], // lower-left corner
-                [size, size]
-            ], {
-                fixed: true,
-                highlight: false
-            });
-        }
-    };
 }
 
 function Sword() {
@@ -235,7 +223,7 @@ function Enemy(name, defeatProb, rewardDistribution, rewardText, filename, side)
                 console.log("reversed!")
                 win = true;
                 wasReversed = true;
-            }else { console.log("not reversed")}
+            } else { console.log("not reversed") }
         }
         let reward = 0;
         if (this.rewardDistribution.type == 'uniform') {
@@ -364,7 +352,7 @@ function renderMerchantRow(tools) {
             anchorX: 'middle',
             fixed: true,
             fontSize: 16,
-            cssStyle: `white-space: pre-wrap; text-align: center; ` 
+            cssStyle: `white-space: pre-wrap; text-align: center; `
         }));
         merchantVisualParts.push(board.create('text', [
             lowerLeftX + slotSize / 2,
@@ -373,7 +361,7 @@ function renderMerchantRow(tools) {
         ], {
             anchorX: 'middle',
             fixed: true,
-            fontSize: 14, 
+            fontSize: 14,
             cssStyle: `text-align: center;`
         }));
         merchantVisualParts.push(board.create('image', [
@@ -406,10 +394,10 @@ function renderMerchantRow(tools) {
 function renderPlayerTools(tools) {
     toolRowVisualParts.forEach(obj => {
         board.removeObject(obj);
-    })
+    });
     toolRowVisualParts.length = 0;
 
-    const slotSize = 2; //icon size
+    const slotSize = 2; // icon size
     const startX = -14;
     const padding = 1;
     const startY = 6;
@@ -418,17 +406,52 @@ function renderPlayerTools(tools) {
         const lowerLeftY = startY - index * (slotSize + padding);
         const lowerLeftX = startX;
 
+        const textBoxWidth = 4.5;
+        const textBoxLeftPadding = 0.25;
+        const extraHeight = tool.description.length > 80 ? 0.5 : 0;
+
         toolRowVisualParts.push(board.create('polygon', [
             [lowerLeftX, lowerLeftY + slotSize],
             [lowerLeftX + slotSize, lowerLeftY + slotSize],
             [lowerLeftX + slotSize, lowerLeftY],
-            [lowerLeftX, lowerLeftY]], {
+            [lowerLeftX, lowerLeftY]
+        ], {
             vertices: { visible: false },
             layer: 1,
             fillColor: 'lightblue'
         }));
 
-        toolRowVisualParts.push(board.create('image', [
+        const tooltipText = board.create('text', [
+            lowerLeftX + slotSize + textBoxLeftPadding + 0.25,
+            lowerLeftY + slotSize / 2,
+            tool.description
+        ], {
+            visible: false,
+            fixed: true,
+            fontSize: 12,
+            anchorX: 'left',
+            anchorY: 'middle',
+            strokeColor: 'black',
+            layer: 10
+        });
+        const tooltipBox = board.create('polygon', [
+            [lowerLeftX + slotSize + textBoxLeftPadding, lowerLeftY + slotSize + extraHeight],
+            [lowerLeftX + slotSize + textBoxWidth + textBoxLeftPadding, lowerLeftY + slotSize + extraHeight],
+            [lowerLeftX + slotSize + textBoxWidth + textBoxLeftPadding, lowerLeftY - extraHeight],
+            [lowerLeftX + slotSize + textBoxLeftPadding, lowerLeftY - extraHeight]
+        ], {
+            vertices: { visible: false },
+            layer: 1,
+            fixed: true,
+            fillColor: 'white',
+            strokeColor: 'black',
+            layer: 10, 
+            fillOpacity: 0.9,
+            visible: false
+        });
+        toolRowVisualParts.push(tooltipText, tooltipBox);
+
+        const img = board.create('image', [
             tool.iconPath,
             [lowerLeftX, lowerLeftY],
             [slotSize, slotSize]
@@ -436,9 +459,22 @@ function renderPlayerTools(tools) {
             fixed: true,
             highlight: false,
             layer: 5
-        }));
+        });
+
+        // hover
+        img.on('over', () => {
+            tooltipText.setAttribute({ visible: true });
+            tooltipBox.setAttribute({ visible: true });
+        });
+        img.on('out', () => {
+            tooltipText.setAttribute({ visible: false });
+            tooltipBox.setAttribute({ visible: false });
+        });
+
+        toolRowVisualParts.push(img);
     });
 }
+
 
 /////////SCENE HANDLING
 const SceneManager = {
@@ -487,5 +523,5 @@ function nextScene() {
 };
 
 
-SceneManager.changeScene(BattleScene);
+SceneManager.changeScene(MerchantScene);
 renderPlayerTools(Player.tools)
