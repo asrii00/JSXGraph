@@ -14,9 +14,13 @@ const Player = {
     gold: 4000,
     tools: [],
     baseStrength: 1.0,
+    hasAntidoteInInventory: false,
     activeEffects: {
         safetyNetOn: false,
         reverseCardOn: false
+    },
+    negativeEffects:{
+        brainRot: false
     },
 
     canAfford(cost) {
@@ -34,12 +38,23 @@ const Player = {
         } else {
             return { success: false, message: "Ei tarpeeksi kolikoita!" };
         }
+    },
+
+    infectionCheck(infectionChance){
+        console.log(infectionChance);
+        if (Math.random()< infectionChance){
+            console.log("infected")
+            this.negativeEffects.brainRot = true;
+            // add effect visual
+            // add effect implementation
+            return {success: true, disease: 'brainrot'};
+        } else {
+        console.log("not infected")
+        return {success: false, disease: 'brainrot'};}
     }
 };
 
-
 let currentStep = 0;
-let lastReward = 0;
 
 let activeEnemies = [];
 const merchantVisualParts = [];
@@ -110,7 +125,6 @@ function getRandomInt(min, max) {
 
 //////////CLASSES
 
-
 function Tool(name, cost, iconPath, description) {
     this.name = name;
     this.cost = cost;
@@ -154,12 +168,28 @@ ReverseCard.prototype.constructor = ReverseCard;
 ReverseCard.prototype.applyEffect = function (player) {
     player.activeEffects.reverseCardOn = true;
 };
+function Potion() {
+    Tool.call(this, "Parantava taikajuoma", 500, "potion.png", "Parantaa aivomädän.");
+}
+Potion.prototype = Object.create(Tool.prototype);
+Potion.prototype.constructor = Potion;
+Potion.prototype.applyEffect = function (player) {
+    if (player.negativeEffects.brainRot == true){
+        console.log("removing disease")
+        player.negativeEffects.brainRot = false;
+        
+    }
+    player.hasAntidoteInInventory = true;
+    
+};
 
-function Enemy(name, defeatProb, rewardDistribution, rewardText, filename, side) {
+function Enemy(name, defeatProb, rewardDistribution, rewardText, filename, canInfect, infectionChance, side) {
     this.name = name;
     this.defeatProb = defeatProb;
     this.rewardDistribution = rewardDistribution;
     this.rewardText = rewardText;
+    this.canInfect = canInfect;
+    this.infectionChance = infectionChance;
     this.centerPos = (side === 'left') ? { y: -2, x: -6 } : { y: -2, x: 6 };
     this.visualParts = [];
     const imgWidth = 8;   // board units
@@ -179,7 +209,7 @@ function Enemy(name, defeatProb, rewardDistribution, rewardText, filename, side)
         highlight: false
     }));
     this.draw = function () {
-        this.visualParts.push(board.create('text', [this.centerPos.x, this.centerPos.y + 0.5, this.name], {
+        this.visualParts.push(board.create('text', [this.centerPos.x, this.centerPos.y + 1.5, this.name], {
             anchorX: 'middle',
             anchorY: 'middle',
             fontSize: fontSize,
@@ -187,7 +217,7 @@ function Enemy(name, defeatProb, rewardDistribution, rewardText, filename, side)
             highlight: false,
             cssStyle: `background-color: rgba(182, 226, 143, 0.8); padding: 4px; border-radius: 4px;`
         }));
-        this.visualParts.push(board.create('text', [this.centerPos.x, this.centerPos.y - 1, `Voiton todennäköisyys: ${this.defeatProb.toFixed(2)}`], {
+        this.visualParts.push(board.create('text', [this.centerPos.x, this.centerPos.y + 0.5, `Voiton todennäköisyys: ${this.defeatProb.toFixed(2)}`], {
             anchorX: 'middle',
             anchorY: 'middle',
             fontSize: fontSize - 2,
@@ -195,7 +225,7 @@ function Enemy(name, defeatProb, rewardDistribution, rewardText, filename, side)
             highlight: false,
             cssStyle: ` background-color: rgba(182, 226, 143, 0.8); padding: 4px; border-radius: 4px;`
         }));
-        this.visualParts.push(board.create('text', [this.centerPos.x, this.centerPos.y - 2.5, `Palkinto, jos voitat: ${this.rewardText}`], {
+        this.visualParts.push(board.create('text', [this.centerPos.x, this.centerPos.y - 0.75, `Palkinto, jos voitat: ${this.rewardText}`], {
             anchorX: 'middle',
             anchorY: 'middle',
             fontSize: fontSize - 2,
@@ -203,7 +233,7 @@ function Enemy(name, defeatProb, rewardDistribution, rewardText, filename, side)
             highlight: false,
             cssStyle: ` background-color: rgba(182, 226, 143, 0.8); padding: 4px; border-radius: 4px; text-align: center;`
         }));
-        this.visualParts.push(board.create('button', [this.centerPos.x, this.centerPos.y - 4, 'Valitse', () => handleFight(this)], {
+        this.visualParts.push(board.create('button', [this.centerPos.x, this.centerPos.y - 2.25, 'Valitse', () => handleFight(this)], {
             anchorX: 'middle',
             anchorY: 'middle',
             fontSize: fontSize - 2,
@@ -211,11 +241,26 @@ function Enemy(name, defeatProb, rewardDistribution, rewardText, filename, side)
             highlight: false,
             cssStyle: `background-color: rgba(182, 226, 143, 0.8); padding: 4px; border-radius: 4px;`
         }));
+        if (this.canInfect){
+            this.visualParts.push(board.create('text', [this.centerPos.x+3, this.centerPos.y + 7.5, `Aivomätätartunnan <br> mahdollisuus: ${this.infectionChance}`], {
+            anchorX: 'middle',
+            anchorY: 'middle',
+            fontSize: fontSize - 4,
+            fixed: true,
+            highlight: false,
+            cssStyle: ` background-color: rgba(239, 156, 156, 0.8); padding: 4px; border-radius: 4px; text-align: center; white-space: pre-wrap; `
+        }));
+
+        }
     }
 
     this.fight = () => {
+        if (this.canInfect && !Player.hasAntidoteInInventory){
+            console.log("checking infection")
+            Player.infectionCheck(this.infectionChance);
+        }
         let wasReversed = false;
-        const adjustedProb = Math.min(1.0, this.defeatProb * Player.baseStrength); //clamp
+        const adjustedProb = Math.min(1.0, this.defeatProb * Player.baseStrength); //clamp 
         console.log("odds", adjustedProb);
         let win = Math.random() < adjustedProb;
         if (!win && Player.activeEffects.reverseCardOn) {
@@ -260,7 +305,9 @@ function generateTwoEnemies() {
 
     [firstIndex, secondIndex].forEach((index, i) => {
         const side = i === 0 ? 'left' : 'right';
-        const enemy = new Enemy(possibleEnemies[index].name, possibleEnemies[index].defeatProb, possibleEnemies[index].rewardDistribution, possibleEnemies[index].rewardText, possibleEnemies[index].filename, side);
+        //Fix the amount of params :'D
+        const enemy = new Enemy(possibleEnemies[index].name, possibleEnemies[index].defeatProb,
+             possibleEnemies[index].rewardDistribution, possibleEnemies[index].rewardText, possibleEnemies[index].filename,possibleEnemies[index].canInfect, possibleEnemies[index].infectionChance, side);
         enemy.draw();
         activeEnemies.push(enemy);
     });
@@ -307,6 +354,7 @@ let toolsForSale = [
     new Sword(),
     new Net(),
     new ReverseCard(),
+    new Potion()
 ];
 
 function buy(tool) {
