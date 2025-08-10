@@ -184,7 +184,7 @@ ReverseCard.prototype.applyEffect = function (player) {
     player.activeEffects.reverseCardOn = true;
 };
 function Potion() {
-    Tool.call(this, "Parantava taikajuoma", 500, "potion.png", "Parantaa aivomädän.", "potionText.png", false);
+    Tool.call(this, "Parantava taikajuoma", 500, "rotPotion.png", "Parantaa aivomädän.", "potionText.png", false);
 }
 Potion.prototype = Object.create(Tool.prototype);
 Potion.prototype.constructor = Potion;
@@ -508,7 +508,7 @@ function renderPlayerTools(tools) {
             visible: false,
             fixed: true,
             highlight: false,
-            layer: 99, 
+            layer: 99, // still doesn't render on top because the enemy texts are html rendered.... ignoring this for now
         });
 
         const img = board.create('image', [
