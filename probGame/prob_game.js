@@ -11,7 +11,7 @@ const board = JXG.JSXGraph.initBoard('box', {
 
 
 const Player = {
-    gold: 4000,
+    gold: 0,
     tools: [],
     baseStrength: 1.0,
     hasAntidoteInInventory: false,
@@ -60,8 +60,10 @@ const Player = {
         if (Math.random() < infectionChance) {
             console.log("infected")
             this.infect();
+            return true;
         } else {
             console.log("not infected")
+            return false;
         }
     }
 };
@@ -116,6 +118,16 @@ const continueBtn = board.create('button', [0, -2.5, 'Jatka', () => nextScene()]
     fixed: true,
     cssStyle: `background-color: rgba(255, 255, 255, 0.8); padding: 4px; border-radius: 4px;`
 });
+const infectionText = board.create('text', [0, -4, `Sait aivomätätartunnan.`], {
+    anchorX: 'middle',
+    anchorY: 'middle',
+    fontSize: fontSize - 2,
+    visible: false,
+    fixed: true,
+    highlight: false,
+    cssStyle: `background-color: rgba(254, 157, 157, 1); padding: 4px; border-radius: 4px;`
+});
+
 //choose your opponent text
 const fightText = board.create('text', [0, 8, `Valitse vastustajasi!`], styling);
 const goldText = board.create('text', [11, 9.5, () => { return `Kultakolikkoja: ${Player.gold}` }], styling);
@@ -163,7 +175,7 @@ function Sword() {
 Sword.prototype = Object.create(Tool.prototype);
 Sword.prototype.constructor = Sword;
 Sword.prototype.applyEffect = function (player) {
-    player.baseStrength = 1.05; //make dynamic if needed
+    player.baseStrength *= 1.05; 
 };
 
 function Net() {
@@ -283,11 +295,15 @@ function Enemy(enemy, side) {
     }
 
     this.fight = () => {
+        let wasReversed = false;
+        let gotInfected = false;
         if (this.canInfect && !Player.hasAntidoteInInventory) {
             console.log("checking infection")
-            Player.infectionCheck(this.infectionChance);
+            if (Player.infectionCheck(this.infectionChance)) {
+                gotInfected = true;
+            };
         }
-        let wasReversed = false;
+
         const adjustedProb = Math.min(1.0, this.defeatProb * Player.baseStrength); //clamp 
         console.log("odds", adjustedProb);
         let win = Math.random() < adjustedProb;
@@ -317,7 +333,7 @@ function Enemy(enemy, side) {
         }
         console.log(rewardOutput)
         //just return outcome object here
-        return { win, reward: rewardOutput, enemy: this };
+        return { win, reward: rewardOutput, enemy: this, gotInfected: gotInfected };
     };
 
     this.removeAll = function () {
@@ -337,10 +353,9 @@ function generateTwoEnemies() {
         enemy.draw();
         activeEnemies.push(enemy);
     });
-    
 }
 
-function showFightEndMessage(outComeMessage, rewardMessage, won = true) {
+function showFightEndMessage(outComeMessage, rewardMessage, won = true, gotInfected = false) {
     const bgColor = won ? '#cfeecf' : '#f0b2b2';
     fightText.setAttribute({ visible: false })
     messagePolygon.setAttribute({ visible: true, fillColor: bgColor });
@@ -348,9 +363,15 @@ function showFightEndMessage(outComeMessage, rewardMessage, won = true) {
     messageText1.setAttribute({ visible: true });
     messageText2.setText(rewardMessage);
     messageText2.setAttribute({ visible: true });
+    if (gotInfected) {
+        infectionText.setAttribute({ visible: true })
+    }
+    else {
+        infectionText.setAttribute({ visible: false })
+    }
 }
 function hideFightEndMessage() {
-    [fightText, messagePolygon, messageText1, messageText2].forEach(obj => {
+    [fightText, messagePolygon, messageText1, messageText2, infectionText].forEach(obj => {
         obj.setAttribute({ visible: false });
     })
 }
@@ -366,11 +387,12 @@ function handleFight(enemy) { //this could be a separate Scene but I'm doing it 
 
     if (result.win) {
         Player.gold += result.reward;
-        showFightEndMessage(`Voitit!`, `Palkintosi:  ${result.reward} kultakolikkoa`);
+        showFightEndMessage(`Voitit!`, `Palkintosi:  ${result.reward} kultakolikkoa`, true, result.gotInfected);
     } else {
         Player.gold += result.reward; // reward is -50 on loss
-        showFightEndMessage(`Hävisit!`, `Tappio: ${result.reward} kultakolikkoa`, false);
+        showFightEndMessage(`Hävisit!`, `Tappio: ${result.reward} kultakolikkoa`, false, result.gotInfected);
     }
+
     continueBtn.setAttribute({ visible: true })
 }
 
@@ -493,16 +515,16 @@ function renderPlayerTools(tools) {
             vertices: { visible: false },
             layer: 1,
             highlight: false,
-            fillColor: tool.isNegative ? '#f0b2b2' : 'lightblue', 
+            fillColor: tool.isNegative ? '#f0b2b2' : 'lightblue',
             borders: { strokeColor: tool.isNegative ? '#a82929ff' : '#3e77ccff' }
         }));
 
-        const tooltipHeight = tool.isTallTooltip ? 3 : 2.25; 
-        const tooltipWidth = 4.75; 
+        const tooltipHeight = tool.isTallTooltip ? 3 : 2.25;
+        const tooltipWidth = 4.75;
 
         const tooltipImg = board.create('image', [
             tool.textImgPath,
-            [lowerLeftX + slotSize + 0.25, lowerLeftY + slotSize /2 - tooltipHeight/2],
+            [lowerLeftX + slotSize + 0.25, lowerLeftY + slotSize / 2 - tooltipHeight / 2],
             [tooltipWidth, tooltipHeight]
         ], {
             visible: false,
@@ -582,5 +604,5 @@ function nextScene() {
 };
 
 
-SceneManager.changeScene(MerchantScene);
+SceneManager.changeScene(BattleScene);
 renderPlayerTools(Player.tools)
