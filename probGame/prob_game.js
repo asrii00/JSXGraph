@@ -19,7 +19,7 @@ const Player = {
         safetyNetOn: false,
         reverseCardOn: false
     },
-    negativeEffects:{
+    negativeEffects: {
         brainRot: false
     },
 
@@ -40,17 +40,29 @@ const Player = {
         }
     },
 
-    infectionCheck(infectionChance){
-        console.log(infectionChance);
-        if (Math.random()< infectionChance){
-            console.log("infected")
+    infect() {
+        if (!this.tools.includes(brainRotObj)) {
             this.negativeEffects.brainRot = true;
-            // add effect visual
-            // add effect implementation
-            return {success: true, disease: 'brainrot'};
+            this.baseStrength *= 0.75;
+            this.tools.push(brainRotObj);
+            renderPlayerTools(this.tools);
+        }
+    },
+
+    removeBrainRot() {
+        this.baseStrength = 1.0;
+        this.tools = this.tools.filter(tool => tool !== brainRotObj);
+        renderPlayerTools(this.tools);
+    },
+
+    infectionCheck(infectionChance) {
+        console.log(infectionChance);
+        if (Math.random() < infectionChance) {
+            console.log("infected")
+            this.infect();
         } else {
-        console.log("not infected")
-        return {success: false, disease: 'brainrot'};}
+            console.log("not infected")
+        }
     }
 };
 
@@ -125,12 +137,13 @@ function getRandomInt(min, max) {
 
 //////////CLASSES
 
-function Tool(name, cost, iconPath, description) {
+function Tool(name, cost, iconPath, description, negative = false) {
     this.name = name;
     this.cost = cost;
     this.iconPath = iconPath;
     this.description = description;
     this.purchased = false;
+    this.isNegative = negative;
 
     this.purchase = function () {
         if (Player.gold >= this.cost) {
@@ -174,22 +187,31 @@ function Potion() {
 Potion.prototype = Object.create(Tool.prototype);
 Potion.prototype.constructor = Potion;
 Potion.prototype.applyEffect = function (player) {
-    if (player.negativeEffects.brainRot == true){
+    if (player.negativeEffects.brainRot == true) {
         console.log("removing disease")
         player.negativeEffects.brainRot = false;
-        
+        player.removeBrainRot();
     }
     player.hasAntidoteInInventory = true;
-    
+
 };
 
-function Enemy(name, defeatProb, rewardDistribution, rewardText, filename, canInfect, infectionChance, side) {
-    this.name = name;
-    this.defeatProb = defeatProb;
-    this.rewardDistribution = rewardDistribution;
-    this.rewardText = rewardText;
-    this.canInfect = canInfect;
-    this.infectionChance = infectionChance;
+function BrainRot() {
+    Tool.call(this, "Aivomätä", 0, "brainrot.png", "Heikentää voitto-<br>mahdollisuuksiasi 25%.");
+}
+BrainRot.prototype = Object.create(Tool.prototype);
+BrainRot.prototype.constructor = BrainRot;
+BrainRot.prototype.applyEffect = function (player) {
+    player.infect();
+};
+
+function Enemy(enemy, side) {
+    this.name = enemy.name;
+    this.defeatProb = enemy.defeatProb;
+    this.rewardDistribution = enemy.rewardDistribution;
+    this.rewardText = enemy.rewardText;
+    this.canInfect = enemy.canInfect;
+    this.infectionChance = enemy.infectionChance;
     this.centerPos = (side === 'left') ? { y: -2, x: -6 } : { y: -2, x: 6 };
     this.visualParts = [];
     const imgWidth = 8;   // board units
@@ -201,7 +223,7 @@ function Enemy(name, defeatProb, rewardDistribution, rewardText, filename, canIn
     const lowerLeftY = imgCenterY - imgHeight / 2;
 
     this.visualParts.push(board.create('image', [
-        filename,
+        enemy.filename,
         [lowerLeftX, lowerLeftY],
         [imgWidth, imgHeight]
     ], {
@@ -215,6 +237,7 @@ function Enemy(name, defeatProb, rewardDistribution, rewardText, filename, canIn
             fontSize: fontSize,
             fixed: true,
             highlight: false,
+            layer: 8,
             cssStyle: `background-color: rgba(182, 226, 143, 0.8); padding: 4px; border-radius: 4px;`
         }));
         this.visualParts.push(board.create('text', [this.centerPos.x, this.centerPos.y + 0.5, `Voiton todennäköisyys: ${this.defeatProb.toFixed(2)}`], {
@@ -223,6 +246,7 @@ function Enemy(name, defeatProb, rewardDistribution, rewardText, filename, canIn
             fontSize: fontSize - 2,
             fixed: true,
             highlight: false,
+            layer: 8,
             cssStyle: ` background-color: rgba(182, 226, 143, 0.8); padding: 4px; border-radius: 4px;`
         }));
         this.visualParts.push(board.create('text', [this.centerPos.x, this.centerPos.y - 0.75, `Palkinto, jos voitat: ${this.rewardText}`], {
@@ -231,6 +255,7 @@ function Enemy(name, defeatProb, rewardDistribution, rewardText, filename, canIn
             fontSize: fontSize - 2,
             fixed: true,
             highlight: false,
+            layer: 8,
             cssStyle: ` background-color: rgba(182, 226, 143, 0.8); padding: 4px; border-radius: 4px; text-align: center;`
         }));
         this.visualParts.push(board.create('button', [this.centerPos.x, this.centerPos.y - 2.25, 'Valitse', () => handleFight(this)], {
@@ -239,23 +264,24 @@ function Enemy(name, defeatProb, rewardDistribution, rewardText, filename, canIn
             fontSize: fontSize - 2,
             fixed: true,
             highlight: false,
+            layer: 8,
             cssStyle: `background-color: rgba(182, 226, 143, 0.8); padding: 4px; border-radius: 4px;`
         }));
-        if (this.canInfect){
-            this.visualParts.push(board.create('text', [this.centerPos.x+3, this.centerPos.y + 7.5, `Aivomätätartunnan <br> mahdollisuus: ${this.infectionChance}`], {
-            anchorX: 'middle',
-            anchorY: 'middle',
-            fontSize: fontSize - 4,
-            fixed: true,
-            highlight: false,
-            cssStyle: ` background-color: rgba(239, 156, 156, 0.8); padding: 4px; border-radius: 4px; text-align: center; white-space: pre-wrap; `
-        }));
-
+        if (this.canInfect) {
+            this.visualParts.push(board.create('text', [this.centerPos.x + 3, this.centerPos.y + 7.5, `Aivomätätartunnan <br> mahdollisuus: ${this.infectionChance}`], {
+                anchorX: 'middle',
+                anchorY: 'middle',
+                fontSize: fontSize - 4,
+                fixed: true,
+                highlight: false,
+                layer: 8,
+                cssStyle: ` background-color: rgba(239, 156, 156, 0.8); padding: 4px; border-radius: 4px; text-align: center; white-space: pre-wrap; `
+            }));
         }
     }
 
     this.fight = () => {
-        if (this.canInfect && !Player.hasAntidoteInInventory){
+        if (this.canInfect && !Player.hasAntidoteInInventory) {
             console.log("checking infection")
             Player.infectionCheck(this.infectionChance);
         }
@@ -306,8 +332,7 @@ function generateTwoEnemies() {
     [firstIndex, secondIndex].forEach((index, i) => {
         const side = i === 0 ? 'left' : 'right';
         //Fix the amount of params :'D
-        const enemy = new Enemy(possibleEnemies[index].name, possibleEnemies[index].defeatProb,
-             possibleEnemies[index].rewardDistribution, possibleEnemies[index].rewardText, possibleEnemies[index].filename,possibleEnemies[index].canInfect, possibleEnemies[index].infectionChance, side);
+        const enemy = new Enemy(possibleEnemies[index], side);
         enemy.draw();
         activeEnemies.push(enemy);
     });
@@ -339,7 +364,6 @@ function handleFight(enemy) { //this could be a separate Scene but I'm doing it 
 
     if (result.win) {
         Player.gold += result.reward;
-        lastReward = result.reward;
         showFightEndMessage(`Voitit!`, `Palkintosi:  ${result.reward} kultakolikkoa`);
     } else {
         Player.gold += result.reward; // reward is -50 on loss
@@ -356,6 +380,9 @@ let toolsForSale = [
     new ReverseCard(),
     new Potion()
 ];
+
+const brainRotObj = new BrainRot();
+brainRotObj.isNegative = true;
 
 function buy(tool) {
     const result = Player.buyTool(tool);
@@ -466,7 +493,8 @@ function renderPlayerTools(tools) {
         ], {
             vertices: { visible: false },
             layer: 1,
-            fillColor: 'lightblue'
+            fillColor: tool.isNegative? '#f0b2b2':'lightblue', 
+            borders: {strokeColor: tool.isNegative? '#a82929ff':'#3e77ccff'}, 
         }));
 
         const tooltipText = board.create('text', [
@@ -480,7 +508,7 @@ function renderPlayerTools(tools) {
             anchorX: 'left',
             anchorY: 'middle',
             strokeColor: 'black',
-            layer: 10
+            layer: 20
         });
         const tooltipBox = board.create('polygon', [
             [lowerLeftX + slotSize + textBoxLeftPadding, lowerLeftY + slotSize + extraHeight],
@@ -493,7 +521,7 @@ function renderPlayerTools(tools) {
             fixed: true,
             fillColor: 'white',
             strokeColor: 'black',
-            layer: 10, 
+            layer: 20,
             fillOpacity: 0.9,
             visible: false
         });
