@@ -195,12 +195,13 @@ ReverseCard.prototype.constructor = ReverseCard;
 ReverseCard.prototype.applyEffect = function (player) {
     player.activeEffects.reverseCardOn = true;
 };
-function Potion() {
-    Tool.call(this, "Parantava taikajuoma", 500, "rotPotion.png", "Parantaa aivomädän.", "potionText.png", false);
+
+function RotPotion() {
+    Tool.call(this, "Parantava taikajuoma", 900, "rotPotion.png", "Parantaa aivomädän.", "rotPotionText.png", false);
 }
-Potion.prototype = Object.create(Tool.prototype);
-Potion.prototype.constructor = Potion;
-Potion.prototype.applyEffect = function (player) {
+RotPotion.prototype = Object.create(Tool.prototype);
+RotPotion.prototype.constructor = RotPotion;
+RotPotion.prototype.applyEffect = function (player) {
     if (player.negativeEffects.brainRot == true) {
         console.log("removing disease")
         player.negativeEffects.brainRot = false;
@@ -209,6 +210,16 @@ Potion.prototype.applyEffect = function (player) {
     player.hasAntidoteInInventory = true;
 
 };
+
+// function BraveryPotion() {
+//     Tool.call(this, "Rohkeusjuoma", 500, "rotPotion.png", "Lisää voittomahdollisuuksia,<br> mutta loukkaannut 20% todennäköisyydellä.", "rotPotionText.png", false);
+// }
+// BraveryPotion.prototype = Object.create(Tool.prototype);
+// BraveryPotion.prototype.constructor = BraveryPotion;
+// BraveryPotion.prototype.applyEffect = function (player) {
+    
+
+// };
 
 function BrainRot() {
     Tool.call(this, "Aivomätä", 0, "brainrot.png", "Heikentää voitto-<br>mahdollisuuksiasi 25%.", "brainrotText.png", false);
@@ -402,7 +413,7 @@ let toolsForSale = [
     new Sword(),
     new Net(),
     new ReverseCard(),
-    new Potion()
+    new RotPotion()
 ];
 
 const brainRotObj = new BrainRot();
