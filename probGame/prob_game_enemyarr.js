@@ -91,7 +91,7 @@ export const possibleEnemies2 = [
         infectionChance: 0.25
     },
     {
-        name: "Mätäötti",
+        name: "Mätäölliäinen",
         defeatProb: 0.50,
         rewardDistribution: { type: "uniform", a: 200, b: 500 },
         rewardText: 'Tasajakautunut<br> välillä 200 - 500',
@@ -217,7 +217,7 @@ export const possibleEnemies2 = [
         infectionChance: 0
     },
     {
-        name: "Mötiötti",
+        name: "Mätäötti",
         defeatProb: 0.55,
         rewardDistribution: { type: "normal", mean: 250, stddev: 100 },
         rewardText: 'Normaalijakautunut, <br> keskiarvo: 250, keskihajonta: 100',
