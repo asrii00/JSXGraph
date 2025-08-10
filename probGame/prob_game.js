@@ -137,13 +137,15 @@ function getRandomInt(min, max) {
 
 //////////CLASSES
 
-function Tool(name, cost, iconPath, description, negative = false) {
+function Tool(name, cost, iconPath, description, textImgPath, isTall = false, negative = false) {
     this.name = name;
     this.cost = cost;
     this.iconPath = iconPath;
     this.description = description;
     this.purchased = false;
     this.isNegative = negative;
+    this.textImgPath = textImgPath;
+    this.isTallTooltip = isTall;
 
     this.purchase = function () {
         if (Player.gold >= this.cost) {
@@ -156,7 +158,7 @@ function Tool(name, cost, iconPath, description, negative = false) {
 }
 
 function Sword() {
-    Tool.call(this, "Miekka", 500, "sword.png", "Lisää voittamisen <br> todennäköisyyttä<br> 5 prosentilla.");
+    Tool.call(this, "Miekka", 500, "sword.png", "Lisää voittamisen <br> todennäköisyyttä<br> 5 prosentilla.", "swordText.png", false);
 }
 Sword.prototype = Object.create(Tool.prototype);
 Sword.prototype.constructor = Sword;
@@ -165,7 +167,7 @@ Sword.prototype.applyEffect = function (player) {
 };
 
 function Net() {
-    Tool.call(this, "Turvaverkko", 800, "net.png", "Et menetä kulta-<br>kolikoita, jos häviät.");
+    Tool.call(this, "Turvaverkko", 800, "net.png", "Et menetä kulta-<br>kolikoita, jos häviät.", "netText.png", false);
 }
 Net.prototype = Object.create(Tool.prototype);
 Net.prototype.constructor = Net;
@@ -174,7 +176,7 @@ Net.prototype.applyEffect = function (player) {
 };
 
 function ReverseCard() {
-    Tool.call(this, "Käänteiskortti", 2000, "reversecard.png", "Jos häviät, sinulla<br> on 25% mahdollisuus<br> kääntää se voitoksi.<br> Silloin voittoraha<br>kuitenkin puolittuu.");
+    Tool.call(this, "Käänteiskortti", 2000, "reversecard.png", "Jos häviät, sinulla<br> on 25% mahdollisuus<br> kääntää se voitoksi.<br> Silloin voittoraha<br>kuitenkin puolittuu.", "cardText.png", true);
 }
 ReverseCard.prototype = Object.create(Tool.prototype);
 ReverseCard.prototype.constructor = ReverseCard;
@@ -182,7 +184,7 @@ ReverseCard.prototype.applyEffect = function (player) {
     player.activeEffects.reverseCardOn = true;
 };
 function Potion() {
-    Tool.call(this, "Parantava taikajuoma", 500, "potion.png", "Parantaa aivomädän.");
+    Tool.call(this, "Parantava taikajuoma", 500, "potion.png", "Parantaa aivomädän.", "potionText.png", false);
 }
 Potion.prototype = Object.create(Tool.prototype);
 Potion.prototype.constructor = Potion;
@@ -197,7 +199,7 @@ Potion.prototype.applyEffect = function (player) {
 };
 
 function BrainRot() {
-    Tool.call(this, "Aivomätä", 0, "brainrot.png", "Heikentää voitto-<br>mahdollisuuksiasi 25%.");
+    Tool.call(this, "Aivomätä", 0, "brainrot.png", "Heikentää voitto-<br>mahdollisuuksiasi 25%.", "brainrotText.png", false);
 }
 BrainRot.prototype = Object.create(Tool.prototype);
 BrainRot.prototype.constructor = BrainRot;
@@ -311,7 +313,7 @@ function Enemy(enemy, side) {
         reward = Math.floor(reward);
         let rewardOutput = win ? reward : (Player.activeEffects.safetyNetOn ? 0 : -50);
         if (win && wasReversed) {
-            rewardOutput *= 0.5;
+            rewardOutput = Math.floor(rewardOutput * 0.5);
         }
         console.log(rewardOutput)
         //just return outcome object here
@@ -331,11 +333,11 @@ function generateTwoEnemies() {
 
     [firstIndex, secondIndex].forEach((index, i) => {
         const side = i === 0 ? 'left' : 'right';
-        //Fix the amount of params :'D
         const enemy = new Enemy(possibleEnemies[index], side);
         enemy.draw();
         activeEnemies.push(enemy);
     });
+    
 }
 
 function showFightEndMessage(outComeMessage, rewardMessage, won = true) {
@@ -466,6 +468,7 @@ function renderMerchantRow(tools) {
         }));
     });
 }
+
 function renderPlayerTools(tools) {
     toolRowVisualParts.forEach(obj => {
         board.removeObject(obj);
@@ -481,10 +484,6 @@ function renderPlayerTools(tools) {
         const lowerLeftY = startY - index * (slotSize + padding);
         const lowerLeftX = startX;
 
-        const textBoxWidth = 4.5;
-        const textBoxLeftPadding = 0.25;
-        const extraHeight = tool.description.length > 80 ? 0.5 : 0;
-
         toolRowVisualParts.push(board.create('polygon', [
             [lowerLeftX, lowerLeftY + slotSize],
             [lowerLeftX + slotSize, lowerLeftY + slotSize],
@@ -493,39 +492,24 @@ function renderPlayerTools(tools) {
         ], {
             vertices: { visible: false },
             layer: 1,
-            fillColor: tool.isNegative? '#f0b2b2':'lightblue', 
-            borders: {strokeColor: tool.isNegative? '#a82929ff':'#3e77ccff'}, 
+            highlight: false,
+            fillColor: tool.isNegative ? '#f0b2b2' : 'lightblue', 
+            borders: { strokeColor: tool.isNegative ? '#a82929ff' : '#3e77ccff' }
         }));
 
-        const tooltipText = board.create('text', [
-            lowerLeftX + slotSize + textBoxLeftPadding + 0.25,
-            lowerLeftY + slotSize / 2,
-            tool.description
+        const tooltipHeight = tool.isTallTooltip ? 3 : 2.25; 
+        const tooltipWidth = 4.75; 
+
+        const tooltipImg = board.create('image', [
+            tool.textImgPath,
+            [lowerLeftX + slotSize + 0.25, lowerLeftY + slotSize /2 - tooltipHeight/2],
+            [tooltipWidth, tooltipHeight]
         ], {
             visible: false,
             fixed: true,
-            fontSize: 12,
-            anchorX: 'left',
-            anchorY: 'middle',
-            strokeColor: 'black',
-            layer: 20
+            highlight: false,
+            layer: 99, 
         });
-        const tooltipBox = board.create('polygon', [
-            [lowerLeftX + slotSize + textBoxLeftPadding, lowerLeftY + slotSize + extraHeight],
-            [lowerLeftX + slotSize + textBoxWidth + textBoxLeftPadding, lowerLeftY + slotSize + extraHeight],
-            [lowerLeftX + slotSize + textBoxWidth + textBoxLeftPadding, lowerLeftY - extraHeight],
-            [lowerLeftX + slotSize + textBoxLeftPadding, lowerLeftY - extraHeight]
-        ], {
-            vertices: { visible: false },
-            layer: 1,
-            fixed: true,
-            fillColor: 'white',
-            strokeColor: 'black',
-            layer: 20,
-            fillOpacity: 0.9,
-            visible: false
-        });
-        toolRowVisualParts.push(tooltipText, tooltipBox);
 
         const img = board.create('image', [
             tool.iconPath,
@@ -537,17 +521,15 @@ function renderPlayerTools(tools) {
             layer: 5
         });
 
-        // hover
+        // hover 
         img.on('over', () => {
-            tooltipText.setAttribute({ visible: true });
-            tooltipBox.setAttribute({ visible: true });
+            tooltipImg.setAttribute({ visible: true });
         });
         img.on('out', () => {
-            tooltipText.setAttribute({ visible: false });
-            tooltipBox.setAttribute({ visible: false });
+            tooltipImg.setAttribute({ visible: false });
         });
 
-        toolRowVisualParts.push(img);
+        toolRowVisualParts.push(img, tooltipImg);
     });
 }
 
@@ -571,6 +553,7 @@ const BattleScene = {
         fightText.setAttribute({ visible: true })
         generateTwoEnemies();
         fightText.setAttribute({ visible: true });
+        renderPlayerTools(Player.tools);
     },
     exit() {
         hideFightEndMessage();

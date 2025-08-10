@@ -4,17 +4,22 @@
 <head>
     <title>JSXGraph Example</title>
     <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
-    
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
     <style>
         #box {
             width: 900px;
             height: 600px;
-            
+
         }
 
         test {
-            color: rgba(182, 226, 143, 0.8), 
+            color: rgba(182, 226, 143, 0.8),
+        }
+
+        .jxgtext {
+            z-index: 1;
+          
         }
     </style>
 </head>
@@ -22,9 +27,9 @@
 <body>
 
     <div id="box" class="jxgbox"></div>
- 
+
     <script type="module" src="./prob_game.js"></script>
-    
+
 
 </body>
 
