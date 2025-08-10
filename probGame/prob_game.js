@@ -9,9 +9,8 @@ const board = JXG.JSXGraph.initBoard('box', {
     showNavigation: false
 });
 
-
 const Player = {
-    gold: 4000,
+    gold: 0,
     tools: [],
     baseStrength: 1.0,
     hasAntidoteInInventory: false,
@@ -231,16 +230,6 @@ RotPotion.prototype.applyEffect = function (player) {
     }
     player.hasAntidoteInInventory = true;
 };
-
-// function BraveryPotion() {
-//     Tool.call(this, "Rohkeusjuoma", 500, "rotPotion.png", "Lisää voittomahdollisuuksia,<br> mutta loukkaannut 20% todennäköisyydellä.", "rotPotionText.png", false);
-// }
-// BraveryPotion.prototype = Object.create(Tool.prototype);
-// BraveryPotion.prototype.constructor = BraveryPotion;
-// BraveryPotion.prototype.applyEffect = function (player) {
-
-
-// };
 
 function BrainRot() {
     Tool.call(this, "Aivomätä", 0, "brainrot.png", "Heikentää voitto-<br>mahdollisuuksiasi 25%.", "brainrotText.png", false);
