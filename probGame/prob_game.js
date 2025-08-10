@@ -11,7 +11,7 @@ const board = JXG.JSXGraph.initBoard('box', {
 
 
 const Player = {
-    gold: 0,
+    gold: 4000,
     tools: [],
     baseStrength: 1.0,
     hasAntidoteInInventory: false,
@@ -28,14 +28,16 @@ const Player = {
     },
 
     buyTool(tool) {
-        //add check to prevent buying the same item twice?
-        if (this.canAfford(tool.cost)) {
+        if (this.canAfford(tool.cost) && tool.purchased == false) {
             this.gold -= tool.cost;
             tool.purchased = true;
             this.tools.push(tool);
             tool.applyEffect(this);  // pass player object to allow tool to modify it
             return { success: true };
         } else {
+            if (tool.purchased) {
+                return { success: false, message: "Ostit tämän jo." };
+            }
             return { success: false, message: "Ei tarpeeksi kolikoita!" };
         }
     },
@@ -50,8 +52,21 @@ const Player = {
     },
 
     removeBrainRot() {
-        this.baseStrength = 1.0;
+        this.baseStrength = 1.0; 
+        if (this.tools.some(tool => tool.name == "Miekka")){
+            console.log("has sword, setting basestrength to 1.05")
+            this.baseStrength = 1.05;
+        }
+        this.negativeEffects.brainRot = false;
         this.tools = this.tools.filter(tool => tool !== brainRotObj);
+        this.tools.forEach((tool, index) => {
+            if (tool.isOneTimeUseForRot) {
+                tool.purchased = false;
+                this.tools.splice(index, 1);
+                console.log("removed one time use item, tools now: ")
+                console.log(this.tools);
+            }
+        })
         renderPlayerTools(this.tools);
     },
 
@@ -149,7 +164,7 @@ function getRandomInt(min, max) {
 
 //////////CLASSES
 
-function Tool(name, cost, iconPath, description, textImgPath, isTall = false, negative = false) {
+function Tool(name, cost, iconPath, description, textImgPath, isTall = false, negative = false, isOneTimeUseForRot = false) {
     this.name = name;
     this.cost = cost;
     this.iconPath = iconPath;
@@ -158,9 +173,16 @@ function Tool(name, cost, iconPath, description, textImgPath, isTall = false, ne
     this.isNegative = negative;
     this.textImgPath = textImgPath;
     this.isTallTooltip = isTall;
+    this.isOneTimeUseForRot = isOneTimeUseForRot;
 
     this.purchase = function () {
         if (Player.gold >= this.cost) {
+
+            console.log(Player.tools)
+            if (Player.tools.some(tool => tool.name === this.name)) {
+                console.log(tool.name, this.name)
+                console.log("tool is in player tools");
+            }
             this.purchased = true;
             return { success: true, goldLeft: Player.gold - this.cost };
         }
@@ -175,7 +197,7 @@ function Sword() {
 Sword.prototype = Object.create(Tool.prototype);
 Sword.prototype.constructor = Sword;
 Sword.prototype.applyEffect = function (player) {
-    player.baseStrength *= 1.05; 
+    player.baseStrength *= 1.05;
 };
 
 function Net() {
@@ -197,7 +219,7 @@ ReverseCard.prototype.applyEffect = function (player) {
 };
 
 function RotPotion() {
-    Tool.call(this, "Parantava taikajuoma", 900, "rotPotion.png", "Parantaa aivomädän.", "rotPotionText.png", false);
+    Tool.call(this, "Parantava taikajuoma", 900, "rotPotion.png", "Parantaa aivomädän. Toimii kerran.", "rotPotionText.png", false, false, true);
 }
 RotPotion.prototype = Object.create(Tool.prototype);
 RotPotion.prototype.constructor = RotPotion;
@@ -208,7 +230,6 @@ RotPotion.prototype.applyEffect = function (player) {
         player.removeBrainRot();
     }
     player.hasAntidoteInInventory = true;
-
 };
 
 // function BraveryPotion() {
@@ -217,7 +238,7 @@ RotPotion.prototype.applyEffect = function (player) {
 // BraveryPotion.prototype = Object.create(Tool.prototype);
 // BraveryPotion.prototype.constructor = BraveryPotion;
 // BraveryPotion.prototype.applyEffect = function (player) {
-    
+
 
 // };
 
@@ -308,7 +329,7 @@ function Enemy(enemy, side) {
     this.fight = () => {
         let wasReversed = false;
         let gotInfected = false;
-        if (this.canInfect && !Player.hasAntidoteInInventory) {
+        if (this.canInfect) {
             console.log("checking infection")
             if (Player.infectionCheck(this.infectionChance)) {
                 gotInfected = true;
@@ -343,6 +364,7 @@ function Enemy(enemy, side) {
             rewardOutput = Math.floor(rewardOutput * 0.5);
         }
         console.log(rewardOutput)
+
         //just return outcome object here
         return { win, reward: rewardOutput, enemy: this, gotInfected: gotInfected };
     };
@@ -366,7 +388,7 @@ function generateTwoEnemies() {
     });
 }
 
-function showFightEndMessage(outComeMessage, rewardMessage, won = true, gotInfected = false) {
+function showFightEndMessage(outComeMessage, rewardMessage, won = true, gotInfected = false, brainRotRemoved) {
     const bgColor = won ? '#cfeecf' : '#f0b2b2';
     fightText.setAttribute({ visible: false })
     messagePolygon.setAttribute({ visible: true, fillColor: bgColor });
@@ -375,7 +397,9 @@ function showFightEndMessage(outComeMessage, rewardMessage, won = true, gotInfec
     messageText2.setText(rewardMessage);
     messageText2.setAttribute({ visible: true });
     if (gotInfected) {
-        infectionText.setAttribute({ visible: true })
+        if (brainRotRemoved) infectionText.setText("Sait aivomätätartunnan, mutta paransit sen taikajuoman avulla.")
+        else infectionText.setText(`Sait aivomätätartunnan.`);
+        infectionText.setAttribute({ visible: true });
     }
     else {
         infectionText.setAttribute({ visible: false })
@@ -389,6 +413,12 @@ function hideFightEndMessage() {
 
 function handleFight(enemy) { //this could be a separate Scene but I'm doing it like this for now
     const result = enemy.fight();
+    let brainRotRemoved = false;
+
+    if (Player.hasAntidoteInInventory && result.gotInfected) {
+        Player.removeBrainRot();
+        brainRotRemoved = true;
+    }
     console.log(result);
 
     activeEnemies.forEach(enemy => {
@@ -398,10 +428,10 @@ function handleFight(enemy) { //this could be a separate Scene but I'm doing it 
 
     if (result.win) {
         Player.gold += result.reward;
-        showFightEndMessage(`Voitit!`, `Palkintosi:  ${result.reward} kultakolikkoa`, true, result.gotInfected);
+        showFightEndMessage(`Voitit!`, `Palkintosi:  ${result.reward} kultakolikkoa`, true, result.gotInfected, brainRotRemoved);
     } else {
         Player.gold += result.reward; // reward is -50 on loss
-        showFightEndMessage(`Hävisit!`, `Tappio: ${result.reward} kultakolikkoa`, false, result.gotInfected);
+        showFightEndMessage(`Hävisit!`, `Tappio: ${result.reward} kultakolikkoa`, false, result.gotInfected, brainRotRemoved);
     }
 
     continueBtn.setAttribute({ visible: true })
@@ -422,12 +452,14 @@ brainRotObj.isNegative = true;
 function buy(tool) {
     const result = Player.buyTool(tool);
     if (result.success) {
-        toolsForSale = toolsForSale.filter(t => t !== tool);
+        if (!tool.isOneTimeUseForRot) {
+            toolsForSale = toolsForSale.filter(t => t !== tool);
+        }
         renderMerchantRow(toolsForSale);
         goldText.setText(() => `Kultakolikkoja: ${Player.gold}`);
         renderPlayerTools(Player.tools);  // re-render inventory
     } else {
-        alert(result.message || "Osto epäonnistui.");
+        alert(result.message);
     }
 }
 
@@ -571,6 +603,9 @@ function renderPlayerTools(tools) {
 const SceneManager = {
     currentScene: null,
     changeScene(newScene) {
+        if (Player.hasAntidoteInInventory && Player.negativeEffects.brainRot) {
+            Player.removeBrainRot();
+        }
         continueBtn.setAttribute({ visible: false });
         //add some sort of flash screen or animation?
         if (this.currentScene && this.currentScene.exit) {

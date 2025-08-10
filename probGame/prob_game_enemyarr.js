@@ -280,10 +280,19 @@ export const possibleEnemies2 = [
         infectionChance: 0
     },
     {
-        name: "Pikkuhötö",
+        name: "Pikkuhötöläinen",
         defeatProb: 0.96,
         rewardDistribution: { type: "uniform", a: 1, b: 25 },
         rewardText: 'Tasajakautunut<br> välillä 1 - 25',
+        filename: "pikkuotti.png",
+        canInfect: false,
+        infectionChance: 0
+    },
+    {
+        name: "Pikkumöttiäinen",
+        defeatProb: 0.99,
+        rewardDistribution: { type: "normal", mean: 10, stddev: 5 },
+        rewardText: 'Normaalijakautunut, <br> keskiarvo: 10, keskihajonta: 5',
         filename: "pikkuotti.png",
         canInfect: false,
         infectionChance: 0
