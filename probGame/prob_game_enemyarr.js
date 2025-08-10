@@ -269,5 +269,23 @@ export const possibleEnemies2 = [
         filename: "otti.png",
         canInfect: false,
         infectionChance: 0
+    },
+    {
+        name: "Pikkuötti",
+        defeatProb: 1,
+        rewardDistribution: { type: "binomial", n: 20, p: 0.25, multiplier: 5 },
+        rewardText: 'Binomiaalijakautunut,<br> n = 20 , p: 0.25, x 5 kolikkoa',
+        filename: "pikkuotti.png",
+        canInfect: false,
+        infectionChance: 0
+    },
+    {
+        name: "Pikkuhötö",
+        defeatProb: 0.96,
+        rewardDistribution: { type: "uniform", a: 1, b: 25 },
+        rewardText: 'Tasajakautunut<br> välillä 1 - 25',
+        filename: "pikkuotti.png",
+        canInfect: false,
+        infectionChance: 0
     }
 ];
