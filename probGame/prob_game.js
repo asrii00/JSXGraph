@@ -13,7 +13,6 @@ const Player = {
     gold: 0,
     tools: [],
     baseStrength: 1.0,
-    hasAntidoteInInventory: false,
     activeEffects: {
         safetyNetOn: false,
         reverseCardOn: false
@@ -51,34 +50,26 @@ const Player = {
     },
 
     removeBrainRot() {
-        this.baseStrength = 1.0; 
-        if (this.tools.some(tool => tool.name == "Miekka")){
-            console.log("has sword, setting basestrength to 1.05")
+        this.baseStrength = 1.0;
+        if (this.tools.some(tool => tool.name == "Miekka")) {
             this.baseStrength = 1.05;
         }
-        
         this.negativeEffects.brainRot = false;
         this.tools = this.tools.filter(tool => tool !== brainRotObj);
         this.tools.forEach((tool, index) => {
             if (tool.isOneTimeUseForRot) {
                 tool.purchased = false;
                 this.tools.splice(index, 1);
-                console.log("removed one time use item, tools now: ")
-                console.log(this.tools);
-                this.hasAntidoteInInventory = false; 
             }
         })
         renderPlayerTools(this.tools);
     },
 
     infectionCheck(infectionChance) {
-        console.log(infectionChance);
         if (Math.random() < infectionChance) {
-            console.log("infected")
             this.infect();
             return true;
         } else {
-            console.log("not infected")
             return false;
         }
     }
@@ -176,20 +167,6 @@ function Tool(name, cost, iconPath, description, textImgPath, isTall = false, ne
     this.isTallTooltip = isTall;
     this.isOneTimeUseForRot = isOneTimeUseForRot;
 
-    this.purchase = function () {
-        if (Player.gold >= this.cost) {
-
-            console.log(Player.tools)
-            if (Player.tools.some(tool => tool.name === this.name)) {
-                console.log(tool.name, this.name)
-                console.log("tool is in player tools");
-            }
-            this.purchased = true;
-            return { success: true, goldLeft: Player.gold - this.cost };
-        }
-        return { success: false, goldLeft: Player.gold };
-    };
-
 }
 
 function Sword() {
@@ -226,11 +203,8 @@ RotPotion.prototype = Object.create(Tool.prototype);
 RotPotion.prototype.constructor = RotPotion;
 RotPotion.prototype.applyEffect = function (player) {
     if (player.negativeEffects.brainRot == true) {
-        console.log("removing disease")
-        player.negativeEffects.brainRot = false;
         player.removeBrainRot();
     }
-    player.hasAntidoteInInventory = true;
 };
 
 function BrainRot() {
@@ -321,7 +295,6 @@ function Enemy(enemy, side) {
         let wasReversed = false;
         let gotInfected = false;
         if (this.canInfect) {
-            console.log("checking infection")
             if (Player.infectionCheck(this.infectionChance)) {
                 gotInfected = true;
             };
@@ -354,7 +327,6 @@ function Enemy(enemy, side) {
         if (win && wasReversed) {
             rewardOutput = Math.floor(rewardOutput * 0.5);
         }
-        console.log(rewardOutput)
 
         //just return outcome object here
         return { win, reward: rewardOutput, enemy: this, gotInfected: gotInfected };
@@ -387,9 +359,11 @@ function showFightEndMessage(outComeMessage, rewardMessage, won = true, gotInfec
     messageText1.setAttribute({ visible: true });
     messageText2.setText(rewardMessage);
     messageText2.setAttribute({ visible: true });
+    infectionText.setText(`Sait aivomätätartunnan.`);
+    if (brainRotRemoved) {
+        infectionText.setText("Sait aivomätätartunnan, mutta paransit sen taikajuoman avulla.");
+    }
     if (gotInfected) {
-        if (brainRotRemoved) infectionText.setText("Sait aivomätätartunnan, mutta paransit sen taikajuoman avulla.")
-        else infectionText.setText(`Sait aivomätätartunnan.`);
         infectionText.setAttribute({ visible: true });
     }
     else {
@@ -406,11 +380,10 @@ function handleFight(enemy) { //this could be a separate Scene but I'm doing it 
     const result = enemy.fight();
     let brainRotRemoved = false;
 
-    if (Player.hasAntidoteInInventory && result.gotInfected) {
+    if (Player.tools.some(tool => tool.name == "Parantava taikajuoma") && result.gotInfected) {
         Player.removeBrainRot();
         brainRotRemoved = true;
     }
-    console.log(result);
 
     activeEnemies.forEach(enemy => {
         enemy.removeAll();
@@ -594,7 +567,7 @@ function renderPlayerTools(tools) {
 const SceneManager = {
     currentScene: null,
     changeScene(newScene) {
-        if (Player.hasAntidoteInInventory && Player.negativeEffects.brainRot) {
+        if (Player.tools.some(tool => tool.name == "Parantava taikajuoma") && Player.negativeEffects.brainRot) {
             Player.removeBrainRot();
         }
         continueBtn.setAttribute({ visible: false });

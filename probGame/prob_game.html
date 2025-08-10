@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>JSXGraph Example</title>
+    <title>Todennäköisyyspeli</title>
     <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
@@ -12,9 +12,9 @@
             height: 600px;
 
         }
-
-        test {
-            color: rgba(182, 226, 143, 0.8),
+        div {
+            margin: 8px;
+            max-width: 900px;
         }
 
         .jxgtext {
@@ -25,8 +25,13 @@
 </head>
 
 <body>
-
+    <div style="text-align: center;"><h3 > Todennäköisyyspeli</h3></div>
+    
     <div id="box" class="jxgbox"></div>
+    <div> Pelaa peliä valitsemalla haluamasi vastustaja kahdesta vaihtoehdosta. Joka neljännen taistelun jälkeen 
+        pääset kauppanäkymään, jossa voit ostaa keräämilläsi kolikoilla hyödyllisiä tavaroita.<br><br>
+        Jos et ole varma, kumman vihollisen voittopalkkio on parempi, voit tutkia eri jakaumia <a href="./distribution_vis.html">tämän sivun</a> interaktiivisten kuvaajien avulla.
+    </div>
 
     <script type="module" src="./prob_game.js"></script>
 
