@@ -197,7 +197,7 @@ ReverseCard.prototype.applyEffect = function (player) {
 };
 
 function RotPotion() {
-    Tool.call(this, "Parantava taikajuoma", 900, "rotPotion.png", "Parantaa aivomädän. Toimii kerran.", "rotPotionText.png", false, false, true);
+    Tool.call(this, "Parantava taikajuoma", 900, "rotPotion.png", "Parantaa aivomädän.<br> Toimii kerran.", "rotPotionText.png", false, false, true);
 }
 RotPotion.prototype = Object.create(Tool.prototype);
 RotPotion.prototype.constructor = RotPotion;
