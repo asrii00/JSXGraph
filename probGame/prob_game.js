@@ -56,6 +56,7 @@ const Player = {
             console.log("has sword, setting basestrength to 1.05")
             this.baseStrength = 1.05;
         }
+        
         this.negativeEffects.brainRot = false;
         this.tools = this.tools.filter(tool => tool !== brainRotObj);
         this.tools.forEach((tool, index) => {
@@ -64,6 +65,7 @@ const Player = {
                 this.tools.splice(index, 1);
                 console.log("removed one time use item, tools now: ")
                 console.log(this.tools);
+                this.hasAntidoteInInventory = false; 
             }
         })
         renderPlayerTools(this.tools);
