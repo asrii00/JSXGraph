@@ -6,3 +6,4 @@ The texts accompanying the visualizations are mostly written in Finnish. The sug
 
 index.html contains an organized list of visualizations and simulations created during the practice. The repository contains some additional files, but those missing from the index list are generally unfinished or were used only for testing. 
 
+[GitHub pages](https://asrii00.github.io/JSXGraph/)
