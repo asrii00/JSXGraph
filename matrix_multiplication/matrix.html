@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>JSXGraph Example</title>
+  <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.3.2/math.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+  <style>
+    #box {
+      width: 500px;
+      height: 500px;
+    }
+
+    div {
+      margin: 7px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="box" class="jxgbox"></div>
+  <div class="flex">
+    <button onclick="simulationStep()">Step</button>
+
+  </div>
+
+
+  <script>
+    const board = JXG.JSXGraph.initBoard('box', {
+      boundingbox: [-1, 11, 11, -1],
+      axis: true,
+      showNavigation: false,
+      showCopyright: false,
+    });
+
+    function valueToColor(value) {
+      // Clamp value to the range [-100, 100]
+      value = Math.max(-100, Math.min(100, value));
+
+      if (value < 0) {
+        // Blue -> White
+        const t = (value + 100) / 100;
+        const r = Math.round(255 * t);
+        const g = Math.round(255 * t);
+        const b = 255;
+        const code = `rgb(${r}, ${g}, ${b})`;
+        console.log(code)
+        return code;
+      } else {
+        // White -> Red
+        const t = value / 100;
+        const r = 255;
+        const g = Math.round(255 * (1 - t));
+        const b = Math.round(255 * (1 - t));
+        const code = `rgb(${r}, ${g}, ${b})`;
+        console.log(code)
+        return code;
+      }
+    }
+
+    const gridSize = 5;
+    const cellRadius = 0.45;
+    const gridYStart = 5.5;
+    const gridXStart = 0.5;
+
+    const squares = [];
+    const arr = [10, 20, 30, 40, -50]
+
+    const mA = math.matrix([arr, arr, arr, arr, arr]);
+
+
+
+    //grid
+    for (let row = 0; row < gridSize; row++) {
+      squares[row] = [];
+
+      for (let col = 0; col < gridSize; col++) {
+
+
+        const square = board.create('polygon', [[col + gridXStart, row], [col + 1 + gridXStart, row], [col + 1 + gridXStart, row + 1], [col + gridXStart, row + 1]], { vertices: { visible: false } })
+        squares[row][col] = square;
+
+
+      }
+    }
+
+    mA.forEach(function (value, index, matrix) {
+      console.log('value:', value, 'index:', index)
+
+
+
+      const a = board.create('point', [index[0] + gridXStart, index[1] + gridYStart], { visible: false })
+      const b = board.create('point', [index[0] + gridXStart + 1, index[1] + gridYStart], { visible: false })
+      const c = board.create('point', [index[0] + gridXStart + 1, index[1] + gridYStart + 1], { visible: false })
+      const d = board.create('point', [index[0] + gridXStart, index[1] + gridYStart + 1], { visible: false })
+      const square = board.create('polygon', [a, b, c, d], { fillColor: valueToColor(value), vertices: { visible: false } })
+
+      const label = board.create('text', [index[0] + gridXStart + 0.5, index[1] + gridYStart + +0.5, value], {
+      anchorX: 'middle',
+      anchorY: 'middle',
+      fontSize: 18,
+      fixed: true,
+      highlight: false
+    });
+    })
+
+    board.create('input', [5, 5, 'value', '']);
+
+  </script>
+
+</body>
+
+</html>
