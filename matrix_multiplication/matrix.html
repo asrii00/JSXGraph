@@ -22,91 +22,144 @@
 
   <div id="box" class="jxgbox"></div>
   <div class="flex">
-    <button onclick="simulationStep()">Step</button>
+    <button onclick="printMatrix()">Print to console</button> 
+    <button onclick="clearGrid()">delet</button> 
 
   </div>
 
 
   <script>
     const board = JXG.JSXGraph.initBoard('box', {
-      boundingbox: [-1, 11, 11, -1],
+      boundingbox: [-1, 12, 12, -1],
       axis: true,
       showNavigation: false,
       showCopyright: false,
     });
 
-    function valueToColor(value) {
+    const inputs = [];
+    const deletableGrid = [];
+
+    function printMatrix() {
+      const editedMatrix = readInputMatrix(inputs);
+      console.log(editedMatrix);
+      const resultMatrix = math.multiply(mA, editedMatrix)
+      clearGrid();
+      makeGrid(resultMatrix, 0,0,false, true)
+    }
+
+    function clearGrid(){
+      deletableGrid.forEach(obj => {
+                if (obj && typeof obj === 'object') {
+                    board.removeObject(obj);
+                }
+            });
+    }
+
+
+    function valueToColor(value, range) {
       // Clamp value to the range [-100, 100]
-      value = Math.max(-100, Math.min(100, value));
+      value = Math.max(-range, Math.min(range, value));
 
       if (value < 0) {
         // Blue -> White
-        const t = (value + 100) / 100;
+        const t = (value + range) / range;
         const r = Math.round(255 * t);
         const g = Math.round(255 * t);
         const b = 255;
         const code = `rgb(${r}, ${g}, ${b})`;
-        console.log(code)
         return code;
       } else {
         // White -> Red
-        const t = value / 100;
+        const t = value / range;
         const r = 255;
         const g = Math.round(255 * (1 - t));
         const b = Math.round(255 * (1 - t));
         const code = `rgb(${r}, ${g}, ${b})`;
-        console.log(code)
         return code;
       }
     }
 
-    const gridSize = 5;
-    const cellRadius = 0.45;
-    const gridYStart = 5.5;
-    const gridXStart = 0.5;
 
-    const squares = [];
-    const arr = [10, 20, 30, 40, -50]
+    function makeGrid(matrix, xStart, yStart, inputEnabled = false, deletable = false) {
+      //x and y might be reversed lmao
 
-    const mA = math.matrix([arr, arr, arr, arr, arr]);
+      matrix.forEach(function (value, index, matrix) {
+        const row = index[0];
+        const column = index[1];
+        const size = matrix.size();
+        const width = size[0]
 
+        const square = board.create('polygon', [[row + xStart, width - column + yStart],
+        [row + xStart + 1, width - column + yStart],
+        [row + xStart + 1, width - column + yStart + 1],
+        [row + xStart, width - column + yStart + 1]], { fillColor: valueToColor(value, 50), vertices: { visible: false } })
 
+        if (deletable){
+          deletableGrid.push(square)
+        }
 
-    //grid
-    for (let row = 0; row < gridSize; row++) {
-      squares[row] = [];
+        if (inputEnabled) {
+          const input = board.create('input', [index[0] + xStart, width - index[1] + yStart + 1, value, ''], { anchorX: 'left', anchorY: 'center', cssStyle: 'height:3em; width:2.5em; text-align: center;', maxlength: 4 });
+          //TODO: limit to 100 or whatever i guess
+          if (!inputs[row]) {
+            inputs[row] = [];
+          }
 
-      for (let col = 0; col < gridSize; col++) {
+          inputs[row][column] = input;
+  
+        } else {
+          const label = board.create('text', [index[0] + xStart + 0.5, width - index[1] + yStart + +0.5, value], {
+            anchorX: 'middle',
+            anchorY: 'middle',
+            fontSize: 18,
+            fixed: true,
+            highlight: false
+          });
 
+          if (deletable){
+          deletableGrid.push(label)
+        }
 
-        const square = board.create('polygon', [[col + gridXStart, row], [col + 1 + gridXStart, row], [col + 1 + gridXStart, row + 1], [col + gridXStart, row + 1]], { vertices: { visible: false } })
-        squares[row][col] = square;
-
-
-      }
+        }
+      })
     }
 
-    mA.forEach(function (value, index, matrix) {
-      console.log('value:', value, 'index:', index)
+    function readInputMatrix(inputs) {
+      const values = inputs.map(row =>
+        row.map(input => {
+          const value = Number(input.Value());
+
+          if (input.Value().trim() === '' ||
+            !Number.isFinite(value)) {
+            throw new Error('All cells must contain numbers');
+          }
+
+          return value;
+        })
+      );
+
+      return math.matrix(values);
+    }
 
 
 
-      const a = board.create('point', [index[0] + gridXStart, index[1] + gridYStart], { visible: false })
-      const b = board.create('point', [index[0] + gridXStart + 1, index[1] + gridYStart], { visible: false })
-      const c = board.create('point', [index[0] + gridXStart + 1, index[1] + gridYStart + 1], { visible: false })
-      const d = board.create('point', [index[0] + gridXStart, index[1] + gridYStart + 1], { visible: false })
-      const square = board.create('polygon', [a, b, c, d], { fillColor: valueToColor(value), vertices: { visible: false } })
 
-      const label = board.create('text', [index[0] + gridXStart + 0.5, index[1] + gridYStart + +0.5, value], {
-      anchorX: 'middle',
-      anchorY: 'middle',
-      fontSize: 18,
-      fixed: true,
-      highlight: false
-    });
-    })
+    const arr = [10, 20, 30, 40, -50]
 
-    board.create('input', [5, 5, 'value', '']);
+
+    //const mA = math.matrix([arr, arr, arr, arr, arr]); 
+    const mA = math.matrix([[1, 2, 3, 4, 5],[6, 7, 8, 9, 10], [11, 12, 13, 14, 15], [10, 20, 30, 40, -50], [10, 20, 30, 40, -50]]); 
+    const mB = math.identity(5, 5)
+    let mC = math.multiply(mA, mB)
+
+
+    makeGrid(mA, 0, 5.5, false);
+    makeGrid(mB, 5.5, 5.5, true);
+    makeGrid(mC, 0, 0, false, true)
+
+
+
+
 
   </script>
 
