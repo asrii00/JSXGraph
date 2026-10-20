@@ -48,11 +48,14 @@
     }
 
     function clearGrid(){
+      board.suspendUpdate();
       deletableGrid.forEach(obj => {
                 if (obj && typeof obj === 'object') {
                     board.removeObject(obj);
                 }
             });
+      deletableGrid.length = 0;
+      board.unsuspendUpdate();
     }
 
 
